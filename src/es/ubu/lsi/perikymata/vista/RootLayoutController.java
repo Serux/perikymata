@@ -50,7 +50,7 @@ public class RootLayoutController {
      */
     @FXML
     private void windowPerikymataCount() {
-        mainApp.showImageSelection();
+        mainApp.showPerikymataCount();
     }
 
     /**
