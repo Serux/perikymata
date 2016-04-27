@@ -39,7 +39,7 @@ public class MainApp extends Application  {
 		        this.primaryStage = primaryStage;
 		        this.primaryStage.setTitle("AddressApp");
 		        
-		        this.primaryStage.getIcons().add(new Image("file:resources/images/urinating.png"));
+		        this.primaryStage.getIcons().add(new Image("file:resources/images/logo.png"));
 		        this.primaryStage.setMinHeight(400.0);
 		        this.primaryStage.setMinWidth(600.0);
 		        initRootLayout();

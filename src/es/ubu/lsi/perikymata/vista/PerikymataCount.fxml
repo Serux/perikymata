@@ -6,11 +6,11 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="447.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.ubu.lsi.perikymata.vista.PerikymataCountController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.ubu.lsi.perikymata.vista.PerikymataCountController">
    <children>
-      <AnchorPane layoutX="15.0" layoutY="39.0" prefHeight="41.0" prefWidth="597.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
+      <AnchorPane layoutX="15.0" layoutY="14.0" prefHeight="41.0" prefWidth="597.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
          <children>
-            <ToolBar layoutX="-8.0" layoutY="3.0" prefHeight="35.0" prefWidth="238.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="327.0">
+            <ToolBar layoutY="3.0" prefHeight="35.0" prefWidth="238.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="327.0">
               <items>
                   <Button mnemonicParsing="false" text="Zoom +" />
                   <Button mnemonicParsing="false" text="Zoom -" />
@@ -23,11 +23,14 @@
             <Button layoutX="456.0" layoutY="8.0" mnemonicParsing="false" text="¿Calcular Grafica?" AnchorPane.rightAnchor="0.0" />
          </children>
       </AnchorPane>
-      <ScrollPane layoutX="27.0" layoutY="94.0" prefHeight="338.0" prefWidth="565.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="94.0">
+      <ScrollPane layoutX="27.0" layoutY="62.0" prefHeight="322.0" prefWidth="565.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="62.0">
         <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="327.0" prefWidth="299.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="376.0" prefWidth="636.0">
                <children>
-                  <ImageView fitHeight="200.0" fitWidth="208.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="0.0" />
+                  <ImageView fitHeight="382.0" fitWidth="613.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-6.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="0.0">
+                     <image>
+                        <Image url="@../../../../../../rsc/perikymata.jpg" />
+                     </image></ImageView>
                </children>
             </AnchorPane>
         </content>
