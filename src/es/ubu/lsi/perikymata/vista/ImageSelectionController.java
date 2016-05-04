@@ -31,8 +31,10 @@ public class ImageSelectionController {
         
         // Show open file dialog
         File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+        
         if (file != null) {
-        	 previewImage.setImage(new Image(file.toURI().toString()));
+        	mainApp.setImagenCompleta(new Image(file.toURI().toString()));
+        	previewImage.setImage(mainApp.getImagenCompleta());
         }
     }
     

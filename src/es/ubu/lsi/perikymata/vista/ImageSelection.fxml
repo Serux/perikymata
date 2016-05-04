@@ -1,19 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="338.0" prefWidth="472.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.ubu.lsi.perikymata.vista.ImageSelectionController">
+<AnchorPane prefHeight="350.0" prefWidth="511.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.ubu.lsi.perikymata.vista.ImageSelectionController">
    <children>
-      <Button layoutX="248.0" layoutY="232.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Generar" />
-      <Button layoutX="248.0" layoutY="257.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Guardar" />
-      <Button layoutX="248.0" layoutY="282.0" mnemonicParsing="false" onAction="#nextScreen" prefHeight="25.0" prefWidth="200.0" text="Guardar y Continuar" />
-      <Button layoutX="29.0" layoutY="232.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Cargar imagen" />
-      <ListView layoutX="29.0" layoutY="32.0" prefHeight="200.0" prefWidth="200.0" />
-      <ImageView fx:id="previewImage" fitHeight="200.0" fitWidth="200.0" layoutX="248.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="33.0" layoutY="282.0" mnemonicParsing="false" onMouseClicked="#handleOpen" prefHeight="25.0" prefWidth="200.0" text="Cargar imagen de pieza completa" />
+      <SplitPane dividerPositions="0.5" layoutX="26.0" layoutY="24.0" prefHeight="302.0" prefWidth="464.0" AnchorPane.bottomAnchor="24.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="24.0">
+         <items>
+            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="209.0">
+               <children>
+                  <ListView prefHeight="226.0" prefWidth="228.0" AnchorPane.bottomAnchor="74.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="211.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Cargar imagen" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button layoutY="261.0" mnemonicParsing="false" onMouseClicked="#handleOpen" prefHeight="25.0" prefWidth="200.0" text="Cargar imagen de pieza completa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="209.0">
+               <children>
+                  <ScrollPane prefHeight="226.0" prefWidth="228.0" AnchorPane.bottomAnchor="74.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <ImageView fx:id="previewImage" pickOnBounds="true" preserveRatio="true">
+                           <viewport>
+                              <Rectangle2D />
+                           </viewport>
+                        </ImageView>
+                     </content>
+                  </ScrollPane>
+                  <Button layoutY="261.0" mnemonicParsing="false" onAction="#nextScreen" prefHeight="25.0" prefWidth="200.0" text="Guardar y Continuar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button layoutY="236.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Generar" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button contentDisplay="CENTER" layoutY="211.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Guardar" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+               </children>
+            </AnchorPane>
+         </items>
+      </SplitPane>
    </children>
 </AnchorPane>

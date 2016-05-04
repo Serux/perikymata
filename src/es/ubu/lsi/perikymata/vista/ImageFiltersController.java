@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 
 public class ImageFiltersController {
 
@@ -15,7 +16,12 @@ public class ImageFiltersController {
     private ScrollPane scroll1;
     @FXML
     private ScrollPane scroll2;
-	
+    
+	@FXML
+	private ImageView imagenFiltro;
+	@FXML
+	private ImageView imagenOriginal;
+    
     @FXML
     private void initialize() {
     	ChangeListener<Object> changeListener1 = new ChangeListener<Object>() {
@@ -32,6 +38,7 @@ public class ImageFiltersController {
         };
         scroll2.vvalueProperty().addListener(changeListener1);
         scroll1.vvalueProperty().addListener(changeListener2);
+        
     }
     
 	   /**
@@ -41,6 +48,10 @@ public class ImageFiltersController {
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+        if(mainApp.getImagenCompleta() != null){
+        	imagenOriginal.setImage(mainApp.getImagenCompleta());
+        	imagenFiltro.setImage(mainApp.getImagenCompleta());
+        }
     }
     
     @FXML

@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 public class MainApp extends Application  {
 	 private Stage primaryStage;
 	 private BorderPane rootLayout;
-	 
+	 private Image imagenCompleta;
 	   /**
 	     * Returns the main stage.
 	     * @return
@@ -40,8 +40,8 @@ public class MainApp extends Application  {
 		        this.primaryStage.setTitle("AddressApp");
 		        
 		        this.primaryStage.getIcons().add(new Image("file:resources/images/logo.png"));
-		        this.primaryStage.setMinHeight(400.0);
-		        this.primaryStage.setMinWidth(600.0);
+		        this.primaryStage.setMinHeight(450.0);
+		        this.primaryStage.setMinWidth(650.0);
 		        initRootLayout();
 
 		        showImageSelection();
@@ -105,14 +105,14 @@ public class MainApp extends Application  {
 	            FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(MainApp.class.getResource("vista/ImageFilters.fxml"));
 	            AnchorPane personOverview = (AnchorPane) loader.load();
-
+	          
 	            // Set person overview into the center of root layout.
 	            rootLayout.setCenter(personOverview);
-
+	            
 	            // Give the controller access to the main app.
 	            ImageFiltersController controller = loader.getController();
 	            controller.setMainApp(this);
-
+	            
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }
@@ -128,10 +128,7 @@ public class MainApp extends Application  {
 	            loader.setLocation(MainApp.class.getResource("vista/PerikymataCount.fxml"));
 	            AnchorPane personOverview = (AnchorPane) loader.load();
 	            // Set person overview into the center of root layout
-	            
-	            
 
-	            
 	            rootLayout.setCenter(personOverview);
 
 	            // Give the controller access to the main app.
@@ -142,4 +139,12 @@ public class MainApp extends Application  {
 	            e.printStackTrace();
 	        }
 	    }
+
+		public Image getImagenCompleta() {
+			return imagenCompleta;
+		}
+
+		public void setImagenCompleta(Image imagenCompleta) {
+			this.imagenCompleta = imagenCompleta;
+		}
 }
