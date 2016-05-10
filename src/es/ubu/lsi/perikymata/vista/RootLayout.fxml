@@ -9,13 +9,13 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" text="Archivo">
             <items>
-                  <MenuItem mnemonicParsing="false" text="New" />
-                  <MenuItem mnemonicParsing="false" text="Open..." />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-                  <MenuItem mnemonicParsing="false" text="Save As..." />
-              <MenuItem mnemonicParsing="false" text="Exit" />
+                  <MenuItem mnemonicParsing="false" text="Nuevo Proyecto" />
+                  <MenuItem mnemonicParsing="false" text="Abrir Proyecto" />
+                  <MenuItem mnemonicParsing="false" text="Guardar" />
+                  <MenuItem mnemonicParsing="false" text="Guardar Como..." />
+              <MenuItem mnemonicParsing="false" text="Cerrar" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Ventana">
@@ -25,7 +25,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#windowPerikymataCount" text="Contar Perikymata" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
+          <Menu mnemonicParsing="false" text="Ayuda">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="About" />
             </items>
