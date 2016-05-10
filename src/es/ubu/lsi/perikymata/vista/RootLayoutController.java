@@ -1,6 +1,7 @@
 package es.ubu.lsi.perikymata.vista;
 
 import java.io.File;
+import java.net.URI;
 
 import es.ubu.lsi.perikymata.MainApp;
 import javafx.fxml.FXML;
@@ -9,9 +10,9 @@ import javafx.stage.FileChooser;
 
 
 /**
- * The controller for the root layout. The root layout provides the basic
- * application layout containing a menu bar and space where other JavaFX
- * elements can be placed.
+ * Controlador para el layour principal. Contiene un layout principal
+ * con una barra de menú común a toda la aplicación y espacio para
+ * introducir otros elementos de JavaFX.
  * 
  * @author Sergio Chico Carrancio
  */
@@ -26,7 +27,8 @@ public class RootLayoutController {
     }
     
     /**
-     * Is called by the main application to give a reference back to itself.
+     * Método llamado por la aplicación principal para 
+     * obtener una referencia a si misma para acceder a su funcionalidad.
      * 
      * @param mainApp
      */
@@ -35,7 +37,8 @@ public class RootLayoutController {
     }
     
     /**
-     * 
+     * Método que llama al controlador principal para cambiar a la
+     * ventana de selección de imágenes.
      */
     @FXML
     private void windowImageSelection() {
@@ -43,7 +46,8 @@ public class RootLayoutController {
     }
     
     /**
-     * 
+     * Método que llama al controlador principal para cambiar a la
+     * ventana de aplicar filtros.
      */
     @FXML
     private void windowImageFilters() {
@@ -51,7 +55,8 @@ public class RootLayoutController {
     }
     
     /**
-     * 
+     * Método que llama al controlador principal para cambiar a la
+     * ventana de contar perikymata.
      */
     @FXML
     private void windowPerikymataCount() {
@@ -59,10 +64,31 @@ public class RootLayoutController {
     }
 
     /**
-     * Creates an empty project.
+     * Crea un proyecto vacío, junto a su estructura de carpetas.
      */
     @FXML
     private void handleNew() {
+    	   FileChooser fileChooser = new FileChooser();
+
+    	   
+           // Extensión vacía para que sólo aparezcan carpetas.
+           FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                   "Carpeta proyecto", "*");
+           fileChooser.getExtensionFilters().add(extFilter);
+           fileChooser.initialFileNameProperty().set("Nombre_Proyecto");
+
+           // Muestra el diálogo de selección.
+           File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
+
+           if (file != null) {
+               // Crea los directoriosdel proyecto.
+        	   file.mkdir();
+        	   new File(file.toString() + "\\Fragmentos").mkdir();
+        	   new File(file.toString() + "\\Imagen_Original").mkdir();
+        	   new File(file.toString() + "\\perikymata").mkdir();
+               //TODO Crear el XML inicial.
+               //mainApp.savePersonDataToFile(file);
+           }
     }
 
  

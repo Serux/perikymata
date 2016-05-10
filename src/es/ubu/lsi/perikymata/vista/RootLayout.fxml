@@ -11,7 +11,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="Archivo">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Nuevo Proyecto" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleNew" text="Nuevo Proyecto" />
                   <MenuItem mnemonicParsing="false" text="Abrir Proyecto" />
                   <MenuItem mnemonicParsing="false" text="Guardar" />
                   <MenuItem mnemonicParsing="false" text="Guardar Como..." />
