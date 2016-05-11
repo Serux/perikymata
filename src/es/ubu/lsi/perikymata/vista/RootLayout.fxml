@@ -12,7 +12,7 @@
           <Menu mnemonicParsing="false" text="Archivo">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#handleNew" text="Nuevo Proyecto" />
-                  <MenuItem mnemonicParsing="false" text="Abrir Proyecto" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="Abrir Proyecto" />
                   <MenuItem mnemonicParsing="false" text="Guardar" />
                   <MenuItem mnemonicParsing="false" text="Guardar Como..." />
               <MenuItem mnemonicParsing="false" text="Cerrar" />

@@ -111,6 +111,7 @@ public class RootLayoutController {
    	            //TODO implementar setFilePath.
    	            //setPersonFilePath(file);
    	        } catch (Exception e) { // catches ANY exception
+   	        	//TODO crear método en el MainApp para mostrar los errores.
    	        	Alert alert = new Alert(Alert.AlertType.ERROR);
    	        	alert.setTitle("Error");
    	        	alert.setHeaderText("No se puede guardar archivo :\n" + file.getPath());
@@ -141,6 +142,24 @@ public class RootLayoutController {
      }
 
  
+    /**
+     * Opens a FileChooser to let the user select an address book to load.
+     */
+    @FXML
+    private void handleOpen() {
+        FileChooser fileChooser = new FileChooser();
+        // Filtro para el xml del proyecto
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "Archivos XML (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Muestra el diálogo para abrir el fichero
+        File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+
+        if (file != null) {
+            mainApp.loadProjectFromFile(file);
+        }
+    }
 
     /**
      * Saves the file to the person file that is currently open. If there is no
