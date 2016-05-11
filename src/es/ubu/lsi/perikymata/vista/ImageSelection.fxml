@@ -15,8 +15,8 @@
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="209.0">
                <children>
                   <ListView prefHeight="226.0" prefWidth="228.0" AnchorPane.bottomAnchor="74.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="211.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Cargar imagen" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button layoutY="261.0" mnemonicParsing="false" onMouseClicked="#handleOpen" prefHeight="25.0" prefWidth="200.0" text="Cargar imagen de pieza completa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="211.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Load image pieces" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="261.0" mnemonicParsing="false" onMouseClicked="#handleOpen" prefHeight="25.0" prefWidth="200.0" text="Load full image" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="209.0">
@@ -30,9 +30,9 @@
                         </ImageView>
                      </content>
                   </ScrollPane>
-                  <Button layoutY="261.0" mnemonicParsing="false" onAction="#nextScreen" prefHeight="25.0" prefWidth="200.0" text="Guardar y Continuar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button layoutY="236.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Generar" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button contentDisplay="CENTER" layoutY="211.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Guardar" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="261.0" mnemonicParsing="false" onAction="#nextScreen" prefHeight="25.0" prefWidth="200.0" text="Save project and continue" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="236.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Generate full image" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="211.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Save Full image as..." AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
          </items>

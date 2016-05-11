@@ -3,7 +3,7 @@ package es.ubu.lsi.perikymata.modelo;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class Proyecto {
+public class Project {
 	String projectName;
 
 	public String getProjectName() {

@@ -9,23 +9,23 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="Archivo">
+          <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#handleNew" text="Nuevo Proyecto" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="Abrir Proyecto" />
-                  <MenuItem mnemonicParsing="false" text="Guardar" />
-                  <MenuItem mnemonicParsing="false" text="Guardar Como..." />
-              <MenuItem mnemonicParsing="false" text="Cerrar" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleNew" text="New Project" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="Open Project" />
+                  <MenuItem mnemonicParsing="false" text="Save" />
+                  <MenuItem mnemonicParsing="false" text="Save As..." />
+              <MenuItem mnemonicParsing="false" text="Exit" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Ventana">
+          <Menu mnemonicParsing="false" text="Stage">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#windowImageSelection" text="Selección Imagenes" />
-                  <MenuItem mnemonicParsing="false" onAction="#windowImageFilters" text="Aplicar Filtros" />
-                  <MenuItem mnemonicParsing="false" onAction="#windowPerikymataCount" text="Contar Perikymata" />
+              <MenuItem mnemonicParsing="false" onAction="#windowImageSelection" text="Select images" />
+                  <MenuItem mnemonicParsing="false" onAction="#windowImageFilters" text="Apply filters" />
+                  <MenuItem mnemonicParsing="false" onAction="#windowPerikymataCount" text="Count perikymata" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Ayuda">
+          <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="About" />
             </items>

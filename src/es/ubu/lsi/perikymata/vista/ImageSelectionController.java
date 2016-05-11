@@ -9,16 +9,18 @@ import javafx.stage.FileChooser;
 
 public class ImageSelectionController {
 	
+	/**
+	 * preview of the full tooth Image.
+	 */
 	@FXML
 	private ImageView previewImage;
-	// Reference to the main application.
-    private MainApp mainApp;
-	
-    public ImageSelectionController() {
-	}
-    
 	/**
-     * Opens a FileChooser to let the user select an address book to load.
+	 *  Reference to the main application.
+	 */
+    private MainApp mainApp;
+	  
+	/**
+     * Opens a FileChooser to let the user select Image to load.
      */
     @FXML
     private void handleOpen() {
@@ -33,30 +35,30 @@ public class ImageSelectionController {
         File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
         
         if (file != null) {
-        	mainApp.setImagenCompleta(new Image(file.toURI().toString()));
-        	previewImage.setImage(mainApp.getImagenCompleta());
+        	mainApp.setFullImage(new Image(file.toURI().toString()));
+        	previewImage.setImage(mainApp.getFullImage());
         }
     }
     
+    /**
+     * Handler that changes to the image filter stage when called.
+     */
     @FXML
     private void nextScreen(){
     	mainApp.showImageFilters();
     }
-    
-    /**
-     * Initializes the controller class. This method is automatically called
-     * after the fxml file has been loaded.
-     */
-    @FXML
-    private void initialize() {
-    }
-    
+        
     /**
      * Is called by the main application to give a reference back to itself.
+     * Also, sets the Images. This is done here because when the method
+     * initialize is called, there is no reference to the mainapp.
      * 
      * @param mainApp
      */
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
+        if(mainApp.getFullImage() != null){
+        	previewImage.setImage(mainApp.getFullImage());
+        }
     }
 }

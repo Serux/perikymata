@@ -10,7 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import es.ubu.lsi.perikymata.MainApp;
-import es.ubu.lsi.perikymata.modelo.Proyecto;
+import es.ubu.lsi.perikymata.modelo.Project;
 import es.ubu.lsi.perikymata.vista.ImageFiltersController;
 import es.ubu.lsi.perikymata.vista.ImageSelectionController;
 import es.ubu.lsi.perikymata.vista.PerikymataCountController;
@@ -29,20 +29,33 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 /**
- * Controlador principal de la aplicación, que contiene los datos comunes 
- * y realiza las operaciones comunes, como cambiar de ventana o acceso a datos.
+ * Controller for the main application, contains the data that needs to be accessed 
+ * by any of the other windows and has common operations, like navigation between
+ * windows or data access.
  * 
- * @author Sergio Chico
+ * @author Sergio Chico Carrancio
  */
 public class MainApp extends Application  {
 
+	 /**
+	 * Main container of the application's layout.
+	 */
 	 private Stage primaryStage;
+	 /**
+	  * Main layout of the application.
+	  */
 	 private BorderPane rootLayout;
-	 private Image imagenCompleta;
-	 private Proyecto proyecto;
+	 /**
+	  * Full image of a tooth, used to count perikyma.
+	  */
+	 private Image fullImage;
+	 /**
+	  * Data of a perikymata project.
+	  */
+	 private Project project;
 	 
 	   /**
-	     * Devuelve la Stage principal.
+	     * Returns the main stage.
 	     * @return
 	     */
 	    public Stage getPrimaryStage() {
@@ -50,6 +63,10 @@ public class MainApp extends Application  {
 	        
 	    }
 
+	    /**
+	     * Launches the applications, no args needed.
+	     * @param args
+	     */
 	    public static void main(String[] args) {
 	        launch(args);
 	    }
@@ -57,7 +74,7 @@ public class MainApp extends Application  {
 		@Override
 		public void start(Stage primaryStage) {
 		        this.primaryStage = primaryStage;
-		        this.primaryStage.setTitle("Perekimata - Proyecto sin guardar");
+		        this.primaryStage.setTitle("Perikymata - Unsaved Project");
 		        this.primaryStage.getIcons().add(new Image("file:resources/images/logo.png"));
 		        this.primaryStage.setMinHeight(450.0);
 		        this.primaryStage.setMinWidth(650.0);
@@ -67,21 +84,21 @@ public class MainApp extends Application  {
 		}
 		
 		/**
-	     * Inicializa el layout principal e intenta cargar el último fichero abierto.
+	     * Loads and shows the RootLayout and tries to load the last opened file.
 	     */
 	    public void initRootLayout() {
 	        try {
-	        	// Carga la clase FXML.
+	        	// Loads the FXML view.
 	            FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(MainApp.class
 	                    .getResource("vista/RootLayout.fxml"));
 	            rootLayout = (BorderPane) loader.load();
 
-	            // Muestra añade a la ventana la barra de menú.
+	            // Puts the rootlayout(menubar) into the scene.
 	            Scene scene = new Scene(rootLayout);
 	            primaryStage.setScene(scene);
 
-	            // Da al controlador acceso a la aplicación principal.
+	            // Gives a mainapp's reference to the controller.
 	            RootLayoutController controller = loader.getController();
 	            controller.setMainApp(this);
 
@@ -90,10 +107,10 @@ public class MainApp extends Application  {
 	            e.printStackTrace();
 	        }
 	        
-	        // Intenta cargar el último fichero abierto.
+	        // Tries to load the last opened file.
 	        File file = getProjectFilePath();
 	        if (file != null) {
-	        	//Si el fichero existe se carga, si no, se borra la preferencia.
+	        	// if the file exists, it is loaded. If it doesn't the reference is erased.
 	            if (file.exists())
 	            	loadProjectFromFile(file);
 	            else
@@ -103,23 +120,23 @@ public class MainApp extends Application  {
 	    }
 		
 		/**
-		 * Carga los datos de un fichero de proyecto XML en la aplicación.
-		 * @param file fichero XML del proyecto.
+		 * Loads a Project XML file into the application.
+		 * @param file XML project.
 		 */
 		public void loadProjectFromFile(File file) {
 	        try {
-	            JAXBContext context = JAXBContext.newInstance(Proyecto.class);
+	            JAXBContext context = JAXBContext.newInstance(Project.class);
 	            Unmarshaller um = context.createUnmarshaller();
 
-	            // Lee el fichero XML y realiza el unmarshalling.
-	            proyecto = (Proyecto) um.unmarshal(file);
-	            this.primaryStage.setTitle("Perekimata - " + proyecto.getProjectName());
+	            // reads the XML and saves its data into a Project class.
+	            project = (Project) um.unmarshal(file);
+	            this.primaryStage.setTitle("Perekimata - " + project.getProjectName());
 	            
-	            // Guarda la ruta del fichero en las preferencias.
+	            // Saves the path of the opened file.
 	            setProjectFilePath(file);
 
 	        } catch (Exception e) { // catches ANY exception
-	        	// Si ha habido error, se vacía la preferencia.
+	        	//TODO put this into a method with arguments.
 	        	Alert alert = new Alert(Alert.AlertType.ERROR);
 	        	alert.setTitle("Error");
 	        	alert.setHeaderText("Could not load data from file:\n" + file.getPath());
@@ -152,30 +169,30 @@ public class MainApp extends Application  {
 		
 	    
 	    /**
-	     * Guarda la dirección del archivo del proyecto en las preferencias del sistema.
+	     * Saves the preference of the last opened project file.
 	     * 
-	     * @param file Archivo para guardar su ruta o null para eliminar la preferencia. 
+	     * @param file Project file to store into preferences or null to remove the preference. 
 	     */
 	    public void setProjectFilePath(File file) {
 	        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
 	        if (file != null) {
 	            prefs.put("filePath", file.getPath());
-	            // Actualiza el título de la ventana.
+	            // Updates the window's Title.
 	            primaryStage.setTitle("Perikymata - " + file.getName());
 	        } else {
 	            prefs.remove("filePath");
-	            // Actualiza el título de la ventana.
-	            primaryStage.setTitle("Perikymata - Proyecto sin guardar");
+	            // Updates the window's Title.
+	            primaryStage.setTitle("Perikymata - Unsaved Project");
 	        }
 	    }
 	    
 	    /**
-	     * Accede al último archivo abierto-guardado en las preferencias del sistema.
+	     * Loads the preference of the last opened project file.
 	     * 
-	     * @return null si no existe proyecto, último proyecto abierto en caso contrario.
+	     * @return null if project found in the preferences, File of the last opened project otherwise.
 	     */
 	    public File getProjectFilePath() {
-	    	//Se busca la preferencia del proyecto actual que indica el último proyecto abierto.
+	    	//Looks into the preferences of this application for the preference of the last opened project.
 	        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
 	        String filePath = prefs.get("filePath", null);
 	        if (filePath != null) {
@@ -186,19 +203,19 @@ public class MainApp extends Application  {
 	    }
 	    
 	    /**
-	     * Muestra la ventana de selección de imágenes.
+	     * Shows the Image Selection Window.
 	     */
 	    public void showImageSelection() {
 	        try {
-	        	// Carga la clase FXML.
+	        	// Loads the FXML view.
 	            FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(MainApp.class.getResource("vista/ImageSelection.fxml"));
 	            AnchorPane personOverview = (AnchorPane) loader.load();
 
-	            // Muestra la ventana en el centro del layout.
+	            // Shows this layout in the center of the rootLayout.
 	            rootLayout.setCenter(personOverview);
 
-	            // Da al controlador acceso a la aplicación principal.
+	            // Gives a mainapp's reference to the controller of the layout.
 	            ImageSelectionController controller = loader.getController();
 	            controller.setMainApp(this);
 
@@ -208,19 +225,19 @@ public class MainApp extends Application  {
 	    }
 	    
 	    /**
-	     * Muestra la ventana para filtrar imágenes.
+	     * Shows the Filter Application Window.
 	     */
 	    public void showImageFilters() {
 	        try {
-	        	// Carga la clase FXML.
+	        	// Loads the FXML view.
 	            FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(MainApp.class.getResource("vista/ImageFilters.fxml"));
 	            AnchorPane personOverview = (AnchorPane) loader.load();
 	          
-	            // Muestra la ventana en el centro del layout.
+	            // Shows this layout in the center of the rootLayout.
 	            rootLayout.setCenter(personOverview);
 	            
-	            // Da al controlador acceso a la aplicación principal.
+	            // Gives a mainapp's reference to the controller of the layout.
 	            ImageFiltersController controller = loader.getController();
 	            controller.setMainApp(this);
 	            
@@ -230,19 +247,19 @@ public class MainApp extends Application  {
 	    }
 	    
 	    /**
-	     * Muestra la ventana para contar perikymata.
+	     * Shows the Perikymata counting window.
 	     */
 	    public void showPerikymataCount() {
 	        try {
-	            // Carga la clase FXML.
+	        	// Loads the FXML view.
 	            FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(MainApp.class.getResource("vista/PerikymataCount.fxml"));
 	            AnchorPane personOverview = (AnchorPane) loader.load();
 	            
-	            // Muestra la ventana en el centro del layout.
+	            // Shows this layout in the center of the rootLayout.
 	            rootLayout.setCenter(personOverview);
 
-	            // Da al controlador acceso a la aplicación principal.
+	        	// Gives a mainapp's reference to the controller of the layout.
 	            PerikymataCountController controller = loader.getController();
 	            controller.setMainApp(this);
 
@@ -251,19 +268,35 @@ public class MainApp extends Application  {
 	        }
 	    }
 
-		public Image getImagenCompleta() {
-			return imagenCompleta;
+	    /**
+	     * Gets the full image of the tooth.
+	     * @return Image of the tooth.
+	     */
+		public Image getFullImage() {
+			return fullImage;
 		}
 
-		public void setImagenCompleta(Image imagenCompleta) {
-			this.imagenCompleta = imagenCompleta;
+		/**
+		 * Sets the full image of the tooth.
+		 * @param fullImage Full image of the tooth.
+		 */
+		public void setFullImage(Image fullImage) {
+			this.fullImage = fullImage;
 		}
 
-		public Proyecto getProyecto() {
-			return proyecto;
+		/**
+		 * Gets the project data.
+		 * @return Project with the project data.
+		 */
+		public Project getProject() {
+			return project;
 		}
 
-		public void setProyecto(Proyecto proyecto) {
-			this.proyecto = proyecto;
+		/**
+		 * Sets the project data.
+		 * @param project Project with the data of a perikymata project.
+		 */
+		public void setProject(Project project) {
+			this.project = project;
 		}
 }
