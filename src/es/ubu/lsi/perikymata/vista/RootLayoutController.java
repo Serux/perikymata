@@ -105,11 +105,11 @@ public class RootLayoutController {
    	            Marshaller m = context.createMarshaller();
    	            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
    	            // Marshalling and saving XML to the file.
-   	            m.marshal(mainApp.getProyecto(), new File(file.toString() + "\\" + file.getName() + ".xml"));
+   	            File projectXMLfile = new File(file.toString() + "\\" + file.getName() + ".xml");
+   	            m.marshal(mainApp.getProyecto(), projectXMLfile );
    	           
    	            // Save the file path to the registry.
-   	            //TODO implementar setFilePath.
-   	            //setPersonFilePath(file);
+   	            mainApp.setProjectFilePath(projectXMLfile);
    	        } catch (Exception e) { // catches ANY exception
    	        	//TODO crear método en el MainApp para mostrar los errores.
    	        	Alert alert = new Alert(Alert.AlertType.ERROR);

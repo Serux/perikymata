@@ -93,8 +93,12 @@ public class MainApp extends Application  {
 	        // Intenta cargar el último fichero abierto.
 	        File file = getProjectFilePath();
 	        if (file != null) {
-	            loadProjectFromFile(file);
-	        }
+	        	//Si el fichero existe se carga, si no, se borra la preferencia.
+	            if (file.exists())
+	            	loadProjectFromFile(file);
+	            else
+	            	setProjectFilePath(null);
+	        } 
 	        
 	    }
 		
@@ -115,7 +119,7 @@ public class MainApp extends Application  {
 	            setProjectFilePath(file);
 
 	        } catch (Exception e) { // catches ANY exception
-	        	//TODO crear método general para mostrar los erroes.
+	        	// Si ha habido error, se vacía la preferencia.
 	        	Alert alert = new Alert(Alert.AlertType.ERROR);
 	        	alert.setTitle("Error");
 	        	alert.setHeaderText("Could not load data from file:\n" + file.getPath());
@@ -141,6 +145,7 @@ public class MainApp extends Application  {
 	        	expContent.add(textArea, 0, 1);
 	        	alert.getDialogPane().setExpandableContent(expContent);
 	        	alert.showAndWait();
+	        	
 	        }
 	    }
 	    
