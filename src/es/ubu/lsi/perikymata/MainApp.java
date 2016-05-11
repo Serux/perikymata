@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import es.ubu.lsi.perikymata.MainApp;
+import es.ubu.lsi.perikymata.modelo.Proyecto;
 import es.ubu.lsi.perikymata.modelo.URIListWrapper;
 import es.ubu.lsi.perikymata.vista.ImageFiltersController;
 import es.ubu.lsi.perikymata.vista.ImageSelectionController;
@@ -34,6 +35,7 @@ public class MainApp extends Application  {
 	 private BorderPane rootLayout;
 	 private Image imagenCompleta;
 	 private List<URI> imagenesURI;
+	 private Proyecto proyecto;
 	   /**
 	     * Returns the main stage.
 	     * @return
@@ -211,5 +213,13 @@ public class MainApp extends Application  {
 
 		public void setImagenCompleta(Image imagenCompleta) {
 			this.imagenCompleta = imagenCompleta;
+		}
+
+		public Proyecto getProyecto() {
+			return proyecto;
+		}
+
+		public void setProyecto(Proyecto proyecto) {
+			this.proyecto = proyecto;
 		}
 }
