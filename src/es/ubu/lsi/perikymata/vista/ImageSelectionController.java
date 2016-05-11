@@ -5,6 +5,7 @@ import es.ubu.lsi.perikymata.MainApp;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 public class ImageSelectionController {
@@ -19,6 +20,16 @@ public class ImageSelectionController {
 	 */
     private MainApp mainApp;
 	  
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @FXML
+    private void initialize() {
+    	previewImage.fitHeightProperty().bind(((Pane)previewImage.getParent()).heightProperty());
+    	previewImage.fitWidthProperty().bind(((Pane)previewImage.getParent()).widthProperty());
+    }
+    
 	/**
      * Opens a FileChooser to let the user select Image to load.
      */
