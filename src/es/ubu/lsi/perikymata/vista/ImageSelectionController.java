@@ -1,5 +1,6 @@
 package es.ubu.lsi.perikymata.vista;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import es.ubu.lsi.perikymata.MainApp;
 import javafx.fxml.FXML;
@@ -47,7 +48,9 @@ public class ImageSelectionController {
         
         if (file != null) {
         	mainApp.setFullImage(new Image(file.toURI().toString()));
+        	mainApp.setFilteredImage(new Image(file.toURI().toString()));
         	previewImage.setImage(mainApp.getFullImage());
+    
         }
     }
     

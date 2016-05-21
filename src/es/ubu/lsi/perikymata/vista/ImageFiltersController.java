@@ -1,11 +1,18 @@
 package es.ubu.lsi.perikymata.vista;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
+
 import es.ubu.lsi.perikymata.MainApp;
+import ij.plugin.filter.Convolver;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 /**
  * Controller for the layout that filters images.
  * 
@@ -80,6 +87,22 @@ public class ImageFiltersController {
         
     }
     
+    /**
+     * Handler that applyes a convolveFilter to the original image and stores it as a filtered image.
+     */
+    @FXML
+    public void applyConvolveFilter(){
+    	new Thread(()->{
+    		ConvolveOp colv = new ConvolveOp(new Kernel(3, 3,new float[]{10,0,-10,15,0,-15,10,0,-10}));
+        	BufferedImage temp = colv.filter(SwingFXUtils.fromFXImage(originalImage.getImage(),null), null);
+        	mainApp.setFilteredImage(SwingFXUtils.toFXImage(temp, null));
+        	filteredImage.setImage(mainApp.getFilteredImage());
+    	}).start();
+    	
+    	
+    	
+    }
+    
 	 /**
      * Is called by the main application to give a reference back to itself.
      * Also, sets the Images. This is done here because when the method
@@ -91,7 +114,7 @@ public class ImageFiltersController {
         this.mainApp = mainApp;
         if(mainApp.getFullImage() != null){
         	originalImage.setImage(mainApp.getFullImage());
-        	filteredImage.setImage(mainApp.getFullImage());
+        	filteredImage.setImage(mainApp.getFilteredImage());
         }
     }
     

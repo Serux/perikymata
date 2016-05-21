@@ -50,9 +50,15 @@ public class MainApp extends Application  {
 	  */
 	 private Image fullImage;
 	 /**
+	  * Full image of a tooth with some applied filters
+	  */
+	 private Image filteredImage;
+	 
+	 /**
 	  * Data of a perikymata project.
 	  */
 	 private Project project;
+	
 	 
 	   /**
 	     * Returns the main stage.
@@ -282,6 +288,22 @@ public class MainApp extends Application  {
 		 */
 		public void setFullImage(Image fullImage) {
 			this.fullImage = fullImage;
+		}
+		
+	    /**
+	     * Gets the full image of the tooth.
+	     * @return Image of the tooth.
+	     */
+		public Image getFilteredImage() {
+			return filteredImage;
+		}
+
+		/**
+		 * Sets the full image of the tooth.
+		 * @param fullImage Full image of the tooth.
+		 */
+		public void setFilteredImage(Image filteredImage) {
+			this.filteredImage = filteredImage;
 		}
 
 		/**
