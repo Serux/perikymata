@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
@@ -9,7 +10,7 @@
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="475.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.ubu.lsi.perikymata.vista.ImageFiltersController">
    <children>
       <Slider layoutX="210.0" layoutY="30.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="30.0" />
-      <Slider layoutX="210.0" layoutY="70.0" prefHeight="13.0" prefWidth="140.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="70.0" />
+      <Slider fx:id="GaussSlide" blockIncrement="0.1" layoutX="210.0" layoutY="71.0" majorTickUnit="1.0" max="4.0" minorTickCount="5" prefHeight="14.0" prefWidth="111.0" showTickLabels="true" showTickMarks="true" value="2.0" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="71.0" />
       <Button layoutX="406.0" layoutY="318.0" mnemonicParsing="false" onAction="#nextScreen" text="Continue" AnchorPane.bottomAnchor="57.0" AnchorPane.rightAnchor="70.0" />
       <Button layoutX="335.0" layoutY="318.0" mnemonicParsing="false" text="Save filtered image as..." AnchorPane.bottomAnchor="57.0" AnchorPane.rightAnchor="150.0" />
       <SplitPane dividerPositions="0.5135135135135135" layoutX="24.0" layoutY="20.0" orientation="VERTICAL" prefHeight="353.0" prefWidth="270.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="301.0" AnchorPane.topAnchor="20.0">
@@ -35,5 +36,7 @@
         </items>
       </SplitPane>
       <Button layoutX="359.0" layoutY="22.0" mnemonicParsing="false" onAction="#applyConvolveFilter" text="Apply Prewwit" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="22.0" />
+      <Button layoutX="364.0" layoutY="59.0" mnemonicParsing="false" onAction="#applyGaussFilter" text="Apply Gauss" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="59.0" />
+      <Label fx:id="GaussLevel" layoutX="326.0" layoutY="63.0" text="Label" />
    </children>
 </AnchorPane>

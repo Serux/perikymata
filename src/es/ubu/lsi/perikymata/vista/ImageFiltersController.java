@@ -1,11 +1,21 @@
 package es.ubu.lsi.perikymata.vista;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 
+import javax.annotation.processing.Processor;
+
 import es.ubu.lsi.perikymata.MainApp;
 import ij.plugin.filter.Convolver;
+import ij.plugin.filter.GaussianBlur;
+import ij.process.ByteProcessor;
+import ij.process.ColorProcessor;
+import ij.process.FloatProcessor;
+import ij.process.ImageProcessor;
+import ij.process.ShortProcessor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -88,19 +98,37 @@ public class ImageFiltersController {
     }
     
     /**
-     * Handler that applyes a convolveFilter to the original image and stores it as a filtered image.
+     * Handler that applies a convolveFilter to the original image and stores it as a filtered image.
      */
     @FXML
     public void applyConvolveFilter(){
     	new Thread(()->{
+    		ImageProcessor proc = new ColorProcessor(SwingFXUtils.fromFXImage(originalImage.getImage(),null));
+    		System.out.println("iniciando Filtrado");
+    		proc.convolve3x3(new int[]{10,0,-10,15,0,-15,10,0,-10});	
+        	mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) proc.createImage(), null));
+        	filteredImage.setImage(mainApp.getFilteredImage());
+    		/*
     		ConvolveOp colv = new ConvolveOp(new Kernel(3, 3,new float[]{10,0,-10,15,0,-15,10,0,-10}));
-        	BufferedImage temp = colv.filter(SwingFXUtils.fromFXImage(originalImage.getImage(),null), null);
+        	BufferedImage temp = colv.filter(SwingFXUtils.fromFXImage(filteredImage.getImage(),null), null);
         	mainApp.setFilteredImage(SwingFXUtils.toFXImage(temp, null));
         	filteredImage.setImage(mainApp.getFilteredImage());
+        	*/
     	}).start();
-    	
-    	
-    	
+    }
+    /**
+     * Handler that applies a convolveFilter to the original image and stores it as a filtered image.
+     */
+    @FXML
+    public void applyGaussFilter(){
+    	new Thread(()->{
+    		GaussianBlur gauss = new GaussianBlur();
+    		ImageProcessor proc = new ColorProcessor(SwingFXUtils.fromFXImage(filteredImage.getImage(),null));
+    		System.out.println("iniciando Filtrado");
+    		gauss.blurGaussian(proc, 2);	
+        	mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) proc.createImage(), null));
+        	filteredImage.setImage(mainApp.getFilteredImage());
+    	}).start();
     }
     
 	 /**
