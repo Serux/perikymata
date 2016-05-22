@@ -9,8 +9,7 @@
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="475.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.ubu.lsi.perikymata.vista.ImageFiltersController">
    <children>
-      <Slider layoutX="210.0" layoutY="30.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="30.0" />
-      <Slider fx:id="GaussSlide" blockIncrement="0.1" layoutX="210.0" layoutY="71.0" majorTickUnit="1.0" max="4.0" minorTickCount="5" prefHeight="14.0" prefWidth="111.0" showTickLabels="true" showTickMarks="true" value="2.0" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="71.0" />
+      <Slider fx:id="gaussSlider" blockIncrement="0.05" layoutX="185.0" layoutY="143.0" majorTickUnit="1.0" max="4.0" minorTickCount="5" prefHeight="17.0" prefWidth="161.0" showTickLabels="true" showTickMarks="true" value="2.0" AnchorPane.rightAnchor="129.0" AnchorPane.topAnchor="143.0" />
       <Button layoutX="406.0" layoutY="318.0" mnemonicParsing="false" onAction="#nextScreen" text="Continue" AnchorPane.bottomAnchor="57.0" AnchorPane.rightAnchor="70.0" />
       <Button layoutX="335.0" layoutY="318.0" mnemonicParsing="false" text="Save filtered image as..." AnchorPane.bottomAnchor="57.0" AnchorPane.rightAnchor="150.0" />
       <SplitPane dividerPositions="0.5135135135135135" layoutX="24.0" layoutY="20.0" orientation="VERTICAL" prefHeight="353.0" prefWidth="270.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="301.0" AnchorPane.topAnchor="20.0">
@@ -35,8 +34,16 @@
             </ScrollPane>
         </items>
       </SplitPane>
-      <Button layoutX="359.0" layoutY="22.0" mnemonicParsing="false" onAction="#applyConvolveFilter" text="Apply Prewwit" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="22.0" />
-      <Button layoutX="364.0" layoutY="59.0" mnemonicParsing="false" onAction="#applyGaussFilter" text="Apply Gauss" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="59.0" />
-      <Label fx:id="GaussLevel" layoutX="326.0" layoutY="63.0" text="Label" />
+      <Button layoutX="359.0" layoutY="81.0" mnemonicParsing="false" onAction="#applyConvolveFilter" text="Apply Prewwit" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="81.0" />
+      <Button layoutX="364.0" layoutY="139.0" mnemonicParsing="false" onAction="#applyGaussFilter" text="Apply Gauss" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="139.0" />
+      <Label fx:id="gaussLevel" layoutX="266.0" layoutY="124.0" prefHeight="17.0" prefWidth="24.0" text="2.00" AnchorPane.rightAnchor="185.0" AnchorPane.topAnchor="124.0" />
+      <Label layoutX="185.0" layoutY="124.0" text="Gauss Sigma:" AnchorPane.rightAnchor="220.0" AnchorPane.topAnchor="124.0" />
+      <Slider fx:id="prewittForceSlider" blockIncrement="0.1" layoutX="186.0" layoutY="34.0" majorTickUnit="1.0" max="4.0" minorTickCount="5" prefHeight="17.0" prefWidth="161.0" showTickLabels="true" showTickMarks="true" value="2.0" AnchorPane.rightAnchor="128.0" AnchorPane.topAnchor="34.0" />
+      <Slider fx:id="prewittSizeSlider" blockIncrement="0.1" layoutX="186.0" layoutY="85.0" majorTickUnit="1.0" max="4.0" minorTickCount="5" prefHeight="17.0" prefWidth="161.0" showTickLabels="true" showTickMarks="true" value="2.0" AnchorPane.rightAnchor="128.0" AnchorPane.topAnchor="85.0" />
+      <Label layoutX="186.0" layoutY="16.0" text="Prewitt Force:" AnchorPane.rightAnchor="217.0" AnchorPane.topAnchor="16.0" />
+      <Label layoutX="186.0" layoutY="66.0" text="Prewitt Size:" AnchorPane.rightAnchor="225.0" AnchorPane.topAnchor="66.0" />
+      <Label fx:id="prewittSizeLevel" layoutX="266.0" layoutY="66.0" prefHeight="17.0" prefWidth="24.0" text="2.00" AnchorPane.rightAnchor="185.0" AnchorPane.topAnchor="66.0" />
+      <Label fx:id="prewittForceLevel" layoutX="266.0" layoutY="16.0" prefHeight="17.0" prefWidth="24.0" text="2.00" AnchorPane.rightAnchor="185.0" AnchorPane.topAnchor="16.0" />
+      <Separator layoutX="185.0" layoutY="118.0" prefWidth="275.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="118.0" />
    </children>
 </AnchorPane>

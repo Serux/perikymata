@@ -5,6 +5,9 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.text.NumberFormat;
 
 import javax.annotation.processing.Processor;
 
@@ -16,11 +19,15 @@ import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ShortProcessor;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 /**
@@ -56,44 +63,30 @@ public class ImageFiltersController {
      */
 	@FXML
 	private ImageView originalImage;
+	
+	/**
+	 * Slider for controlling the sigma of the gauss filter.
+	 */
+	@FXML
+	private Slider gaussSlider;
+	
+	/**
+	 * Label to show the exact size of sigma on a gaussian filter.
+	 */
+	@FXML
+	private Label gaussLevel;
     
 	/**
 	 * Initializes the components when the controller is loaded.
 	 */
     @FXML
     private void initialize() {
-    	// Creates listeners to make the scrolls of both scrollviews move at the same time.
-    	ChangeListener<Object> changeListenerVerticalScroll1 = new ChangeListener<Object>() {
-			@Override
-			public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-				scrollPane2.setVvalue(scrollPane1.getVvalue());
-			}
-        };
-    	ChangeListener<Object> changeListenerVerticalScroll2 = new ChangeListener<Object>() {
-			@Override
-			public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-				scrollPane1.setVvalue(scrollPane2.getVvalue());
-			}
-        };
-        ChangeListener<Object> changeListenerHorizontalScroll1 = new ChangeListener<Object>() {
-			@Override
-			public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-				scrollPane2.setHvalue(scrollPane1.getHvalue());
-			}
-        };
-    	ChangeListener<Object> changeListenerHorizontalScroll2 = new ChangeListener<Object>() {
-			@Override
-			public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-				scrollPane1.setHvalue(scrollPane2.getHvalue());
-			}
-        };
-        
-        // Adds the listeners to make both scrolls move at the same time.
-        scrollPane1.vvalueProperty().addListener(changeListenerVerticalScroll1);
-        scrollPane2.vvalueProperty().addListener(changeListenerVerticalScroll2);
-        scrollPane1.hvalueProperty().addListener(changeListenerHorizontalScroll1);
-        scrollPane2.hvalueProperty().addListener(changeListenerHorizontalScroll2);
-        
+        // binds scroll properties together to make both scrolls move at the same time.
+        scrollPane1.vvalueProperty().bindBidirectional(scrollPane2.vvalueProperty());
+        scrollPane1.hvalueProperty().bindBidirectional(scrollPane2.hvalueProperty());
+
+       //Handler that changes a label to show the value of the gauss slider.
+        gaussLevel.textProperty().bindBidirectional(gaussSlider.valueProperty(), new DecimalFormat("#.##"));
         
     }
     
@@ -104,16 +97,9 @@ public class ImageFiltersController {
     public void applyConvolveFilter(){
     	new Thread(()->{
     		ImageProcessor proc = new ColorProcessor(SwingFXUtils.fromFXImage(originalImage.getImage(),null));
-    		System.out.println("iniciando Filtrado");
     		proc.convolve3x3(new int[]{10,0,-10,15,0,-15,10,0,-10});	
         	mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) proc.createImage(), null));
         	filteredImage.setImage(mainApp.getFilteredImage());
-    		/*
-    		ConvolveOp colv = new ConvolveOp(new Kernel(3, 3,new float[]{10,0,-10,15,0,-15,10,0,-10}));
-        	BufferedImage temp = colv.filter(SwingFXUtils.fromFXImage(filteredImage.getImage(),null), null);
-        	mainApp.setFilteredImage(SwingFXUtils.toFXImage(temp, null));
-        	filteredImage.setImage(mainApp.getFilteredImage());
-        	*/
     	}).start();
     }
     /**
@@ -125,7 +111,7 @@ public class ImageFiltersController {
     		GaussianBlur gauss = new GaussianBlur();
     		ImageProcessor proc = new ColorProcessor(SwingFXUtils.fromFXImage(filteredImage.getImage(),null));
     		System.out.println("iniciando Filtrado");
-    		gauss.blurGaussian(proc, 2);	
+    		gauss.blurGaussian(proc, gaussSlider.getValue());	
         	mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) proc.createImage(), null));
         	filteredImage.setImage(mainApp.getFilteredImage());
     	}).start();
@@ -145,6 +131,7 @@ public class ImageFiltersController {
         	filteredImage.setImage(mainApp.getFilteredImage());
         }
     }
+    
     
     /**
      * Handler that changes to the perikymata counting stage when called.
