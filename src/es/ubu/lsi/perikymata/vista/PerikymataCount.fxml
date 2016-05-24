@@ -12,8 +12,8 @@
          <children>
             <ToolBar layoutY="3.0" prefHeight="35.0" prefWidth="238.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="327.0">
               <items>
-                  <Button mnemonicParsing="false" text="Zoom +" />
-                  <Button mnemonicParsing="false" text="Zoom -" />
+                  <Button fx:id="zoomPlusButton" mnemonicParsing="false" onAction="#zoomPlus" text="Zoom +" />
+                  <Button fx:id="zoomMinusButton" mnemonicParsing="false" onAction="#zoomMinus" text="Zoom -" />
                   <Button mnemonicParsing="false" text="Line - Free Draw" />
                   <Button mnemonicParsing="false" text="Line - Points" />
               </items>
