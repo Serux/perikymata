@@ -1,7 +1,16 @@
 package es.ubu.lsi.perikymata.vista;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import es.ubu.lsi.perikymata.MainApp;
+import ij.ImagePlus;
+import ij.io.Opener;
+import ij.io.TiffDecoder;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -46,9 +55,13 @@ public class ImageSelectionController {
         File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
         
         if (file != null) {
-        	mainApp.setFullImage(new Image(file.toURI().toString()));
-        	mainApp.setFilteredImage(new Image(file.toURI().toString()));
-        	previewImage.setImage(mainApp.getFullImage());
+        	
+        	java.awt.Image full = new Opener().openImage(file.getParent(),file.getName()).getImage();
+        		
+			mainApp.setFullImage( SwingFXUtils.toFXImage((BufferedImage) full,null));
+			previewImage.setImage(mainApp.getFullImage());
+        	mainApp.setFilteredImage(mainApp.getFullImage());
+        	
     
         }
     }
