@@ -1,15 +1,11 @@
 package es.ubu.lsi.perikymata.vista;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import es.ubu.lsi.perikymata.MainApp;
-import ij.ImagePlus;
 import ij.io.Opener;
-import ij.io.TiffDecoder;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -65,6 +61,25 @@ public class ImageSelectionController {
     
         }
     }
+    
+    /**
+     * Handler that rotates image.
+     */
+    @FXML
+    private void handleRotate(){
+    	BufferedImage im = SwingFXUtils.fromFXImage(previewImage.getImage(),null);
+    	AffineTransform a = new AffineTransform();
+    	a.translate(0.5*im.getHeight(), 0.5*im.getWidth());
+    	a.rotate(Math.PI/2);
+    	a.translate(-0.5*im.getWidth(), -0.5*im.getHeight());
+    	AffineTransformOp op = new AffineTransformOp(a,AffineTransformOp.TYPE_BILINEAR);
+    	Image i = SwingFXUtils.toFXImage(op.filter(im, null), null);
+    	previewImage.setImage(i);
+    	mainApp.setFullImage(i);
+    	mainApp.setFilteredImage(i);
+    	
+    }
+       
     
     /**
      * Handler that changes to the image filter stage when called.

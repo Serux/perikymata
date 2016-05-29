@@ -19,6 +19,7 @@ public class PerikymataCountController {
     @FXML
     private Button zoomMinusButton;
     
+
     
 	@FXML
 	private ImageView fullImage;
@@ -44,7 +45,6 @@ public class PerikymataCountController {
      */
     @FXML
     public void zoomPlus(){
-    	System.out.println(fullImage.getFitHeight());
     	fullImage.setFitHeight(fullImage.getFitHeight()*1.25);
     	if(fullImage.getFitHeight()>=5){
     		zoomMinusButton.setDisable(false);
@@ -56,7 +56,6 @@ public class PerikymataCountController {
      */
     @FXML
     public void zoomMinus(){
-    	
     	fullImage.setFitHeight(fullImage.getFitHeight()*0.75);
     	if(fullImage.getFitHeight()<=5){
     		zoomMinusButton.setDisable(true);

@@ -11,11 +11,14 @@ import javax.xml.bind.Unmarshaller;
 
 import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.modelo.Project;
+import es.ubu.lsi.perikymata.modelo.filters.Filter;
 import es.ubu.lsi.perikymata.vista.ImageFiltersController;
 import es.ubu.lsi.perikymata.vista.ImageSelectionController;
 import es.ubu.lsi.perikymata.vista.PerikymataCountController;
 import es.ubu.lsi.perikymata.vista.RootLayoutController;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -55,6 +58,18 @@ public class MainApp extends Application  {
 	 private Image filteredImage;
 	 
 	 /**
+	  * List of applied filters.
+	  */
+	 private ObservableList<Filter> appliedFilters = FXCollections.observableArrayList();
+	 
+	 /**
+	 * @return the appliedFilters
+	 */
+	public ObservableList<Filter> getAppliedFilters() {
+		return appliedFilters;
+	}
+
+	/**
 	  * Data of a perikymata project.
 	  */
 	 private Project project;
