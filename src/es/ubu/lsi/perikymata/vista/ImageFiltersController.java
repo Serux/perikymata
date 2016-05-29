@@ -39,18 +39,69 @@ import javafx.scene.input.TransferMode;
  * @author Sergio Chico Carrancio
  */
 public class ImageFiltersController {
+	////////////////////////NotFXML variables////////////////////////////
+	/**
+	 * Used to modify the behaviour of the filters table. 
+	 */
 	private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
+	
 	/**
 	 * Reference to the main application
 	 */
 	private MainApp mainApp;
+	
+	/**
+	 * Image used to apply the filters.
+	 */
+	private BufferedImage auxImage;
+	
+	/**
+	 * True if a thread is working, false otherwise.
+	 */
+	private AtomicBoolean working = new AtomicBoolean(false);
 
+	/////////////////////////Imageviews Elements////////////////////////
+
+	/**
+	 * Reference to the filtered image.
+	 */
+	@FXML
+	private ImageView filteredImage;
+	
+	/**
+	 * Reference to the original image.
+	 */
+	@FXML
+	private ImageView originalImage;
+
+	/**
+	 * Reference to the first Scrollpane.
+	 */
+	@FXML
+	private ScrollPane scrollPane1;
+	
+	/**
+	 * Reference to the second Scrollpane.
+	 */
+	@FXML
+	private ScrollPane scrollPane2;
+	
+	//////////////////////Status Elements////////////////////
+	
+	/**
+	 * Current status, tells to the user if a Thread is running.
+	 */
+	@FXML
+	private Label status;
+	
 	/**
 	 * Loading gif.
 	 */
     @FXML
 	private ImageView loading;
-    
+
+	
+	////////////////////Table Elements/////////////////////////
 	/**
 	 * List of operations to be executed.
 	 */
@@ -69,49 +120,6 @@ public class ImageFiltersController {
     @FXML
     private TableColumn<Filter, String> argumentsColumn;
     
-
-	/**
-	 * Reference to the filtered image.
-	 */
-	@FXML
-	private ImageView filteredImage;
-	
-	/**
-	 * Image used to apply the filters.
-	 */
-	private BufferedImage auxImage;
-	
-	/**
-	 * Reference to the original image.
-	 */
-	@FXML
-	private ImageView originalImage;
-
-	
-	
-	/**
-	 * True if a thread is working, false otherwise.
-	 */
-	private AtomicBoolean working = new AtomicBoolean(false);
-
-	/**
-	 * Current status, tells to the user if a Thread is running.
-	 */
-	@FXML
-	private Label status;
-
-	/**
-	 * Reference to the first Scrollpane.
-	 */
-	@FXML
-	private ScrollPane scrollPane1;
-	
-	/**
-	 * Reference to the second Scrollpane.
-	 */
-	@FXML
-	private ScrollPane scrollPane2;
-	
 	/**
 	 * Button to delete a selected filter.
 	 */
