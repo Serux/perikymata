@@ -25,6 +25,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
@@ -110,8 +111,20 @@ public class ImageFiltersController {
 	 */
 	@FXML
 	private ScrollPane scrollPane2;
+	
+	/**
+	 * Button to delete a selected filter.
+	 */
+	@FXML
+	private Button deleteFilterButton;
 
 	////////////////////////Prewitt Filter///////////////////////
+	/**
+	 * Button to ad a new prewitt filter.
+	 */
+	@FXML
+	private Button addPrewittButton;
+	
 	/**
 	 * Slider for controlling the size of the prewitt mask.
 	 */
@@ -138,6 +151,12 @@ public class ImageFiltersController {
 
 	//////////////////////Gaussian Filter/////////////////////////
 
+	/**
+	 * Button to ad a new gauss filter.
+	 */
+	@FXML
+	private Button addGaussButton;
+	
 	/**
 	 * Slider for controlling the sigma of the gauss filter.
 	 */
@@ -270,6 +289,7 @@ public class ImageFiltersController {
 		if (working.compareAndSet(false, true)) {
 			// Saves a copy of the original image to apply filters
 			auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
+			disableComponents();
 			changeStatus("Applying filters, please wait");
 			loading.setVisible(true);
 			new Thread(() -> {
@@ -283,6 +303,7 @@ public class ImageFiltersController {
 				changeStatus("Filters apply completed! Idle.");
 				working.set(false);
 				loading.setVisible(false);
+				this.enableComponents();
 			}).start();
 
 		} else {
@@ -290,6 +311,19 @@ public class ImageFiltersController {
 		}
 	}
 	
+	
+	private void disableComponents(){
+		filtersTable.setDisable(true);
+		addGaussButton.setDisable(true);
+		addPrewittButton.setDisable(true);
+		deleteFilterButton.setDisable(true);
+	}
+	private void enableComponents(){
+		filtersTable.setDisable(false);
+		addGaussButton.setDisable(false);
+		addPrewittButton.setDisable(false);
+		deleteFilterButton.setDisable(false);
+	}
 	
 	/**
 	 * Handler that applies a convolveFilter to the original image and stores it
@@ -364,6 +398,7 @@ public class ImageFiltersController {
 	        auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
 		}
 	}
+
 
 	/**
 	 * Handler that changes to the perikymata counting stage when called.
