@@ -332,59 +332,6 @@ public class ImageFiltersController {
 		addPrewittButton.setDisable(false);
 		deleteFilterButton.setDisable(false);
 	}
-	
-	/**
-	 * Handler that applies a convolveFilter to the original image and stores it
-	 * as a filtered image.
-	 */
-	@FXML
-	public void applyConvolveFilter() {
-		//TODO remove and generic run
-		/*if (working.compareAndSet(false, true)) {
-			changeStatus("Applying filters, please wait");
-			loading.setVisible(true);
-			new Thread(() -> {
-				
-				Filter f = new Prewitt(SwingFXUtils.fromFXImage(originalImage.getImage(), null), 3, 10);
-				
-				filteredImage.setImage(SwingFXUtils.toFXImage(f.run(),null));
-				changeStatus("Filters apply completed! Idle.");
-				working.set(false);
-				loading.setVisible(false);
-			}).start();
-
-		} else {
-			changeStatus("Already applying filters, please wait.");
-		}*/
-
-	}
-
-	/**
-	 * Handler that applies a convolveFilter to the original image and stores it
-	 * as a filtered image.
-	 */
-	@FXML
-	public void applyGaussFilter() {
-		//TODO remove and generic run
-		if (working.compareAndSet(false, true)) {
-			changeStatus("Applying filters, please wait");
-			//TODO loading image only in one function
-			loading.setVisible(true);
-			new Thread(() -> {
-				GaussianBlur gauss = new GaussianBlur();
-				ImageProcessor proc = new ColorProcessor(SwingFXUtils.fromFXImage(filteredImage.getImage(), null));
-				gauss.blurGaussian(proc, gaussSlider.getValue());
-				mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) proc.createImage(), null));
-				filteredImage.setImage(mainApp.getFilteredImage());
-				changeStatus("Filters apply completed! Idle.");
-				working.set(false);
-				loading.setVisible(false);
-			}).start();
-
-		} else {
-			changeStatus("Already applying filters, please wait.");
-		}
-	}
 
 	/**
 	 * Is called by the main application to give a reference back to itself.
@@ -402,7 +349,7 @@ public class ImageFiltersController {
 	        // Add observable list data to the table
 	        filtersTable.setItems(mainApp.getAppliedFilters());
 	        
-	     // Saves a copy of the original image to apply filters
+	        // Saves a copy of the original image to apply filters
 	        auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
 		}
 	}
