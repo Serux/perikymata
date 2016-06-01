@@ -199,9 +199,9 @@ public class ImageFiltersController {
 		originalImage.fitHeightProperty().bindBidirectional(filteredImage.fitHeightProperty());
 		originalImage.fitWidthProperty().bindBidirectional(filteredImage.fitWidthProperty());
 		
-		scrollPane1.setCursor(new ImageCursor(new Image(new File("rsc/zoom_in.gif").toURI().toString())));
-		scrollPane2.setCursor(scrollPane1.getCursor());
-		scrollPane1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		scrollPane1.getContent().setCursor(new ImageCursor(new Image(new File("rsc/zoom_in.gif").toURI().toString())));
+		scrollPane2.getContent().setCursor(scrollPane1.getContent().getCursor());
+		scrollPane1.getContent().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
@@ -214,7 +214,7 @@ public class ImageFiltersController {
 				event.consume();
 			}
 		});
-		scrollPane2.setOnMouseClicked(scrollPane1.onMouseClickedProperty().get());
+		scrollPane2.getContent().setOnMouseClicked(scrollPane1.getContent().onMouseClickedProperty().get());
 		
 
 		// Handler that changes a labels to show the value of the sliders.
