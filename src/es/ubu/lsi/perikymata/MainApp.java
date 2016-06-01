@@ -195,6 +195,7 @@ public class MainApp extends Application  {
 	     * @param file Project file to store into preferences or null to remove the preference. 
 	     */
 	    public void setProjectFilePath(File file) {
+	    	/*
 	        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
 	        if (file != null) {
 	            prefs.put("filePath", file.getPath());
@@ -204,7 +205,7 @@ public class MainApp extends Application  {
 	            prefs.remove("filePath");
 	            // Updates the window's Title.
 	            primaryStage.setTitle("Perikymata - Unsaved Project");
-	        }
+	        }*/
 	    }
 	    
 	    /**
@@ -213,6 +214,7 @@ public class MainApp extends Application  {
 	     * @return null if project found in the preferences, File of the last opened project otherwise.
 	     */
 	    public File getProjectFilePath() {
+	    	/*
 	    	//Looks into the preferences of this application for the preference of the last opened project.
 	        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
 	        String filePath = prefs.get("filePath", null);
@@ -220,7 +222,7 @@ public class MainApp extends Application  {
 	            return new File(filePath);
 	        } else {
 	            return null;
-	        }
+	        }*/
 	    }
 	    
 	    /**

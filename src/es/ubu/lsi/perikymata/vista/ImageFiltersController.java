@@ -2,6 +2,7 @@ package es.ubu.lsi.perikymata.vista;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -15,7 +16,9 @@ import ij.process.ImageProcessor;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.ImageCursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -31,6 +34,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 
 /**
@@ -188,6 +193,29 @@ public class ImageFiltersController {
 		// same time.
 		scrollPane1.vvalueProperty().bindBidirectional(scrollPane2.vvalueProperty());
 		scrollPane1.hvalueProperty().bindBidirectional(scrollPane2.hvalueProperty());
+		
+		// binds size of the two images to be the same.
+		//originalImage.setPreserveRatio(true);
+		originalImage.fitHeightProperty().bindBidirectional(filteredImage.fitHeightProperty());
+		originalImage.fitWidthProperty().bindBidirectional(filteredImage.fitWidthProperty());
+		
+		scrollPane1.setCursor(new ImageCursor(new Image(new File("rsc/zoom_in.gif").toURI().toString())));
+		scrollPane2.setCursor(scrollPane1.getCursor());
+		scrollPane1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				
+				if(event.getButton().compareTo(MouseButton.PRIMARY)==0){
+					zoomPlusHandler();
+				} else if(event.getButton().compareTo(MouseButton.SECONDARY)==0){
+					zoomMinusHandler();		
+				}
+				event.consume();
+			}
+		});
+		scrollPane2.setOnMouseClicked(scrollPane1.onMouseClickedProperty().get());
+		
 
 		// Handler that changes a labels to show the value of the sliders.
 		gaussLevel.textProperty().bindBidirectional(gaussSlider.valueProperty(), new DecimalFormat("##.##"));
@@ -253,6 +281,16 @@ public class ImageFiltersController {
         });
         
 	}
+	
+	@FXML
+	private void zoomMinusHandler(){
+		originalImage.setFitHeight(originalImage.getFitHeight()*0.75);
+	}
+	
+	@FXML
+	private void zoomPlusHandler(){
+		originalImage.setFitHeight(originalImage.getFitHeight()*1.25);
+	}
 
 	/**
 	 * Handler that adds a prewitt filter to the list of filters.
@@ -308,6 +346,7 @@ public class ImageFiltersController {
 				}
 				
 				filteredImage.setImage(SwingFXUtils.toFXImage(auxImage,null));
+				this.mainApp.setFilteredImage(SwingFXUtils.toFXImage(auxImage,null));
 				changeStatus("Filters apply completed! Idle.");
 				working.set(false);
 				loading.setVisible(false);
@@ -345,6 +384,8 @@ public class ImageFiltersController {
 		if (mainApp.getFullImage() != null) {
 			originalImage.setImage(mainApp.getFullImage());
 			filteredImage.setImage(mainApp.getFilteredImage());
+			
+			originalImage.setFitHeight(originalImage.getImage().getHeight());
 	        
 	        // Add observable list data to the table
 	        filtersTable.setItems(mainApp.getAppliedFilters());
