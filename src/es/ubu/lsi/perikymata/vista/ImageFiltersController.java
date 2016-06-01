@@ -199,7 +199,7 @@ public class ImageFiltersController {
 		originalImage.fitHeightProperty().bindBidirectional(filteredImage.fitHeightProperty());
 		originalImage.fitWidthProperty().bindBidirectional(filteredImage.fitWidthProperty());
 		
-		scrollPane1.getContent().setCursor(new ImageCursor(new Image(new File("rsc/zoom_in.gif").toURI().toString())));
+		scrollPane1.getContent().setCursor(new ImageCursor(new Image(this.getClass().getResource("/rsc/zoom_in.gif").toExternalForm())));
 		scrollPane2.getContent().setCursor(scrollPane1.getContent().getCursor());
 		scrollPane1.getContent().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -224,7 +224,7 @@ public class ImageFiltersController {
 		status.setText("Idle");
 		
 		// Loads loading gif.
-		loading.setImage(new Image(new File("rsc/482.gif").toURI().toString()));
+		loading.setImage(new Image(this.getClass().getResource("/rsc/482.gif").toExternalForm()));
 		loading.setVisible(false);
 		
 		// Initialize the person table with the two columns.
