@@ -18,7 +18,12 @@
 using namespace cv;
 using namespace std;
 
-
+/**
+* OpenCV class that stitches images together.
+* argv[1] path and name to output image
+* argc[1>] path of the input images.
+* returns 0 if Stitching finished correctly, else 1.
+*/
 int main(int argc, char** argv)
 {
 	vector< Mat > vImg;
@@ -26,9 +31,11 @@ int main(int argc, char** argv)
 	Mat rImg;
 
 
-	
-	for (int i = 1; i < argc; i++)
+	//Reads all the image files passed by argument.
+		printf("1:%s", argv[1]);
+	for (int i = 2; i < argc; i++)
 	{
+		printf("%d:%s",i,argv[i]);
 		vImg.push_back(imread(argv[i]));
 	}
 	
@@ -46,7 +53,10 @@ int main(int argc, char** argv)
 	
 	if (Stitcher::OK == status) {
 		//imshow("Stitching Result", rImg);
-		imwrite("resultado.tif", rImg);
+		vector<int> compression_params;
+		compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+		compression_params.push_back(4);
+		imwrite(argv[1], rImg, compression_params);
 	}
 	else {
 		printf("Stitching fail.");
@@ -55,5 +65,5 @@ int main(int argc, char** argv)
 	rImg.release();
 	vImg.clear();
 	
-	return Stitcher::OK;
+	return Stitcher::OK == status;
 }
