@@ -60,6 +60,7 @@ public class ImageFiltersController {
 	 */
 	private BufferedImage auxImage;
 	
+	//TODO atomic lock must be on MainApp.
 	/**
 	 * True if a thread is working, false otherwise.
 	 */
@@ -296,7 +297,7 @@ public class ImageFiltersController {
 	 * Handler that adds a prewitt filter to the list of filters.
 	 */
 	@FXML
-	public void addPrewittFilter() {
+	private void addPrewittFilter() {
 		mainApp.getAppliedFilters().add(new Prewitt((int)prewittSizeSlider.getValue(), prewittForceSlider.getValue()));
 
 	}
@@ -305,7 +306,7 @@ public class ImageFiltersController {
 	 * Handler that adds a gaussian filter to the list of filters.
 	 */
 	@FXML
-	public void addGaussianFilter() {
+	private void addGaussianFilter() {
 		mainApp.getAppliedFilters().add(new Gauss(gaussSlider.getValue()));
 	}
 	
@@ -313,7 +314,7 @@ public class ImageFiltersController {
 	 * Handler that removes a filter from the list.
 	 */
 	@FXML
-	public void handleRemoveFilter() {
+	private void handleRemoveFilter() {
 	       int selectedIndex = filtersTable.getSelectionModel().getSelectedIndex();
 	        if (selectedIndex >= 0) {
 	        	filtersTable.getItems().remove(selectedIndex);
@@ -331,7 +332,7 @@ public class ImageFiltersController {
 	 * Handler that removes a filter from the list.
 	 */
 	@FXML
-	public void handleRunFilters() {
+	private void handleRunFilters() {
 		if (working.compareAndSet(false, true)) {
 			// Saves a copy of the original image to apply filters
 			auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
