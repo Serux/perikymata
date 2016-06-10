@@ -75,68 +75,7 @@ public class RootLayoutController {
      */
     @FXML
     private void handleNew() {
-    	   FileChooser fileChooser = new FileChooser();
-
-    	   
-           // Adds a filter that shows all the files..
-           FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                   "Project Folder", "*");
-           fileChooser.getExtensionFilters().add(extFilter);
-           fileChooser.initialFileNameProperty().set("Project_Name");
-
-           // Shows the save dialog.
-           File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
-
-           if (file != null) {
-               // Saves the project name.
-        	   mainApp.setProject(new Project());
-        	   mainApp.getProject().setProjectName(file.getName());
-        	   
-        	   // Makes the folder structure.
-        	   file.mkdir();
-        	   new File(file.toString() + "\\Fragmentos").mkdir();
-        	   new File(file.toString() + "\\Imagen_Original").mkdir();
-        	   new File(file.toString() + "\\perikymata").mkdir();
-        	   //Creates the XML project file.
-        	   try {
-   	            JAXBContext context = JAXBContext.newInstance(Project.class);
-   	            Marshaller m = context.createMarshaller();
-   	            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-   	            // Marshalling and saving XML to the file.
-   	            File projectXMLfile = new File(file.toString() + "\\" + file.getName() + ".xml");
-   	            m.marshal(mainApp.getProject(), projectXMLfile );
-   	           
-   	            // Save the file path to the registry.
-   	            mainApp.setProjectFilePath(projectXMLfile);
-   	        } catch (Exception e) { // catches ANY exception
-   	        	//TODO take this to a method in MainApp
-   	        	Alert alert = new Alert(Alert.AlertType.ERROR);
-   	        	alert.setTitle("Error");
-   	        	alert.setHeaderText("No se puede guardar archivo :\n" + file.getPath());
-   	        	
-   	        	Label label = new Label("La traza de la excepción fue:");
-   	        	
-   	        	StringWriter sw = new StringWriter();
-   	        	PrintWriter pw = new PrintWriter(sw);
-   	        	e.printStackTrace(pw);
-   	        	
-   	        	TextArea textArea = new TextArea(sw.toString());
-   	        	textArea.setEditable(false);
-   	        	textArea.setWrapText(true);
-
-   	        	textArea.setMaxWidth(Double.MAX_VALUE);
-   	        	textArea.setMaxHeight(Double.MAX_VALUE);
-   	        	GridPane.setVgrow(textArea, Priority.ALWAYS);
-   	        	GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-   	        	GridPane expContent = new GridPane();
-   	        	expContent.setMaxWidth(Double.MAX_VALUE);
-   	        	expContent.add(label, 0, 0);
-   	        	expContent.add(textArea, 0, 1);
-   	        	alert.getDialogPane().setExpandableContent(expContent);
-   	        	alert.showAndWait();
-   	        }
-   	    }
+    	   mainApp.createNewProject();
      }
 
  
@@ -148,7 +87,7 @@ public class RootLayoutController {
         FileChooser fileChooser = new FileChooser();
         // adds a XML project filter.
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "Perikymata XML ile (*.xml)", "*.xml");
+                "Perikymata XML file (*.xml)", "*.xml");
         fileChooser.getExtensionFilters().add(extFilter);
 
         // shows the open project dialog.
@@ -156,6 +95,7 @@ public class RootLayoutController {
 
         if (file != null) {
             mainApp.loadProjectFromFile(file);
+            mainApp.setProjectPath(file.getParent());
         }
     }
 

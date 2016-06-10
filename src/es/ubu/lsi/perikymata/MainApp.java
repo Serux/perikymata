@@ -1,12 +1,16 @@
 package es.ubu.lsi.perikymata;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import es.ubu.lsi.perikymata.MainApp;
@@ -29,6 +33,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -58,33 +63,26 @@ public class MainApp extends Application  {
 	 private Image filteredImage;
 	 
 	 /**
+	  * List of files to stitch.
+	  */
+	 private ObservableList<String> filesList = FXCollections.observableArrayList();
+	 
+	 /**
 	  * List of applied filters.
 	  */
 	 private ObservableList<Filter> appliedFilters = FXCollections.observableArrayList();
-	 
-	 /**
-	 * @return the appliedFilters
-	 */
-	public ObservableList<Filter> getAppliedFilters() {
-		return appliedFilters;
-	}
 
 	/**
 	  * Data of a perikymata project.
 	  */
 	 private Project project;
-	
-	 
-	   /**
-	     * Returns the main stage.
-	     * @return
-	     */
-	    public Stage getPrimaryStage() {
-	        return primaryStage;
-	        
-	    }
 
-	    /**
+	 /**
+	  * Opened project Path
+	  */
+	 private String projectPath;
+	 
+	/**
 	     * Launches the applications, no args needed.
 	     * @param args
 	     */
@@ -129,13 +127,13 @@ public class MainApp extends Application  {
 	        }
 	        
 	        // Tries to load the last opened file.
-	        File file = getProjectFilePath();
+	        File file = getProjectFilePathProperty();
 	        if (file != null) {
 	        	// if the file exists, it is loaded. If it doesn't the reference is erased.
 	            if (file.exists())
 	            	loadProjectFromFile(file);
 	            else
-	            	setProjectFilePath(null);
+	            	setProjectFilePathProperty(null);
 	        } 
 	        
 	    }
@@ -151,11 +149,11 @@ public class MainApp extends Application  {
 
 	            // reads the XML and saves its data into a Project class.
 	            project = (Project) um.unmarshal(file);
-	            this.primaryStage.setTitle("Perekimata - " + project.getProjectName());
+	            this.primaryStage.setTitle("Perikymata - " + project.getProjectName());
 	            
 	            // Saves the path of the opened file.
-	            setProjectFilePath(file);
-
+	            setProjectFilePathProperty(file);
+	            setProjectPath(file.getParent());
 	        } catch (Exception e) { // catches ANY exception
 	        	//TODO put this into a method with arguments.
 	        	Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -188,43 +186,6 @@ public class MainApp extends Application  {
 	    }
 	    
 		
-	    
-	    /**
-	     * Saves the preference of the last opened project file.
-	     * 
-	     * @param file Project file to store into preferences or null to remove the preference. 
-	     */
-	    public void setProjectFilePath(File file) {
-	    	/*
-	        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-	        if (file != null) {
-	            prefs.put("filePath", file.getPath());
-	            // Updates the window's Title.
-	            primaryStage.setTitle("Perikymata - " + file.getName());
-	        } else {
-	            prefs.remove("filePath");
-	            // Updates the window's Title.
-	            primaryStage.setTitle("Perikymata - Unsaved Project");
-	        }*/
-	    }
-	    
-	    /**
-	     * Loads the preference of the last opened project file.
-	     * 
-	     * @return null if project found in the preferences, File of the last opened project otherwise.
-	     */
-	    public File getProjectFilePath() {
-	    	/*
-	    	//Looks into the preferences of this application for the preference of the last opened project.
-	        Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-	        String filePath = prefs.get("filePath", null);
-	        if (filePath != null) {
-	            return new File(filePath);
-	        } else {
-	            return null;
-	        }*/
-	    	return null;
-	    }
 	    
 	    /**
 	     * Shows the Image Selection Window.
@@ -293,6 +254,29 @@ public class MainApp extends Application  {
 	    }
 
 	    /**
+		 * Returns the main stage.
+		 * @return
+		 */
+		public Stage getPrimaryStage() {
+		    return primaryStage;
+		    
+		}
+
+		/**
+		  * @return the fileList
+		  */
+		 public ObservableList<String> getFilesList() {
+			 return filesList;
+		 }
+
+		/**
+		  * @return the appliedFilters
+		  */
+		 public ObservableList<Filter> getAppliedFilters() {
+			 return appliedFilters;
+		 }
+
+		/**
 	     * Gets the full image of the tooth.
 	     * @return Image of the tooth.
 	     */
@@ -338,5 +322,127 @@ public class MainApp extends Application  {
 		 */
 		public void setProject(Project project) {
 			this.project = project;
+		}
+
+		/**
+		 * Saves the property of the last opened project file.
+		 * 
+		 * @param file Project file to store into preferences or null to remove the preference. 
+		 */
+		public void setProjectFilePathProperty(File file) {
+			Properties properties = new Properties();
+			try {
+				
+				if(file != null){
+					properties.setProperty("filePath", file.getPath());	    			
+				}
+				FileOutputStream fout = new FileOutputStream("config.properties");
+				properties.store(fout, null);
+			} catch (IOException e){
+				//TODO treat exception
+			}
+		}
+
+		/**
+		 * Loads the preference of the last opened project file.
+		 * 
+		 * @return null if project found in the preferences, File of the last opened project otherwise.
+		 */
+		public File getProjectFilePathProperty() {
+			Properties properties = new Properties();
+			try {
+				properties.load(new FileInputStream("config.properties"));
+				String filePath = properties.getProperty("filePath",null);
+				if(filePath!=null){
+					return new File(filePath);
+				} else {
+					return null;
+				}
+			} catch (IOException e){
+				//TODO treat exception
+			}
+			return null;
+		}
+
+		/**
+		 * @return the projectPath
+		 */
+		public String getProjectPath() {
+			return projectPath;
+		}
+
+		/**
+		 * @param projectPath the projectPath to set
+		 */
+		public void setProjectPath(String projectPath) {
+			this.projectPath = projectPath;
+		}
+		
+		public void createNewProject(){
+			FileChooser fileChooser = new FileChooser();
+
+	    	   
+	           // Adds a filter that shows all the files..
+	           FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+	                   "Project Folder", "*");
+	           fileChooser.getExtensionFilters().add(extFilter);
+	           fileChooser.initialFileNameProperty().set("Project_Name");
+
+	           // Shows the save dialog.
+	           File file = fileChooser.showSaveDialog(getPrimaryStage());
+
+	           if (file != null) {
+	               // Saves the project name.
+	        	   setProject(new Project());
+	        	   getProject().setProjectName(file.getName());
+	        	   
+	        	   // Makes the folder structure.
+	        	   file.mkdir();
+	        	   new File(file.toString() + "\\Fragments").mkdir();
+	        	   new File(file.toString() + "\\Full_Image").mkdir();
+	        	   new File(file.toString() + "\\Perikymata_Outputs").mkdir();
+	        	   //Creates the XML project file.
+	        	   try {
+	   	            JAXBContext context = JAXBContext.newInstance(Project.class);
+	   	            Marshaller m = context.createMarshaller();
+	   	            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	   	            // Marshalling and saving XML to the file.
+	   	            File projectXMLfile = new File(file.toString() + "\\" + file.getName() + ".xml");
+	   	            m.marshal(getProject(), projectXMLfile );
+	   	           
+	   	            // Save the file path to the registry.
+	   	            setProjectFilePathProperty(projectXMLfile);
+	   	            setProjectPath(file.getPath());
+	   	        	getPrimaryStage().setTitle("Perikymata - " + file.getName());
+	   	            
+	   	        } catch (Exception e) { // catches ANY exception
+	   	        	//TODO take this to a method in MainApp
+	   	        	Alert alert = new Alert(Alert.AlertType.ERROR);
+	   	        	alert.setTitle("Error");
+	   	        	alert.setHeaderText("No se puede guardar archivo :\n" + file.getPath());
+	   	        	
+	   	        	Label label = new Label("La traza de la excepción fue:");
+	   	        	
+	   	        	StringWriter sw = new StringWriter();
+	   	        	PrintWriter pw = new PrintWriter(sw);
+	   	        	e.printStackTrace(pw);
+	   	        	
+	   	        	TextArea textArea = new TextArea(sw.toString());
+	   	        	textArea.setEditable(false);
+	   	        	textArea.setWrapText(true);
+
+	   	        	textArea.setMaxWidth(Double.MAX_VALUE);
+	   	        	textArea.setMaxHeight(Double.MAX_VALUE);
+	   	        	GridPane.setVgrow(textArea, Priority.ALWAYS);
+	   	        	GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+	   	        	GridPane expContent = new GridPane();
+	   	        	expContent.setMaxWidth(Double.MAX_VALUE);
+	   	        	expContent.add(label, 0, 0);
+	   	        	expContent.add(textArea, 0, 1);
+	   	        	alert.getDialogPane().setExpandableContent(expContent);
+	   	        	alert.showAndWait();
+	   	        }
+	   	    }
 		}
 }
