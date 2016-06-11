@@ -33,6 +33,7 @@ public class RootLayoutController {
     private MainApp mainApp;
 
     
+    
     /**
      * Method called by the main application to set a reference to itself.
      * This is done to be able to call mainapp's methods.
@@ -75,7 +76,37 @@ public class RootLayoutController {
      */
     @FXML
     private void handleNew() {
-    	   mainApp.createNewProject();
+    	FileChooser fileChooser = new FileChooser();
+
+ 	   
+        // Adds a filter that shows all the files..
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "Project Folder", "*");
+        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.initialFileNameProperty().set("Project_Name");
+
+        // Shows the save dialog.
+        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
+        
+        if (file != null) {
+        	//destroys old data to create new.
+        	mainApp.clearData();
+            // Saves the project name.
+        	mainApp.setProject(new Project());
+     	   mainApp.getProject().setProjectName(file.getName());
+     	   
+     	   // Makes the folder structure.
+     	   file.mkdir();
+     	   new File(file.toString() + "\\Fragments").mkdir();
+     	   new File(file.toString() + "\\Full_Image").mkdir();
+     	   new File(file.toString() + "\\Perikymata_Outputs").mkdir();
+     	   mainApp.setProjectPath(file.getPath());
+     	   //Creates the XML project file.
+     	   
+     	   mainApp.getPrimaryStage().setTitle("Perikymata - " + file.getName());
+     	   mainApp.makeProjectXml();
+     	   mainApp.showImageSelection();
+	    }
      }
 
  
@@ -94,8 +125,12 @@ public class RootLayoutController {
         File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
 
         if (file != null) {
+        	//destroys old data to create new.
+        	mainApp.clearData();
+        	
             mainApp.loadProjectFromFile(file);
             mainApp.setProjectPath(file.getParent());
+            mainApp.showImageSelection();
         }
     }
 

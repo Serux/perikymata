@@ -204,17 +204,22 @@ public class MainApp extends Application  {
 	            project = (Project) um.unmarshal(file);
 	            this.primaryStage.setTitle("Perikymata - " + project.getProjectName());
 	            // Adds the elements of the project to their variables.
-	            this.getAppliedFilters().addAll(project.getFilterList());
+	            if(project.getFilterList() != null)
+	            	this.getAppliedFilters().addAll(project.getFilterList());
 	            File fullImageFile= Paths.get(file.getParent(), "Full_image","Full_image.png").toFile();
 	            if(fullImageFile.exists()){
 	            	java.awt.Image full = new Opener().openImage(fullImageFile.getPath()).getImage();
 	            	setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
+	            	
+		            File filteredImageFile= Paths.get(file.getParent(), "Full_image","Filtered_image.png").toFile();
+		            if(filteredImageFile.exists()){
+		            	java.awt.Image filtered = new Opener().openImage(filteredImageFile.getAbsolutePath()).getImage();
+		            	setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) filtered, null));
+		            } else {
+		            	setFilteredImage(getFullImage());
+		            }
 	            }
-	            File filteredImageFile= Paths.get(file.getParent(), "Full_image","Filtered_image.png").toFile();
-	            if(filteredImageFile.exists()){
-	            	java.awt.Image filtered = new Opener().openImage(filteredImageFile.getAbsolutePath()).getImage();
-	            	setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) filtered, null));
-	            }
+
 	    		
 	            File fragmentsFolder= Paths.get(file.getParent(), "Fragments").toFile();
 	            
@@ -450,71 +455,12 @@ public class MainApp extends Application  {
 			this.projectPath = projectPath;
 		}
 		
-		/*public void createNewProject(){
-			FileChooser fileChooser = new FileChooser();
-
-	    	   
-	           // Adds a filter that shows all the files..
-	           FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-	                   "Project Folder", "*");
-	           fileChooser.getExtensionFilters().add(extFilter);
-	           fileChooser.initialFileNameProperty().set("Project_Name");
-
-	           // Shows the save dialog.
-	           File file = fileChooser.showSaveDialog(getPrimaryStage());
-
-	           if (file != null) {
-	               // Saves the project name.
-	        	   setProject(new Project());
-	        	   getProject().setProjectName(file.getName());
-	        	   
-	        	   // Makes the folder structure.
-	        	   file.mkdir();
-	        	   new File(file.toString() + "\\Fragments").mkdir();
-	        	   new File(file.toString() + "\\Full_Image").mkdir();
-	        	   new File(file.toString() + "\\Perikymata_Outputs").mkdir();
-	        	   //Creates the XML project file.
-	        	   try {
-	   	            JAXBContext context = JAXBContext.newInstance(Project.class);
-	   	            Marshaller m = context.createMarshaller();
-	   	            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-	   	            // Marshalling and saving XML to the file.
-	   	            File projectXMLfile = new File(file.toString() + "\\" + file.getName() + ".xml");
-	   	            m.marshal(getProject(), projectXMLfile );
-	   	           
-	   	            // Save the file path to the registry.
-	   	            setProjectFilePathProperty(projectXMLfile);
-	   	            setProjectPath(file.getPath());
-	   	        	getPrimaryStage().setTitle("Perikymata - " + file.getName());
-	   	            
-	   	        } catch (Exception e) { // catches ANY exception
-	   	        	//TODO take this to a method in MainApp
-	   	        	Alert alert = new Alert(Alert.AlertType.ERROR);
-	   	        	alert.setTitle("Error");
-	   	        	alert.setHeaderText("No se puede guardar archivo :\n" + file.getPath());
-	   	        	
-	   	        	Label label = new Label("La traza de la excepción fue:");
-	   	        	
-	   	        	StringWriter sw = new StringWriter();
-	   	        	PrintWriter pw = new PrintWriter(sw);
-	   	        	e.printStackTrace(pw);
-	   	        	
-	   	        	TextArea textArea = new TextArea(sw.toString());
-	   	        	textArea.setEditable(false);
-	   	        	textArea.setWrapText(true);
-
-	   	        	textArea.setMaxWidth(Double.MAX_VALUE);
-	   	        	textArea.setMaxHeight(Double.MAX_VALUE);
-	   	        	GridPane.setVgrow(textArea, Priority.ALWAYS);
-	   	        	GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-	   	        	GridPane expContent = new GridPane();
-	   	        	expContent.setMaxWidth(Double.MAX_VALUE);
-	   	        	expContent.add(label, 0, 0);
-	   	        	expContent.add(textArea, 0, 1);
-	   	        	alert.getDialogPane().setExpandableContent(expContent);
-	   	        	alert.showAndWait();
-	   	        }
-	   	    }
-		}*/
+		public void clearData(){
+			this.appliedFilters.clear();
+			this.filesList.clear();;
+			this.filteredImage = null;
+			this.fullImage = null;
+			this.project = null;
+			this.projectPath = null;
+		}
 }

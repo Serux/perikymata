@@ -59,6 +59,7 @@ public class ImageSelectionController {
 		previewImage.fitHeightProperty().bind(((Pane) previewImage.getParent()).heightProperty());
 		previewImage.fitWidthProperty().bind(((Pane) previewImage.getParent()).widthProperty());
 
+
 	}
 
 	/**
@@ -213,13 +214,13 @@ public class ImageSelectionController {
 			previewImage.setImage(mainApp.getFullImage());
 		}
 
-		if (mainApp.getProjectPath() == null) {
+		/*if (mainApp.getProjectPath() == null) {
 			mainApp.createNewProject();
-		}
+		}*/
 		// TODO block actions if project has not been created.
-		for (File i : Paths.get(mainApp.getProjectPath(), "Fragments").toFile().listFiles()) {
+		/*for (File i : Paths.get(mainApp.getProjectPath(), "Fragments").toFile().listFiles()) {
 			mainApp.getFilesList().add(i.getName());
-		}
+		}*/
 
 		// Add observable list data to the table
 		filesListView.setItems(mainApp.getFilesList());
