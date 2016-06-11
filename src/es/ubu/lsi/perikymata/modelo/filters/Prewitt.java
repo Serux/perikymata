@@ -10,7 +10,7 @@ import javafx.beans.property.StringProperty;
 
 public class Prewitt implements Filter {
 
-	private static final String filterName = "Prewitt";
+	public static final String filterName = "Prewitt";
 	private int size;
 	private double force;
 	
@@ -49,7 +49,12 @@ public class Prewitt implements Filter {
 
 	@Override
 	public StringProperty getFilterArgs() {
-		return new SimpleStringProperty("Size: " + size + " Force: " + new DecimalFormat("#.##").format(force));
+		return new SimpleStringProperty("Size: " + size + "; Force: " + new DecimalFormat("#.##").format(force));
+	}
+
+	@Override
+	public String getSmallStringRepresentation() {
+		return filterName + ":" + size + "," + force;
 	}
 
 }

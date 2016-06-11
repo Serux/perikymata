@@ -1,11 +1,14 @@
 package es.ubu.lsi.perikymata;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -20,9 +23,11 @@ import es.ubu.lsi.perikymata.vista.ImageFiltersController;
 import es.ubu.lsi.perikymata.vista.ImageSelectionController;
 import es.ubu.lsi.perikymata.vista.PerikymataCountController;
 import es.ubu.lsi.perikymata.vista.RootLayoutController;
+import ij.io.Opener;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -138,6 +143,54 @@ public class MainApp extends Application  {
 	        
 	    }
 		
+	    /**
+	     * Creates or updates the current project XML.
+	     */
+	    public void makeProjectXml(){
+	    	File parent = new File(this.getProjectPath());
+	    	try {
+	            JAXBContext context = JAXBContext.newInstance(Project.class);
+	            Marshaller m = context.createMarshaller();
+	            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	            // Marshalling and saving XML to the file.
+	            
+	            File projectXMLfile = new File(parent.toString() + "\\" + parent.getName() + ".xml");
+	            m.marshal(getProject(), projectXMLfile );
+	           
+	            // Save the file path to the registry.
+	            setProjectFilePathProperty(projectXMLfile);
+	            
+	            
+	        } catch (Exception e) { // catches ANY exception
+	        	//TODO make this into a method?
+	        	Alert alert = new Alert(Alert.AlertType.ERROR);
+	        	alert.setTitle("Error");
+	        	alert.setHeaderText("Cant save file :\n" + parent.getPath());
+	        	
+	        	Label label = new Label("The Exception trace was:");
+	        	
+	        	StringWriter sw = new StringWriter();
+	        	PrintWriter pw = new PrintWriter(sw);
+	        	e.printStackTrace(pw);
+	        	
+	        	TextArea textArea = new TextArea(sw.toString());
+	        	textArea.setEditable(false);
+	        	textArea.setWrapText(true);
+
+	        	textArea.setMaxWidth(Double.MAX_VALUE);
+	        	textArea.setMaxHeight(Double.MAX_VALUE);
+	        	GridPane.setVgrow(textArea, Priority.ALWAYS);
+	        	GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+	        	GridPane expContent = new GridPane();
+	        	expContent.setMaxWidth(Double.MAX_VALUE);
+	        	expContent.add(label, 0, 0);
+	        	expContent.add(textArea, 0, 1);
+	        	alert.getDialogPane().setExpandableContent(expContent);
+	        	alert.showAndWait();
+	        }
+	    }
+	    
 		/**
 		 * Loads a Project XML file into the application.
 		 * @param file XML project.
@@ -150,7 +203,26 @@ public class MainApp extends Application  {
 	            // reads the XML and saves its data into a Project class.
 	            project = (Project) um.unmarshal(file);
 	            this.primaryStage.setTitle("Perikymata - " + project.getProjectName());
+	            // Adds the elements of the project to their variables.
+	            this.getAppliedFilters().addAll(project.getFilterList());
+	            File fullImageFile= Paths.get(file.getParent(), "Full_image","Full_image.png").toFile();
+	            if(fullImageFile.exists()){
+	            	java.awt.Image full = new Opener().openImage(fullImageFile.getPath()).getImage();
+	            	setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
+	            }
+	            File filteredImageFile= Paths.get(file.getParent(), "Full_image","Filtered_image.png").toFile();
+	            if(filteredImageFile.exists()){
+	            	java.awt.Image filtered = new Opener().openImage(filteredImageFile.getAbsolutePath()).getImage();
+	            	setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) filtered, null));
+	            }
+	    		
+	            File fragmentsFolder= Paths.get(file.getParent(), "Fragments").toFile();
 	            
+	            for (File fragments : fragmentsFolder.listFiles()) {
+	    			if (file != null) {
+	    				getFilesList().add(fragments.getName());
+	    			}
+	    		}
 	            // Saves the path of the opened file.
 	            setProjectFilePathProperty(file);
 	            setProjectPath(file.getParent());
@@ -378,7 +450,7 @@ public class MainApp extends Application  {
 			this.projectPath = projectPath;
 		}
 		
-		public void createNewProject(){
+		/*public void createNewProject(){
 			FileChooser fileChooser = new FileChooser();
 
 	    	   
@@ -444,5 +516,5 @@ public class MainApp extends Application  {
 	   	        	alert.showAndWait();
 	   	        }
 	   	    }
-		}
+		}*/
 }

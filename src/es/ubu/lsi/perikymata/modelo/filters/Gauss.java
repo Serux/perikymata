@@ -13,7 +13,7 @@ public class Gauss implements Filter{
 
 	private double sigmaValue;
 	
-	private static final String filterName = "Gaussian";
+	public static final String filterName = "Gaussian";
 	
 	public Gauss( double sigma ){
 		
@@ -38,6 +38,11 @@ public class Gauss implements Filter{
 	@Override
 	public StringProperty getFilterArgs() {
 		return new SimpleStringProperty("Sigma: " + new DecimalFormat("#.##").format(sigmaValue));
+	}
+
+	@Override
+	public String getSmallStringRepresentation() {
+		return filterName + ":" + sigmaValue ;
 	}
 }
 

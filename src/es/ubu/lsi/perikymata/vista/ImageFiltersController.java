@@ -4,9 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ubu.lsi.perikymata.MainApp;
+import es.ubu.lsi.perikymata.modelo.Project;
 import es.ubu.lsi.perikymata.modelo.filters.Filter;
 import es.ubu.lsi.perikymata.modelo.filters.Gauss;
 import es.ubu.lsi.perikymata.modelo.filters.Prewitt;
@@ -359,7 +361,7 @@ public class ImageFiltersController {
 		}
 	}
 	
-	
+	//TODO think if this will be useful, and if it is, comment it.
 	private void disableComponents(){
 		filtersTable.setDisable(true);
 		addGaussButton.setDisable(true);
@@ -401,7 +403,9 @@ public class ImageFiltersController {
 	 * Handler that changes to the perikymata counting stage when called.
 	 */
 	@FXML
-	public void nextScreen() {
+	private void nextScreen() {
+		mainApp.getProject().setFilterList(mainApp.getAppliedFilters());
+		mainApp.makeProjectXml();
 		mainApp.showPerikymataCount();
 	}
 	
