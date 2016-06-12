@@ -177,8 +177,13 @@ public class ImageSelectionController {
 						.forEach(x -> tempList.add(Paths.get(mainApp.getProjectPath(), "Fragments", x).toString()));
 				for (String i : tempList)
 					tempString.append(" " + i);
-				Process stitcher = Runtime.getRuntime()
+				//TODO extract exe temporally. exe cant be run inside a jar.
+				/*Process stitcher = Runtime.getRuntime()
 						.exec(this.getClass().getResource("/rsc/stitching/bin/Stitching.exe").getPath() + " "
+								+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " "
+								+ tempString);*/
+				Process stitcher = Runtime.getRuntime()
+						.exec("rsc/stitching/bin/Stitching.exe" + " "
 								+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " "
 								+ tempString);
 				stitcher.waitFor();
