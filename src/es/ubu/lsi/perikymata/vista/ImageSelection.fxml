@@ -22,6 +22,13 @@
                         <Button alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleOpenMultiple" text="Load image pieces" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
+                  <HBox layoutY="251.0" prefHeight="25.0" prefWidth="255.0" AnchorPane.bottomAnchor="24.0" AnchorPane.leftAnchor="0.0">
+                     <children>
+                        <Label prefHeight="17.0" prefWidth="36.0" text="Status:" />
+                        <Label fx:id="status" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="17.0" prefWidth="130.0" text="None     " />
+                        <ImageView fx:id="loading" fitHeight="25.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="209.0">
@@ -36,7 +43,7 @@
                      </children>
                   </Pane>
                   <Button alignment="CENTER" contentDisplay="CENTER" layoutY="261.0" mnemonicParsing="false" onAction="#nextScreen" prefHeight="25.0" prefWidth="200.0" text="Save project and continue" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="236.0" mnemonicParsing="false" onAction="#launchStitcher" prefHeight="25.0" prefWidth="200.0" text="Generate full image" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="250.0" mnemonicParsing="false" onAction="#launchStitcher" prefHeight="25.0" prefWidth="200.0" text="Generate full image" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   <Button alignment="CENTER" contentDisplay="CENTER" layoutY="211.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Save Full image as..." AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   <Button mnemonicParsing="false" onAction="#handleRotate" text="Rotate 90º" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>

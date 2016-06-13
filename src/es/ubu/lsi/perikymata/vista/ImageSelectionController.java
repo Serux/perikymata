@@ -24,6 +24,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
@@ -50,6 +51,20 @@ public class ImageSelectionController {
 	 */
 	private MainApp mainApp;
 
+	//////////////////////Status Elements////////////////////
+	
+	/**
+	 * Current status, tells to the user if a Thread is running.
+	 */
+	@FXML
+	private Label status;
+	
+	/**
+	 * Loading gif.
+	 */
+    @FXML
+	private ImageView loading;
+    /////////////////////////////////////////////////////////////
 	/**
 	 * Initializes the controller class. This method is automatically called
 	 * after the fxml file has been loaded.
@@ -59,7 +74,9 @@ public class ImageSelectionController {
 		previewImage.fitHeightProperty().bind(((Pane) previewImage.getParent()).heightProperty());
 		previewImage.fitWidthProperty().bind(((Pane) previewImage.getParent()).widthProperty());
 
-
+		// Loads loading gif.
+		loading.setImage(new Image(this.getClass().getResource("/rsc/482.gif").toExternalForm()));
+		loading.setVisible(false);
 	}
 
 	/**
@@ -80,6 +97,15 @@ public class ImageSelectionController {
 
 			java.awt.Image full = new Opener().openImage(file.getParent(), file.getName()).getImage();
 
+			try (FileOutputStream fileStream = new FileOutputStream(
+					new File(Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png").toString()))) {
+
+				Files.copy(file.toPath(), fileStream);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			mainApp.setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
 			previewImage.setImage(mainApp.getFullImage());
 			mainApp.setFilteredImage(mainApp.getFullImage());
@@ -169,6 +195,9 @@ public class ImageSelectionController {
 	@FXML
 	private void launchStitcher() {
 
+		changeStatus("Stitching, please wait");
+		loading.setVisible(true);
+		
 		new Thread(() -> {
 			try {
 				List<String> tempList = new ArrayList<>();
@@ -191,10 +220,14 @@ public class ImageSelectionController {
 				java.awt.Image full = new Opener()
 						.openImage(Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png").toString())
 						.getImage();
-
+				
+				changeStatus("Stitching completed!");
+				loading.setVisible(false);
+				
 				Platform.runLater(() -> {
 					mainApp.setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
 					this.previewImage.setImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
+					mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
 				});
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -231,4 +264,12 @@ public class ImageSelectionController {
 		filesListView.setItems(mainApp.getFilesList());
 	}
 
+	/**
+	 * Changes the text of the status label from the Platform because label can't
+	 * be changed directly from a thread.
+	 * @param text
+	 */
+	private synchronized void changeStatus(String text){
+		Platform.runLater(()-> status.setText(text));
+	}
 }
