@@ -20,17 +20,10 @@ public class PrewittTest {
 	
 	Prewitt filtro = null;
 	@Test
-	public void testPrewitt() {
-		Image image = new Image(new File("./rsc/perikymata.jpg").toURI().toString());
-		filtro = new Prewitt(3,2);
-	}
-
-	@Test
 	public void testMakeMatrix() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		//Workaround private methods
 		Method method = Prewitt.class.getDeclaredMethod("calculatePrewittMatrix", new Class[]{});
 		method.setAccessible(true);
-		Image image = new Image(new File("./rsc/perikymata.jpg").toURI().toString());
 		
 		filtro = new Prewitt(3,1);
 		float[] matrix = (float[]) method.invoke(filtro);

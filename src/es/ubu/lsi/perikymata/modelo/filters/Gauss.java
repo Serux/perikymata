@@ -11,17 +11,27 @@ import javafx.beans.property.StringProperty;
 
 public class Gauss implements Filter{
 
+	/**
+	 * Strength of the filter.
+	 */
 	private double sigmaValue;
 	
-	public static final String filterName = "Gaussian";
+	/**
+	 * Name of the filter.
+	 */
+	public static final String FILTERNAME = "Gaussian";
 	
+	/**
+	 * Constructor of the filter, adds the arguments to the object.
+	 * @param sigma Strenght of the filter.
+	 */
 	public Gauss( double sigma ){
-		
 		sigmaValue =  sigma;
-		
-		
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BufferedImage run(BufferedImage image) {
 		GaussianBlur gauss = new GaussianBlur();
@@ -30,19 +40,28 @@ public class Gauss implements Filter{
 		return (BufferedImage) proc.createImage();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public StringProperty getFiltername() {
-		return new SimpleStringProperty(filterName);
+		return new SimpleStringProperty(FILTERNAME);
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public StringProperty getFilterArgs() {
 		return new SimpleStringProperty("Sigma: " + new DecimalFormat("#.##").format(sigmaValue));
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getSmallStringRepresentation() {
-		return filterName + ":" + sigmaValue ;
+		return FILTERNAME + ":" + sigmaValue ;
 	}
 }
 
