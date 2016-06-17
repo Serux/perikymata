@@ -3,16 +3,19 @@ package es.ubu.lsi.perikymata;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
-import java.util.prefs.Preferences;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
@@ -31,14 +34,9 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -58,6 +56,12 @@ public class MainApp extends Application  {
 	  * Main layout of the application.
 	  */
 	 private BorderPane rootLayout;
+	 
+	 /**
+	  * File logger. 
+	  */
+	 private Logger logger = Logger.getLogger(MainApp.class.getName());
+	 
 	 /**
 	  * Full image of a tooth, used to count perikyma.
 	  */
@@ -97,6 +101,7 @@ public class MainApp extends Application  {
 
 		@Override
 		public void start(Stage primaryStage) {
+				configureLogger();
 		        this.primaryStage = primaryStage;
 		        this.primaryStage.setTitle("Perikymata - Unsaved Project");
 		        this.primaryStage.getIcons().add(new Image("file:resources/images/logo.png"));
@@ -107,6 +112,20 @@ public class MainApp extends Application  {
 
 		}
 		
+		/**
+		 * Configures the logger to log in a file.
+		 */
+		public void configureLogger(){
+			try {
+				Date date = new Date() ;
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+				FileHandler fileHandler  = new FileHandler("errorLog_" + dateFormat.format(date) + ".log");
+				fileHandler.setLevel(Level.ALL);
+				getLogger().addHandler(fileHandler);
+			} catch (IOException e) {
+				getLogger().log(Level.SEVERE, "Exception creating logging file.",e);
+			}
+		}
 		/**
 	     * Loads and shows the RootLayout and tries to load the last opened file.
 	     */
@@ -128,7 +147,7 @@ public class MainApp extends Application  {
 
 	            primaryStage.show();
 	        } catch (IOException e) {
-	            e.printStackTrace();
+	        	this.getLogger().log(Level.SEVERE, "Exception occur loading the root layout.",e);
 	        }
 	        
 	        // Tries to load the last opened file.
@@ -148,46 +167,27 @@ public class MainApp extends Application  {
 	     */
 	    public void makeProjectXml(){
 	    	File parent = new File(this.getProjectPath());
-	    	try {
-	            JAXBContext context = JAXBContext.newInstance(Project.class);
-	            Marshaller m = context.createMarshaller();
-	            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-	            // Marshalling and saving XML to the file.
-	            
-	            File projectXMLfile = new File(parent.toString() + "\\" + parent.getName() + ".xml");
-	            m.marshal(getProject(), projectXMLfile );
-	           
-	            // Save the file path to the registry.
-	            setProjectFilePathProperty(projectXMLfile);
-	            
-	            
-	        } catch (Exception e) { // catches ANY exception
-	        	//TODO make this into a method?
-	        	Alert alert = new Alert(Alert.AlertType.ERROR);
-	        	alert.setTitle("Error");
-	        	alert.setHeaderText("Cant save file :\n" + parent.getPath());
-	        	
-	        	Label label = new Label("The Exception trace was:");
-	        	
-	        	StringWriter sw = new StringWriter();
-	        	PrintWriter pw = new PrintWriter(sw);
-	        	e.printStackTrace(pw);
-	        	
-	        	TextArea textArea = new TextArea(sw.toString());
-	        	textArea.setEditable(false);
-	        	textArea.setWrapText(true);
-
-	        	textArea.setMaxWidth(Double.MAX_VALUE);
-	        	textArea.setMaxHeight(Double.MAX_VALUE);
-	        	GridPane.setVgrow(textArea, Priority.ALWAYS);
-	        	GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-	        	GridPane expContent = new GridPane();
-	        	expContent.setMaxWidth(Double.MAX_VALUE);
-	        	expContent.add(label, 0, 0);
-	        	expContent.add(textArea, 0, 1);
-	        	alert.getDialogPane().setExpandableContent(expContent);
-	        	alert.showAndWait();
+	    	
+	            JAXBContext context;
+				try {
+					context = JAXBContext.newInstance(Project.class);
+					Marshaller m = context.createMarshaller();
+		            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		            
+		            // Marshalling and saving XML to the file.
+		            File projectXMLfile = new File(parent.toString() + "\\" + parent.getName() + ".xml");
+		            m.marshal(getProject(), projectXMLfile );
+		           
+		            // Save the file path to the registry.
+		            setProjectFilePathProperty(projectXMLfile);
+				} catch (JAXBException e) {
+					
+	        	this.getLogger().log(Level.SEVERE, "Exception occur creating XML.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Error saving project");
+	        	alert.setHeaderText("Project was not saved.\n");
+	        	alert.setContentText("Error saving project on path: " + parent.toString());
+	            alert.showAndWait();	            
 	        }
 	    }
 	    
@@ -203,14 +203,19 @@ public class MainApp extends Application  {
 	            // reads the XML and saves its data into a Project class.
 	            project = (Project) um.unmarshal(file);
 	            this.primaryStage.setTitle("Perikymata - " + project.getProjectName());
-	            // Adds the elements of the project to their variables.
-	            if(project.getFilterList() != null)
+	            	            
+	            // Adds the filters from the xml to the list of filters.
+	            if(project.getFilterList() != null){
 	            	this.getAppliedFilters().addAll(project.getFilterList());
+	            }
+	            
+	            //Adds the Full image to the project (if exists)
 	            File fullImageFile= Paths.get(file.getParent(), "Full_image","Full_image.png").toFile();
 	            if(fullImageFile.exists()){
 	            	java.awt.Image full = new Opener().openImage(fullImageFile.getPath()).getImage();
 	            	setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
 	            	
+	            	// Adds the filtered image to the project (if exists)
 		            File filteredImageFile= Paths.get(file.getParent(), "Full_image","Filtered_image.png").toFile();
 		            if(filteredImageFile.exists()){
 		            	java.awt.Image filtered = new Opener().openImage(filteredImageFile.getAbsolutePath()).getImage();
@@ -220,69 +225,58 @@ public class MainApp extends Application  {
 		            }
 	            }
 
-	    		
+	    		//Adds the names of the files under the folder "fragments" to the list of
+	            //images to stitch.
 	            File fragmentsFolder= Paths.get(file.getParent(), "Fragments").toFile();
-	            
 	            for (File fragments : fragmentsFolder.listFiles()) {
-	    			if (file != null) {
+	    			if (fragments != null) {
 	    				getFilesList().add(fragments.getName());
 	    			}
 	    		}
+	            
 	            // Saves the path of the opened file.
 	            setProjectFilePathProperty(file);
 	            setProjectPath(file.getParent());
-	        } catch (Exception e) { // catches ANY exception
-	        	//TODO put this into a method with arguments.
-	        	Alert alert = new Alert(Alert.AlertType.ERROR);
-	        	alert.setTitle("Error");
-	        	alert.setHeaderText("Could not load data from file:\n" + file.getPath());
-	        	
-	        	Label label = new Label("The exception stacktrace was:");
-	        	
-	        	StringWriter sw = new StringWriter();
-	        	PrintWriter pw = new PrintWriter(sw);
-	        	e.printStackTrace(pw);
-	        	
-	        	TextArea textArea = new TextArea(sw.toString());
-	        	textArea.setEditable(false);
-	        	textArea.setWrapText(true);
+	            
+	        } catch (JAXBException e) { 
 
-	        	textArea.setMaxWidth(Double.MAX_VALUE);
-	        	textArea.setMaxHeight(Double.MAX_VALUE);
-	        	GridPane.setVgrow(textArea, Priority.ALWAYS);
-	        	GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-	        	GridPane expContent = new GridPane();
-	        	expContent.setMaxWidth(Double.MAX_VALUE);
-	        	expContent.add(label, 0, 0);
-	        	expContent.add(textArea, 0, 1);
-	        	alert.getDialogPane().setExpandableContent(expContent);
-	        	alert.showAndWait();
-	        	
+	          	this.getLogger().log(Level.SEVERE, "Exception occur loading project.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Error loading project");
+	        	alert.setHeaderText("Project cannot be loaded.\n");
+	        	alert.setContentText("Error loading project on path: " + file.toString());
+	            alert.showAndWait();
+	            this.clearData();
 	        }
 	    }
 	    
 		
 	    
 	    /**
-	     * Shows the Image Selection Window.
+	     * Shows the Image Selection Window. 
 	     */
 	    public void showImageSelection() {
 	        try {
 	        	// Loads the FXML view.
 	            FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(MainApp.class.getResource("vista/ImageSelection.fxml"));
-	            AnchorPane personOverview = (AnchorPane) loader.load();
+	            AnchorPane imageSelection = (AnchorPane) loader.load();
 
 	            // Shows this layout in the center of the rootLayout.
-	            rootLayout.setCenter(personOverview);
+	            rootLayout.setCenter(imageSelection);
 
 	            // Gives a mainapp's reference to the controller of the layout.
 	            ImageSelectionController controller = loader.getController();
 	            controller.setMainApp(this);
 
 	        } catch (IOException e) {
-	            e.printStackTrace();
+	          	this.getLogger().log(Level.SEVERE, "Exception occur loading imageSelection Stage.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Internal error.");
+	        	alert.setHeaderText("Error loading image selection stage.\n");
+	        	alert.setContentText("This application will close now, please try again.\n");
+	            alert.showAndWait();
+	            System.exit(-1);
 	        }
 	    }
 	    
@@ -294,17 +288,23 @@ public class MainApp extends Application  {
 	        	// Loads the FXML view.
 	            FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(MainApp.class.getResource("vista/ImageFilters.fxml"));
-	            AnchorPane personOverview = (AnchorPane) loader.load();
+	            AnchorPane imageFilters = (AnchorPane) loader.load();
 	          
 	            // Shows this layout in the center of the rootLayout.
-	            rootLayout.setCenter(personOverview);
+	            rootLayout.setCenter(imageFilters);
 	            
 	            // Gives a mainapp's reference to the controller of the layout.
 	            ImageFiltersController controller = loader.getController();
 	            controller.setMainApp(this);
 	            
 	        } catch (IOException e) {
-	            e.printStackTrace();
+	          	this.getLogger().log(Level.SEVERE, "Exception occur loading imageFilters Stage.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Internal error.");
+	        	alert.setHeaderText("Error loading image filtering stage.\n");
+	        	alert.setContentText("This application will close now, please try again.\n");
+	            alert.showAndWait();
+	            System.exit(-1);
 	        }
 	    }
 	    
@@ -316,17 +316,23 @@ public class MainApp extends Application  {
 	        	// Loads the FXML view.
 	            FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(MainApp.class.getResource("vista/PerikymataCount.fxml"));
-	            AnchorPane personOverview = (AnchorPane) loader.load();
+	            AnchorPane perikymataCount = (AnchorPane) loader.load();
 	            
 	            // Shows this layout in the center of the rootLayout.
-	            rootLayout.setCenter(personOverview);
+	            rootLayout.setCenter(perikymataCount);
 
 	        	// Gives a mainapp's reference to the controller of the layout.
 	            PerikymataCountController controller = loader.getController();
 	            controller.setMainApp(this);
 
 	        } catch (IOException e) {
-	            e.printStackTrace();
+	        	this.getLogger().log(Level.SEVERE, "Exception occur loading PerikymataCount Stage.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Internal error.");
+	        	alert.setHeaderText("Error loading perikymata counting stage.\n");
+	        	alert.setContentText("This application will close now, please try again.\n");
+	            alert.showAndWait();
+	            System.exit(-1);
 	        }
 	    }
 
@@ -416,7 +422,13 @@ public class MainApp extends Application  {
 				FileOutputStream fout = new FileOutputStream("config.properties");
 				properties.store(fout, null);
 			} catch (IOException e){
-				//TODO treat exception
+	        	this.getLogger().log(Level.SEVERE, "Exception writing properties file.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Error saving properties file.");
+	        	alert.setHeaderText("Error saving properties file.\n");
+	        	alert.setContentText("Check that you have writing permissions on the folder\n"
+	        			+ "that contains this application, so config.properties can be written.\n");
+	            alert.showAndWait();
 			}
 		}
 
@@ -432,11 +444,18 @@ public class MainApp extends Application  {
 				String filePath = properties.getProperty("filePath",null);
 				if(filePath!=null){
 					return new File(filePath);
-				} else {
-					return null;
 				}
-			} catch (IOException e){
-				//TODO treat exception
+			} catch (FileNotFoundException e){
+				this.getLogger().log(Level.WARNING, "Properties file doesn't exists.",e);
+			}
+			catch (IOException e){
+	        	this.getLogger().log(Level.SEVERE, "Exception occur opening properties file .",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Error opening properties file.");
+	        	alert.setHeaderText("Error loading opening properties file.\n");
+	        	alert.setContentText("If this problem persists, please delete config.properties"
+	        			+ " on the program folder.\n");
+	            alert.showAndWait();
 			}
 			return null;
 		}
@@ -453,8 +472,17 @@ public class MainApp extends Application  {
 		 */
 		public void setProjectPath(String projectPath) {
 			this.projectPath = projectPath;
+			
 		}
 		
+		/**
+		 * @return the logger
+		 */
+		public Logger getLogger() {
+			return logger;
+		}
+
+
 		public void clearData(){
 			this.appliedFilters.clear();
 			this.filesList.clear();;

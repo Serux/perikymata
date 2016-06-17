@@ -1,20 +1,13 @@
 package es.ubu.lsi.perikymata.vista;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.nio.file.Path;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.ubu.lsi.perikymata.MainApp;
-import es.ubu.lsi.perikymata.modelo.Project;
 import es.ubu.lsi.perikymata.modelo.filters.Filter;
 import es.ubu.lsi.perikymata.modelo.filters.Gauss;
 import es.ubu.lsi.perikymata.modelo.filters.Prewitt;
-import ij.plugin.filter.GaussianBlur;
-import ij.process.ColorProcessor;
-import ij.process.ImageProcessor;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -23,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.scene.ImageCursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;

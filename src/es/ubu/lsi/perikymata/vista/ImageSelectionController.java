@@ -9,14 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.text.DefaultEditorKit.CopyAction;
-
-import com.sun.javafx.iio.ios.IosDescriptor;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.IO;
+import java.util.logging.Level;
 
 import es.ubu.lsi.perikymata.MainApp;
 import ij.io.Opener;
@@ -102,8 +97,13 @@ public class ImageSelectionController {
 
 				Files.copy(file.toPath(), fileStream);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				mainApp.getLogger().log(Level.SEVERE, "Exception occur opening full image.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Error opening full image");
+	        	alert.setHeaderText("Can't open or copy full image.\n");
+	        	alert.setContentText("Can't open full image or copy it into the project folder.\n"
+	        			+ "file was: " + file.toString());
+	            alert.showAndWait();	
 			}
 			
 			mainApp.setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
@@ -135,8 +135,13 @@ public class ImageSelectionController {
 
 					Files.copy(file.toPath(), fileStream);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					mainApp.getLogger().log(Level.SEVERE, "Exception occur opening fragment files.",e);
+		        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		        	alert.setTitle("Error opening or coping fragments.");
+		        	alert.setHeaderText("Can't open or copy fragment file.\n");
+		        	alert.setContentText("Cant open or copy the image to stitch with path:\n"
+		        			+ file.toString());
+		            alert.showAndWait();	
 				}
 
 			}
@@ -230,11 +235,21 @@ public class ImageSelectionController {
 					mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
 				});
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				mainApp.getLogger().log(Level.SEVERE, "Exception occur executing stitcher.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Error stitching");
+	        	alert.setHeaderText("Error executing stitcher.\n");
+	        	alert.setContentText("Error executing stitcher process, make sure that Stitcher.exe is in folder:\n <Perikymata_Folder>/rsc/stitching/bin/Stitching.exe");
+	            alert.showAndWait();	
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				mainApp.getLogger().log(Level.SEVERE, "Exception occur waiting for stitching.",e);
+	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	        	alert.setTitle("Error executing stitcher");
+	        	alert.setHeaderText("An error occurred and stitcher was interrupted.\n");
+	        	alert.setContentText("An error ocurred and stitcher did'n finished correctly.");
+	            alert.showAndWait();
+	            Thread.currentThread().interrupt();
+	            
 			}
 		}).start();
 	}
