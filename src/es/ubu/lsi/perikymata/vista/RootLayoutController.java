@@ -69,37 +69,7 @@ public class RootLayoutController {
      */
     @FXML
     private void handleNew() {
-    	FileChooser fileChooser = new FileChooser();
-
- 	   
-        // Adds a filter that shows all the files..
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "Project Folder", "*");
-        fileChooser.getExtensionFilters().add(extFilter);
-        fileChooser.initialFileNameProperty().set("Project_Name");
-
-        // Shows the save dialog.
-        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
-        
-        if (file != null) {
-        	//destroys old data to create new.
-        	mainApp.clearData();
-            // Saves the project name.
-        	mainApp.setProject(new Project());
-     	   mainApp.getProject().setProjectName(file.getName());
-     	   
-     	   // Makes the folder structure.
-     	   file.mkdir();
-     	   new File(file.toString() + "\\Fragments").mkdir();
-     	   new File(file.toString() + "\\Full_Image").mkdir();
-     	   new File(file.toString() + "\\Perikymata_Outputs").mkdir();
-     	   mainApp.setProjectPath(file.getPath());
-     	   //Creates the XML project file.
-     	   
-     	   mainApp.getPrimaryStage().setTitle("Perikymata - " + file.getName());
-     	   mainApp.makeProjectXml();
-     	   mainApp.showImageSelection();
-	    }
+    	mainApp.createProject();
      }
 
  
@@ -108,23 +78,7 @@ public class RootLayoutController {
      */
     @FXML
     private void handleOpen() {
-        FileChooser fileChooser = new FileChooser();
-        // adds a XML project filter.
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "Perikymata XML file (*.xml)", "*.xml");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        // shows the open project dialog.
-        File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
-
-        if (file != null) {
-        	//destroys old data to create new.
-        	mainApp.clearData();
-        	
-            mainApp.loadProjectFromFile(file);
-            mainApp.setProjectPath(file.getParent());
-            mainApp.showImageSelection();
-        }
+        mainApp.openProject();
     }
 
     /**
@@ -143,31 +97,6 @@ public class RootLayoutController {
     }
 
     /**
-     * Opens a FileChooser to let the user select a file to save to.
-     */
-    @FXML
-    private void handleSaveAs() {
-        FileChooser fileChooser = new FileChooser();
-
-        // Set extension filter
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "XML files (*.xml)", "*.xml");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        // Show save file dialog
-        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
-
-        if (file != null) {
-            // Make sure it has the correct extension
-            if (!file.getPath().endsWith(".xml")) {
-                file = new File(file.getPath() + ".xml");
-            }
-            //TODO
-            //mainApp.saveProjectDataToFile(file);
-        }
-    }
-
-    /**
      * Opens an about dialog.
      */
     @FXML
@@ -175,7 +104,10 @@ public class RootLayoutController {
     	Alert alert = new Alert(Alert.AlertType.INFORMATION);
     	alert.setTitle("Perikymata");
     	alert.setHeaderText("About");
-    	alert.setContentText("Autor: Sergio Chico Carrancio \nUniversidad de Burgos");
+    	alert.setContentText("Autor: Sergio Chico Carrancio\n"
+    			+ "Tutor: Jose Francisco Diez Pastor\n"
+    			+ "Tutor: Raul Marticorena Sanchez  \n"
+    			+ "Universidad de Burgos");
         alert.showAndWait();
     }
     

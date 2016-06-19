@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -34,9 +35,13 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -122,6 +127,7 @@ public class MainApp extends Application  {
 				FileHandler fileHandler  = new FileHandler("errorLog_" + dateFormat.format(date) + ".log");
 				fileHandler.setLevel(Level.ALL);
 				getLogger().addHandler(fileHandler);
+				
 			} catch (IOException e) {
 				getLogger().log(Level.SEVERE, "Exception creating logging file.",e);
 			}
@@ -441,23 +447,110 @@ public class MainApp extends Application  {
 			Properties properties = new Properties();
 			try {
 				properties.load(new FileInputStream("config.properties"));
-				String filePath = properties.getProperty("filePath",null);
-				if(filePath!=null){
+				String filePath = properties.getProperty("filePath", null);
+				if (filePath != null) {
 					return new File(filePath);
 				}
-			} catch (FileNotFoundException e){
-				this.getLogger().log(Level.WARNING, "Properties file doesn't exists.",e);
-			}
-			catch (IOException e){
-	        	this.getLogger().log(Level.SEVERE, "Exception occur opening properties file .",e);
-	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
-	        	alert.setTitle("Error opening properties file.");
-	        	alert.setHeaderText("Error loading opening properties file.\n");
-	        	alert.setContentText("If this problem persists, please delete config.properties"
-	        			+ " on the program folder.\n");
-	            alert.showAndWait();
+			} catch (FileNotFoundException e) {
+				this.getLogger().log(Level.WARNING, "Properties file doesn't exists.", e);
+				Boolean cont = false;
+				while (!cont) {
+					Alert alert = new Alert(AlertType.CONFIRMATION);
+					alert.setTitle("A project needs to be open.");
+					alert.setHeaderText("You need to open o create a new project to continue.");
+					alert.setContentText("Cancel will close the application.");
+	
+					ButtonType buttonTypeNew = new ButtonType("New Project");
+					ButtonType buttonTypeOpen = new ButtonType("Open Project");
+					ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+	
+					alert.getButtonTypes().setAll(buttonTypeNew, buttonTypeOpen, buttonTypeCancel);
+	
+					Optional<ButtonType> result = alert.showAndWait();
+					if (result.get() == buttonTypeNew) {
+						cont = createProject();
+					} else if (result.get() == buttonTypeOpen) {
+						cont = openProject();
+					} else {
+						System.exit(0);
+					}
+				}
+			} catch (IOException e) {
+				this.getLogger().log(Level.SEVERE, "Exception occur opening properties file .", e);
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setTitle("Error opening properties file.");
+				alert.setHeaderText("Error loading opening properties file.\n");
+				alert.setContentText(
+						"If this problem persists, please delete config.properties" + " on the program folder.\n");
+				alert.showAndWait();
 			}
 			return null;
+		}
+		
+		/**
+		 * Creates a new project (folder structure and project xml) by choosing a file-chooser.
+		 * @return
+		 */
+		public Boolean createProject(){
+			FileChooser fileChooser = new FileChooser();
+
+		 	   
+	        // Adds a filter that shows all the files..
+	        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+	                "Project Folder", "*");
+	        fileChooser.getExtensionFilters().add(extFilter);
+	        fileChooser.initialFileNameProperty().set("Project_Name");
+
+	        // Shows the save dialog.
+	        File file = fileChooser.showSaveDialog(getPrimaryStage());
+	        
+	        if (file != null) {
+	        	//destroys old data to create new.
+	        	clearData();
+	            // Saves the project name.
+	        	setProject(new Project());
+	     	    getProject().setProjectName(file.getName());
+	     	   
+	     	   // Makes the folder structure.
+	     	   file.mkdir();
+	     	   new File(file.toString() + "\\Fragments").mkdir();
+	     	   new File(file.toString() + "\\Full_Image").mkdir();
+	     	   new File(file.toString() + "\\Perikymata_Outputs").mkdir();
+	     	   setProjectPath(file.getPath());
+	     	   //Creates the XML project file.
+	     	   
+	     	   getPrimaryStage().setTitle("Perikymata - " + file.getName());
+	     	   makeProjectXml();
+	     	   showImageSelection();
+	     	   return true;
+		    }
+			return false;
+		}
+		
+		 /**
+	     * Opens a FileChooser to let the user select a perikymata project file (xml) to load.
+	     */
+		public Boolean openProject(){
+			FileChooser fileChooser = new FileChooser();
+	        // adds a XML project filter.
+	        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+	                "Perikymata XML file (*.xml)", "*.xml");
+	        fileChooser.getExtensionFilters().add(extFilter);
+
+	        // shows the open project dialog.
+	        File file = fileChooser.showOpenDialog(getPrimaryStage());
+
+	        if (file != null) {
+	        	//destroys old data to create new.
+	        	clearData();
+	        	
+	            loadProjectFromFile(file);
+	            setProjectPath(file.getParent());
+	            showImageSelection();
+	            return true;
+	        }
+			return false;
+			
 		}
 
 		/**
@@ -482,7 +575,7 @@ public class MainApp extends Application  {
 			return logger;
 		}
 
-
+		//TODO
 		public void clearData(){
 			this.appliedFilters.clear();
 			this.filesList.clear();;

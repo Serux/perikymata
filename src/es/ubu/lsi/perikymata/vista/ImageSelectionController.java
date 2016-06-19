@@ -220,6 +220,7 @@ public class ImageSelectionController {
 						.exec("rsc/stitching/bin/Stitching.exe" + " "
 								+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " "
 								+ tempString);
+				//TODO
 				stitcher.waitFor();
 
 				java.awt.Image full = new Opener()
@@ -266,14 +267,6 @@ public class ImageSelectionController {
 		if (mainApp.getFullImage() != null) {
 			previewImage.setImage(mainApp.getFullImage());
 		}
-
-		/*if (mainApp.getProjectPath() == null) {
-			mainApp.createNewProject();
-		}*/
-		// TODO block actions if project has not been created.
-		/*for (File i : Paths.get(mainApp.getProjectPath(), "Fragments").toFile().listFiles()) {
-			mainApp.getFilesList().add(i.getName());
-		}*/
 
 		// Add observable list data to the table
 		filesListView.setItems(mainApp.getFilesList());
