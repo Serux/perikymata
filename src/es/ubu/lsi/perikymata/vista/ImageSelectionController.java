@@ -211,37 +211,40 @@ public class ImageSelectionController {
 						.forEach(x -> tempList.add(Paths.get(mainApp.getProjectPath(), "Fragments", x).toString()));
 				for (String i : tempList)
 					tempString.append(" " + i);
-				//TODO extract exe temporally. exe cant be run inside a jar.
-				/*Process stitcher = Runtime.getRuntime()
-						.exec(this.getClass().getResource("/rsc/stitching/bin/Stitching.exe").getPath() + " "
-								+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " "
-								+ tempString);*/
 				Process stitcher = Runtime.getRuntime()
 						.exec("rsc/stitching/bin/Stitching.exe" + " "
 								+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " "
 								+ tempString);
-				//TODO
-				stitcher.waitFor();
+				int ok;
+				if( (ok=stitcher.waitFor()) == 0){
 
-				java.awt.Image full = new Opener()
-						.openImage(Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png").toString())
-						.getImage();
-				
-				changeStatus("Stitching completed!");
-				loading.setVisible(false);
-				
-				Platform.runLater(() -> {
-					mainApp.setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
-					this.previewImage.setImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
-					mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
-				});
+					java.awt.Image full = new Opener()
+							.openImage(Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png").toString())
+							.getImage();
+					
+					changeStatus("Stitching completed!");
+					loading.setVisible(false);
+					
+					Platform.runLater(() -> {
+						mainApp.setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
+						this.previewImage.setImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
+						mainApp.setFilteredImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
+					});
+				} else {
+					changeStatus("Stitching failed.");
+					loading.setVisible(false);
+					mainApp.getLogger().log(Level.WARNING, "Stitching failed, exit with code: " + ok);
+					
+				}
 			} catch (IOException e) {
 				mainApp.getLogger().log(Level.SEVERE, "Exception occur executing stitcher.",e);
 	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
 	        	alert.setTitle("Error stitching");
 	        	alert.setHeaderText("Error executing stitcher.\n");
 	        	alert.setContentText("Error executing stitcher process, make sure that Stitcher.exe is in folder:\n <Perikymata_Folder>/rsc/stitching/bin/Stitching.exe");
-	            alert.showAndWait();	
+	            alert.showAndWait();
+	            changeStatus("Stitching failed.");
+				loading.setVisible(false);
 			} catch (InterruptedException e) {
 				mainApp.getLogger().log(Level.SEVERE, "Exception occur waiting for stitching.",e);
 	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -249,8 +252,9 @@ public class ImageSelectionController {
 	        	alert.setHeaderText("An error occurred and stitcher was interrupted.\n");
 	        	alert.setContentText("An error ocurred and stitcher did'n finished correctly.");
 	            alert.showAndWait();
+	            changeStatus("Thread interrupted.");
+				loading.setVisible(false);
 	            Thread.currentThread().interrupt();
-	            
 			}
 		}).start();
 	}

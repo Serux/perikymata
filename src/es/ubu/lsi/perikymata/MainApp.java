@@ -599,11 +599,12 @@ public class MainApp extends Application {
 		return logger;
 	}
 
-	// TODO
+	/**
+	 * Clear the data of all the variables to a new state to open or create a project.
+	 */
 	public void clearData() {
 		this.appliedFilters.clear();
 		this.filesList.clear();
-		;
 		this.filteredImage = null;
 		this.fullImage = null;
 		this.project = null;

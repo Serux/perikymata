@@ -15,7 +15,6 @@
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="209.0">
                <children>
                   <ListView fx:id="filesListView" prefHeight="226.0" prefWidth="228.0" AnchorPane.bottomAnchor="74.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="261.0" mnemonicParsing="false" onMouseClicked="#handleOpen" prefHeight="25.0" prefWidth="200.0" text="Load full image" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   <HBox layoutY="226.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" spacing="5.0" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                      <children>
                         <Button alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRemoveImage" text="Delete from list" HBox.hgrow="ALWAYS" />
@@ -29,6 +28,7 @@
                         <ImageView fx:id="loading" fitHeight="25.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </HBox>
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutX="67.0" layoutY="277.0" mnemonicParsing="false" onAction="#launchStitcher" prefHeight="25.0" prefWidth="200.0" text="Generate full image" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="209.0">
@@ -43,9 +43,8 @@
                      </children>
                   </Pane>
                   <Button alignment="CENTER" contentDisplay="CENTER" layoutY="261.0" mnemonicParsing="false" onAction="#nextScreen" prefHeight="25.0" prefWidth="200.0" text="Save project and continue" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="250.0" mnemonicParsing="false" onAction="#launchStitcher" prefHeight="25.0" prefWidth="200.0" text="Generate full image" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="211.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Save Full image as..." AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   <Button mnemonicParsing="false" onAction="#handleRotate" text="Rotate 90º" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutX="-14.0" layoutY="225.0" mnemonicParsing="false" onMouseClicked="#handleOpen" prefHeight="25.0" prefWidth="200.0" text="Load full image" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
          </items>
