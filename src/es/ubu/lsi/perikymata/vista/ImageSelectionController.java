@@ -216,7 +216,8 @@ public class ImageSelectionController {
 								+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " "
 								+ tempString);
 				int ok;
-				if( (ok=stitcher.waitFor()) == 0){
+				//Stitching::OK exit code is 1.
+				if( (ok=stitcher.waitFor()) == 1){
 
 					java.awt.Image full = new Opener()
 							.openImage(Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png").toString())

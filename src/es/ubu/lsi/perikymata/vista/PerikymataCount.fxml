@@ -16,6 +16,7 @@
                   <Button fx:id="zoomMinusButton" mnemonicParsing="false" onAction="#zoomMinus" text="Zoom -" />
                   <Button mnemonicParsing="false" text="Line - Free Draw" />
                   <Button mnemonicParsing="false" text="Line - Points" />
+                  <Button mnemonicParsing="false" onAction="#selectBounds" text="cnahge Start-End" />
               </items>
             </ToolBar>
             <Label layoutX="283.0" layoutY="12.0" text="Perikyma:" AnchorPane.rightAnchor="203.0" />
@@ -25,7 +26,7 @@
       </AnchorPane>
       <ScrollPane layoutX="27.0" layoutY="62.0" prefHeight="322.0" prefWidth="565.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="62.0">
         <content>
-          <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
+          <AnchorPane fx:id="imageAnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                <children>
                   <ImageView fx:id="fullImage" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-6.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="0.0" />
                </children>
