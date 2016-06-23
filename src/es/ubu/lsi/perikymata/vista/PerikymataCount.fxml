@@ -14,17 +14,18 @@
               <items>
                   <Button fx:id="zoomPlusButton" mnemonicParsing="false" onAction="#zoomPlus" text="Zoom +" />
                   <Button fx:id="zoomMinusButton" mnemonicParsing="false" onAction="#zoomMinus" text="Zoom -" />
-                  <Button mnemonicParsing="false" text="Line - Free Draw" />
-                  <Button mnemonicParsing="false" text="Line - Points" />
-                  <Button mnemonicParsing="false" onAction="#selectBounds" text="cnahge Start-End" />
+                  <Button mnemonicParsing="false" onAction="#drawPath" text="Line - Free Draw" />
+                  <Button mnemonicParsing="false" onAction="#selectStart" text="change Start" />
+                  <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#selectEnd" text="change End" />
               </items>
             </ToolBar>
-            <Label layoutX="283.0" layoutY="12.0" text="Perikyma:" AnchorPane.rightAnchor="203.0" />
-            <Label layoutX="373.0" layoutY="12.0" text="0" AnchorPane.rightAnchor="185.0" />
+            <Label layoutX="258.0" layoutY="12.0" text="Total Perikyma:" AnchorPane.rightAnchor="106.0" />
+            <Label fx:id="totalNumber" layoutX="346.0" layoutY="12.0" text="0" AnchorPane.rightAnchor="92.0" />
             <Button layoutX="456.0" layoutY="8.0" mnemonicParsing="false" text="Export Data" AnchorPane.rightAnchor="0.0" />
+            <Button fx:id="countButton" layoutX="133.0" layoutY="8.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Count Perikymata" AnchorPane.rightAnchor="202.0" AnchorPane.topAnchor="8.0" />
          </children>
       </AnchorPane>
-      <ScrollPane layoutX="27.0" layoutY="62.0" prefHeight="322.0" prefWidth="565.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="62.0">
+      <ScrollPane layoutX="27.0" layoutY="62.0" prefHeight="253.0" prefWidth="445.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="62.0">
         <content>
           <AnchorPane fx:id="imageAnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
                <children>
@@ -33,5 +34,11 @@
             </AnchorPane>
         </content>
       </ScrollPane>
+      <HBox layoutX="15.0" layoutY="324.0" prefHeight="17.0" prefWidth="318.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="142.0">
+         <children>
+            <Label prefHeight="17.0" prefWidth="42.0" text="Status:" />
+            <Label fx:id="statusLabel" text="Nothing selected." />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>
