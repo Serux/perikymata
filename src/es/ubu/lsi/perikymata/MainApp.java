@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -123,12 +124,13 @@ public class MainApp extends Application {
 	 */
 	public void configureLogger() {
 		try {
+			getLogger().setLevel(Level.ALL);
 			Date date = new Date();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 			FileHandler fileHandler = new FileHandler("errorLog_" + dateFormat.format(date) + ".log");
 			fileHandler.setLevel(Level.ALL);
+			fileHandler.setFormatter(new SimpleFormatter());
 			getLogger().addHandler(fileHandler);
-
 		} catch (IOException e) {
 			getLogger().log(Level.SEVERE, "Exception creating logging file.", e);
 		}

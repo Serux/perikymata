@@ -1,13 +1,8 @@
 package es.ubu.lsi.perikymata.vista;
 
-import java.io.File;
-
-
 import es.ubu.lsi.perikymata.MainApp;
-import es.ubu.lsi.perikymata.modelo.Project;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.stage.FileChooser;
 
 
 /**

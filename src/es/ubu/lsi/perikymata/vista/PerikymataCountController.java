@@ -1,17 +1,17 @@
 package es.ubu.lsi.perikymata.vista;
 
+import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 
-import com.sun.prism.image.Coords;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import es.ubu.lsi.perikymata.MainApp;
-import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableListBase;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -43,14 +43,6 @@ public class PerikymataCountController {
     
     double[] deciles = new double[9];
     Line[] decilesLines = new Line[9];
-    
-    private void drawLines(){
-    	for(int i =0; i<9; i++){
-    		decilesLines[i].setStartX(deciles[i]/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-    		decilesLines[i].setEndX(deciles[i]/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-    		decilesLines[i].setEndY(fullImage.getFitHeight());
-    	}
-    }
     
     @FXML
     private AnchorPane imageAnchorPane;
@@ -112,32 +104,9 @@ public class PerikymataCountController {
     public void zoomPlus(){
     	fullImage.setFitHeight(fullImage.getFitHeight()*1.25);
     	fullImage.setFitWidth(fullImage.getFitWidth()*1.25);
-    	if(xStart != null && xEnd != null) 	drawLines();
-    	lineStart.setStartX(xStart/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-		lineStart.setEndX(xStart/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-		lineStart.setEndY(fullImage.getFitHeight());
+    	
+    	drawLines();
 		
-		lineEnd.setStartX(xEnd/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-		lineEnd.setEndX(xEnd/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-		lineEnd.setEndY(fullImage.getFitHeight());
-		
-		//((MoveTo) path.getElements().get(0)).setX(value);
-		
-		if(!coords.isEmpty()){
-		path.getElements().clear();
-		path.getElements().add(
-				new MoveTo(
-						((MoveTo)coords.get(0)).getX()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()),
-						((MoveTo)coords.get(0)).getY()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()))
-				);
-		for (int i = 1; i<coords.size(); i++){
-			path.getElements().add(
-					new LineTo(
-							((LineTo)coords.get(i)).getX()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()),
-							((LineTo)coords.get(i)).getY()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()))
-					);
-			
-		}}
     	if(fullImage.getFitHeight()>=50){
     		zoomMinusButton.setDisable(false);
     	}
@@ -150,34 +119,10 @@ public class PerikymataCountController {
     public void zoomMinus(){
     	fullImage.setFitHeight(fullImage.getFitHeight()*0.75);
     	fullImage.setFitWidth(fullImage.getFitWidth()*0.75);
-    	//TODO refactor this
     	
-    	if(xStart != null && xEnd != null) 	drawLines();
-    	lineStart.setStartX(xStart/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-		lineStart.setEndX(xStart/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-		lineStart.setEndY(fullImage.getFitHeight());
+    	 drawLines();
+  
 		
-		lineEnd.setStartX(xEnd/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-		lineEnd.setEndX(xEnd/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
-		lineEnd.setEndY(fullImage.getFitHeight());
-		
-		//TODO and refactor this
-		if(!coords.isEmpty()){
-		path.getElements().clear();
-		path.getElements().add(
-				new MoveTo(
-						((MoveTo)coords.get(0)).getX()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()),
-						((MoveTo)coords.get(0)).getY()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()))
-				);
-		for (int i = 1; i<coords.size(); i++){
-			path.getElements().add(
-					new LineTo(
-							((LineTo)coords.get(i)).getX()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()),
-							((LineTo)coords.get(i)).getY()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()))
-					);
-			
-		}
-		}
     	if(fullImage.getFitHeight()<=50){
     		zoomMinusButton.setDisable(true);
     		
@@ -189,7 +134,7 @@ public class PerikymataCountController {
      */
     @FXML
     private void selectStart(){
-		 
+    	cancelMouseHandlers();
     	 EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
     		 
     	        @Override
@@ -197,11 +142,12 @@ public class PerikymataCountController {
     	          if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
     	        	  xStart = modifyLine(mouseEvent,lineStart);
     	            fullImage.setOnMouseClicked(null);
+    	            statusLabel.setText("Start point selected.");
     	            if(xStart != null && xEnd != null) 	calculateDeciles();
     	          } 
     	        }
     	      };
-    	
+    	statusLabel.setText("Selecting Start point.");
     	fullImage.setPickOnBounds(true);
         fullImage.setOnMouseClicked(mouseHandler);
         
@@ -211,7 +157,7 @@ public class PerikymataCountController {
      */
     @FXML
     private void selectEnd(){
-		 
+    	cancelMouseHandlers();
     	 EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
     	
     	        @Override
@@ -219,19 +165,19 @@ public class PerikymataCountController {
     	          if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
     	        	xEnd = modifyLine(mouseEvent,lineEnd);
     	            fullImage.setOnMouseClicked(null);
+    	            statusLabel.setText("End point selected.");
     	            if(xStart != null && xEnd != null) 	calculateDeciles();
     	          } 
     	        }
     	      };
-    	
+    	statusLabel.setText("Selecting End point.");
     	fullImage.setPickOnBounds(true);
         fullImage.setOnMouseClicked(mouseHandler);
         
     }
 
     private double modifyLine(MouseEvent me, Line line){
-    	 
-    	 ;            
+    	         
          line.setStartX(new Double(me.getX()));
          line.setEndX(new Double(me.getX()));
          line.setStartY(0);
@@ -246,15 +192,14 @@ public class PerikymataCountController {
      */
     @FXML
     private void drawPath(){
-		 
+    	 cancelMouseHandlers();
     	 EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
     	        @Override
     	        public void handle(MouseEvent mouseEvent) {
     	        	if (mouseEvent.getButton().compareTo(MouseButton.SECONDARY)==0){
-    	        	     fullImage.setOnMouseClicked(null);
-    	       	      fullImage.setOnMouseDragged(null);
-    	       	      fullImage.setOnMousePressed(null);
-    	        	}else if (path.getElements().isEmpty() && mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED) {
+    	        		statusLabel.setText("Finished drawing line.");
+    	        	    cancelMouseHandlers();
+    	        	}else if (path.getElements().isEmpty() && (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED || mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED)) {
     	            path.getElements()
     	                .add(new MoveTo(mouseEvent.getX(), mouseEvent.getY()));
     	            	coords.add(
@@ -263,7 +208,7 @@ public class PerikymataCountController {
     	            					mouseEvent.getY() * (fullImage.getImage().getWidth()/fullImage.getFitWidth())
     	            					)
     	            			);
-    	          } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+    	          } else if (mouseEvent.getEventType() == MouseEvent.MOUSE_DRAGGED || mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
     	            path.getElements()
     	                .add(new LineTo(mouseEvent.getX(), mouseEvent.getY()));
     	           	coords.add(
@@ -275,7 +220,7 @@ public class PerikymataCountController {
     	        
     	      };
     	        }};
-    	    
+    	      statusLabel.setText("Drawing line, draw or click between two points. Right click to end.");
     	      fullImage.setPickOnBounds(true);
     	      fullImage.setOnMouseClicked(mouseHandler);
     	      fullImage.setOnMouseDragged(mouseHandler);
@@ -284,7 +229,46 @@ public class PerikymataCountController {
         
     }
     
-    private void calculateDeciles(){
+    private void drawLines(){
+		
+		if(xStart != null){
+			lineStart.setStartX(xStart/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
+			lineStart.setEndX(xStart/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
+			lineStart.setEndY(fullImage.getFitHeight());
+		}
+		if(xEnd != null){
+			lineEnd.setStartX(xEnd/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
+			lineEnd.setEndX(xEnd/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
+			lineEnd.setEndY(fullImage.getFitHeight());
+		}
+		
+		if(xStart != null && xEnd != null){
+		for(int i =0; i<9; i++){
+			decilesLines[i].setStartX(deciles[i]/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
+			decilesLines[i].setEndX(deciles[i]/(fullImage.getImage().getWidth()/fullImage.getFitWidth()));
+			decilesLines[i].setEndY(fullImage.getFitHeight());
+		}
+		}
+		
+		if(!coords.isEmpty()){
+			path.getElements().clear();
+			path.getElements().add(
+					new MoveTo(
+							((MoveTo)coords.get(0)).getX()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()),
+							((MoveTo)coords.get(0)).getY()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()))
+					);
+			for (int i = 1; i<coords.size(); i++){
+				path.getElements().add(
+						new LineTo(
+								((LineTo)coords.get(i)).getX()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()),
+								((LineTo)coords.get(i)).getY()/(fullImage.getImage().getWidth()/fullImage.getFitWidth()))
+						);
+				
+			}
+			}
+	}
+
+	private void calculateDeciles(){
     	double min = xStart,max = xEnd;
     	if (Double.compare(xStart, xEnd) > 0) {min = xEnd ; max=xStart;}
     	double sizeDecil = (max-min)/10;
@@ -296,10 +280,11 @@ public class PerikymataCountController {
     	drawLines();
     }
     
-    public void Bresenham(int x0, int y0, int x1, int y1) { 
+    public List<int[]> Bresenham(int x0, int y0, int x1, int y1) { 
     	  int x, y, dx, dy, p, incE, incNE, stepx, stepy;
     	  dx = (x1 - x0);
     	  dy = (y1 - y0);
+    	  List<int[]> llist = new LinkedList<>();
 
     	 /* determinar que punto usar para empezar, cual para terminar */
     	  if (dy < 0) { 
@@ -334,8 +319,7 @@ public class PerikymataCountController {
     	        y = y + stepy;
     	        p = p + incNE;
     	      }
-    	      //TODO remove
-    	      System.out.println("x="+x+";y="+y);
+    	      llist.add(new int[]{x,y});
     	    }
     	  }
     	  else{
@@ -351,11 +335,64 @@ public class PerikymataCountController {
     	        x = x + stepx;
     	        p = p + incNE;
     	      }
-    	      //TODO remove
-    	      System.out.println("x="+x+";y="+y);
+    	      llist.add(new int[]{x,y});
     	    }
     	  }
+    	  return llist;
     	 }
+    
+    private List<int[]> getProfilePixels(){
+    	LinkedList<int[]> profile = new LinkedList<>();
+    	int x0 = (int)((MoveTo)(coords.get(0))).getX();
+    	int y0 = (int)((MoveTo)(coords.get(0))).getY();
+    	profile.add(new int[]{x0,y0});
+    	int x1;
+    	int y1;
+    	for(int i =1; i<coords.size(); i++){
+    		x1 = (int)((LineTo)(coords.get(i))).getX();
+    		y1 = (int)((LineTo)(coords.get(i))).getY();
+    		profile.addAll(this.Bresenham(x0, y0, x1, y1));
+    		x0 = x1;
+    		y0 = y1;
+    	}
+    	return profile;
+    }
+    
+    @FXML
+    private void calculatePerikymata(){
+    	for(int el : getIntensity())
+    		System.out.println(el);
+    }
+    
+    @FXML 
+    private void clearLine(){
+    	cancelMouseHandlers();
+    	statusLabel.setText("Line cleared.");
+    	this.coords.clear();
+    	path.getElements().clear();
+    }
+    
+    private List<Integer> getIntensity(){
+    	BufferedImage img = SwingFXUtils.fromFXImage(mainApp.getFullImage(), null);
+    	LinkedList<Integer> l = new LinkedList<>();
+    	
+    	//We assume that the image will be in grayScale (8bit) or rgb (24 bits) but
+    	//all the three channels having the same value. r = g = b. 
+    	//gray = r+g+b/3, so if they are the same gray= 3b/b=b, and blue being the 
+    	//8 rightmost bits, we can take these same 8 bits for
+    	//both RGB and GrayScale images.
+    	for(int[] el : getProfilePixels()){
+    		l.add(img.getRGB(el[0], el[1]) & 0xFF);
+    		mainApp.getLogger().log(Level.FINEST, "Coord: x="+el[0]+" , y="+el[1] + "; Intensity = " + (img.getRGB(el[0], el[1]) & 0xFF));
+    	}
+    	return l;
+    }
+    
+    private void cancelMouseHandlers(){
+    	fullImage.setOnMouseClicked(null);
+ 	      fullImage.setOnMouseDragged(null);
+ 	      fullImage.setOnMousePressed(null);
+    }
 }
 
    

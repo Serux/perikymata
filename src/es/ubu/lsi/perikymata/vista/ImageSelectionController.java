@@ -239,20 +239,22 @@ public class ImageSelectionController {
 				}
 			} catch (IOException e) {
 				mainApp.getLogger().log(Level.SEVERE, "Exception occur executing stitcher.",e);
-	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				//TODO alerts are not showing in thread.
+	        	/*Alert alert = new Alert(Alert.AlertType.INFORMATION);
 	        	alert.setTitle("Error stitching");
 	        	alert.setHeaderText("Error executing stitcher.\n");
 	        	alert.setContentText("Error executing stitcher process, make sure that Stitcher.exe is in folder:\n <Perikymata_Folder>/rsc/stitching/bin/Stitching.exe");
-	            alert.showAndWait();
+	            alert.showAndWait();*/
 	            changeStatus("Stitching failed.");
 				loading.setVisible(false);
 			} catch (InterruptedException e) {
 				mainApp.getLogger().log(Level.SEVERE, "Exception occur waiting for stitching.",e);
-	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				//TODO alerts are not showing in thread.
+	        	/*Alert alert = new Alert(Alert.AlertType.INFORMATION);
 	        	alert.setTitle("Error executing stitcher");
 	        	alert.setHeaderText("An error occurred and stitcher was interrupted.\n");
 	        	alert.setContentText("An error ocurred and stitcher did'n finished correctly.");
-	            alert.showAndWait();
+	            alert.showAndWait();*/
 	            changeStatus("Thread interrupted.");
 				loading.setVisible(false);
 	            Thread.currentThread().interrupt();
