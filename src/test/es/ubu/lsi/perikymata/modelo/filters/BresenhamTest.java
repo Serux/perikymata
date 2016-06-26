@@ -2,6 +2,8 @@ package test.es.ubu.lsi.perikymata.modelo.filters;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 
+import es.ubu.lsi.perikymata.modelo.filters.Prewitt;
 import es.ubu.lsi.perikymata.vista.PerikymataCountController;
 
 public class BresenhamTest {
@@ -16,9 +19,11 @@ public class BresenhamTest {
 	@Rule 
 	public JavaFXThreadingRule javafxRule = new JavaFXThreadingRule();
 	@Test
-	public void test() {
+	public void test() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		//TODO test more this.
-		List<int[]> lista = new PerikymataCountController().Bresenham(0, 0, 3, 3);
+		Method method = PerikymataCountController.class.getDeclaredMethod("Bresenham", int.class, int.class, int.class, int.class);
+		method.setAccessible(true);
+		List<int[]> lista = (List<int[]>) method.invoke(new PerikymataCountController(), 0, 0, 3, 3);
 		List<int[]> resultado = new ArrayList<>();
 		resultado.add(new int[]{1,1});
 		resultado.add(new int[]{2,2});
