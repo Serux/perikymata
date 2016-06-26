@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import com.sun.media.jfxmedia.logging.Logger;
 
 import es.ubu.lsi.perikymata.MainApp;
+import es.ubu.lsi.perikymata.util.OrthogonalUtil;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -374,17 +375,7 @@ public class PerikymataCountController {
     
     private List<Integer> getIntensity(){
     	BufferedImage img = SwingFXUtils.fromFXImage(mainApp.getFullImage(), null);
-    	LinkedList<Integer> l = new LinkedList<>();
-    	
-    	//We assume that the image will be in grayScale (8bit) or rgb (24 bits) but
-    	//all the three channels having the same value. r = g = b. 
-    	//gray = r+g+b/3, so if they are the same gray= 3b/b=b, and blue being the 
-    	//8 rightmost bits, we can take these same 8 bits for
-    	//both RGB and GrayScale images.
-    	for(int[] el : getProfilePixels()){
-    		l.add(img.getRGB(el[0], el[1]) & 0xFF);
-    		mainApp.getLogger().log(Level.FINEST, "Coord: x="+el[0]+" , y="+el[1] + "; Intensity = " + (img.getRGB(el[0], el[1]) & 0xFF));
-    	}
+    	List<Integer> l = OrthogonalUtil.getOrthogonalProfile(img, getProfilePixels(), 2);
     	return l;
     }
     
@@ -393,6 +384,8 @@ public class PerikymataCountController {
  	      fullImage.setOnMouseDragged(null);
  	      fullImage.setOnMousePressed(null);
     }
+    
+    
 }
 
    
