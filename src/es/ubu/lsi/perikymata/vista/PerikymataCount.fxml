@@ -18,12 +18,37 @@
                   <Button mnemonicParsing="false" onAction="#clearLine" text="Line - Clear Line" />
                   <Button mnemonicParsing="false" onAction="#selectStart" text="Deciles - Change Start" />
                   <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#selectEnd" text="Deciles - Change End" />
+                  <Button mnemonicParsing="false" onAction="#measureStartHandler" text="Measure - Change Start" />
+                  <Button mnemonicParsing="false" onAction="#measureEndHandler" text="Measure - Change End" />
+                  <Button mnemonicParsing="false" onAction="#measure" text="Measure - Edit unit and value" />
               </items>
             </ToolBar>
-            <Label layoutX="258.0" layoutY="12.0" text="Total Perikyma:" AnchorPane.rightAnchor="106.0" />
-            <Label fx:id="totalNumber" layoutX="346.0" layoutY="12.0" text="0" AnchorPane.rightAnchor="92.0" />
-            <Button layoutX="456.0" layoutY="8.0" mnemonicParsing="false" text="Export Data" AnchorPane.rightAnchor="0.0" />
-            <Button layoutX="133.0" layoutY="8.0" mnemonicParsing="false" onAction="#calculatePerikymata" prefHeight="25.0" prefWidth="110.0" text="Count Perikymata" AnchorPane.rightAnchor="202.0" AnchorPane.topAnchor="8.0" />
+            <Button layoutX="456.0" layoutY="8.0" mnemonicParsing="false" text="Export Data" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0" />
+            <Button layoutX="161.0" layoutY="8.0" mnemonicParsing="false" onAction="#calculatePerikymata" prefHeight="25.0" prefWidth="137.0" text="Auto-mark perikymata" AnchorPane.rightAnchor="165.0" AnchorPane.topAnchor="8.0" />
+            <Button layoutX="324.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleErasePerikymata" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="8.0">
+               <tooltip>
+                  <Tooltip text="Erase Marked Perikymata." />
+               </tooltip>
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../../../../Desktop/perik%20imagenes/Eraser-icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="280.0" layoutY="9.0" mnemonicParsing="false" onAction="#handleDrawPerikymata" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="8.0">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../../../../Desktop/perik%20imagenes/Pen-icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Mark new perikymata." />
+               </tooltip>
+            </Button>
          </children>
       </AnchorPane>
       <ScrollPane layoutX="27.0" layoutY="62.0" prefHeight="253.0" prefWidth="445.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="62.0">

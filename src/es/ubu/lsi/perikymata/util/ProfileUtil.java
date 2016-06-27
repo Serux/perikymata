@@ -7,7 +7,6 @@ import java.util.List;
 
 import es.ubu.lsi.perikymata.MainApp;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.fxml.FXML;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;

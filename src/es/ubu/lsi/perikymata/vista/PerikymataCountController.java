@@ -3,19 +3,35 @@ package es.ubu.lsi.perikymata.vista;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import javax.xml.stream.events.StartDocument;
 
 import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -23,6 +39,8 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
+import javafx.scene.shape.Shape;
+import javafx.util.Pair;
 
 /**
  * Controller for the layout that is used to count perikyma.
@@ -74,7 +92,7 @@ public class PerikymataCountController {
 	/**
 	 * Coordinates of the detected perikymata.
 	 */
-	private List<int[]> peaksCoords;
+	private List<int[]> peaksCoords = new ArrayList<>();
 	
 	/**
 	 * Circles drawn to show where perikymata are found.
@@ -86,7 +104,10 @@ public class PerikymataCountController {
 	@FXML
 	private AnchorPane imageAnchorPane;
 	
-
+	private double[] startMeasure;
+	private double[] endMeasure;
+	private Line measureLine;
+	
 
 	/**
 	 * Imageview of the image used to calculate the perikymata.
@@ -105,6 +126,11 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void initialize() {
+		
+		measureLine = new Line();
+		measureLine.setStrokeWidth(2);
+		measureLine.setStroke(Color.RED);
+		((AnchorPane) fullImage.getParent()).getChildren().add(measureLine);
 		
 		lineDecileStart = new Line();
 		lineDecileStart.setStroke(Color.CORNFLOWERBLUE);
@@ -157,7 +183,7 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void selectStart() {
-		cancelMouseHandlers();
+		clearImageViewHandlers();
 		
 		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 			@Override
@@ -183,7 +209,7 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void selectEnd() {
-		cancelMouseHandlers();
+		clearImageViewHandlers();
 		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 
 			@Override
@@ -216,8 +242,8 @@ public class PerikymataCountController {
 		line.setEndX(new Double(me.getX()));
 		line.setStartY(0);
 		line.setEndY(new Double(fullImage.getFitHeight()));
-		//TODO refactor redimension
-		return Double.valueOf(me.getX() * (fullImage.getImage().getWidth() / fullImage.getFitWidth()));
+		double ratio = (fullImage.getImage().getWidth() / fullImage.getFitWidth());
+		return Double.valueOf(me.getX() * ratio);
 	}
 
 	/**
@@ -226,7 +252,7 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void clearLine() {
-		cancelMouseHandlers();
+		clearImageViewHandlers();
 		statusLabel.setText("Line cleared.");
 		this.freeDrawPathList.clear();
 		freeDrawPath.getElements().clear();
@@ -238,14 +264,14 @@ public class PerikymataCountController {
 	@FXML
 	private void drawPath() {
 		
-		cancelMouseHandlers();
+		clearImageViewHandlers();
 		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				double ratio = (fullImage.getImage().getWidth() / fullImage.getFitWidth());
 				if (mouseEvent.getButton().compareTo(MouseButton.SECONDARY) == 0) {
 					statusLabel.setText("Finished drawing line.");
-					cancelMouseHandlers();
+					clearImageViewHandlers();
 				} else if (freeDrawPath.getElements().isEmpty() 
 						&& (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED
 						|| mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED)) {
@@ -293,6 +319,14 @@ public class PerikymataCountController {
 		//Draws the perikymata circles.
 		if (!circles.isEmpty()){
 			drawPeaks();
+		}
+		
+		if(startMeasure!= null && endMeasure != null){
+			measureLine.setStartX(startMeasure[0]/ratio);
+			measureLine.setStartY(startMeasure[1]/ratio);
+			measureLine.setEndX(endMeasure[0]/ratio);
+			measureLine.setEndY(endMeasure[1]/ratio);
+			
 		}
 
 		//Draws the deciles.
@@ -361,7 +395,6 @@ public class PerikymataCountController {
 			//TODO maybe all this can be done in the util.
 			List<int[]> profile = ProfileUtil.getProfilePixels(this.freeDrawPathList);
 			List<Integer> peaksIndexes = ProfileUtil.findLocalPeaks(ProfileUtil.getIntensityProfile(profile,mainApp));
-			peaksCoords = new ArrayList<>();
 			for (Integer i : peaksIndexes) {
 				peaksCoords.add(profile.get(i));
 	
@@ -375,7 +408,7 @@ public class PerikymataCountController {
 	/**
 	 * Clears the handlers of the imageview.
 	 */
-	private void cancelMouseHandlers() {
+	private void clearImageViewHandlers() {
 		fullImage.setOnMouseClicked(null);
 		fullImage.setOnMouseDragged(null);
 		fullImage.setOnMousePressed(null);
@@ -397,5 +430,155 @@ public class PerikymataCountController {
 			fullImage.setPreserveRatio(true);
 		}
 	}
+	
+	@FXML
+	private void measureStartHandler(){
+		clearImageViewHandlers();
+		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
+					if(startMeasure == null){
+						startMeasure = new double[2];
+					}
+					startMeasure[0] = mouseEvent.getX() * getImageToImageViewRatio();
+					startMeasure[1] = mouseEvent.getY() * getImageToImageViewRatio();
+					fullImage.setOnMouseClicked(null);
+					statusLabel.setText("Start measure point selected.");
+					if (startMeasure != null && endMeasure != null){
+						measure();
+					}
+				}
+			}
+		};
+		statusLabel.setText("Selecting start point for the measure.");
+		fullImage.setPickOnBounds(true);
+		fullImage.setOnMouseClicked(mouseHandler);
+	}
+	
+	@FXML
+	private void measureEndHandler(){
+		clearImageViewHandlers();
+		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
+					if(endMeasure == null){
+						endMeasure = new double[2];
+					}
+					endMeasure[0] = mouseEvent.getX() * getImageToImageViewRatio();
+					endMeasure[1] = mouseEvent.getY() * getImageToImageViewRatio();
+					fullImage.setOnMouseClicked(null);
+					statusLabel.setText("End measure point selected.");
+					if (startMeasure != null && endMeasure != null){
+						measure();
+					}
+				}
+			}
+		};
+		statusLabel.setText("Selecting End point for the measure.");
+		fullImage.setPickOnBounds(true);
+		fullImage.setOnMouseClicked(mouseHandler);
+	}
+	
+	@FXML
+	private void measure(){
+		// Create the custom dialog.
+		Dialog<Pair<String, String>> dialog = new Dialog<>();
+		dialog.setTitle("Input the image measure unit and measure value.");
+		dialog.setHeaderText("Input the image measure unit and measure value.");
+
+		// Set the button types.
+		ButtonType doneButtonType = new ButtonType("Done", ButtonData.OK_DONE);
+		dialog.getDialogPane().getButtonTypes().addAll(doneButtonType, ButtonType.CANCEL);
+
+		// Create the username and password labels and fields.
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 150, 10, 10));
+
+		TextField measureUnit = new TextField();
+		measureUnit.setPromptText("Measure unit");
+		TextField measureValue = new TextField();
+		measureValue.setPromptText("Measure value");
+		measureValue.setTextFormatter(new TextFormatter<String>(
+				change->{
+					if (change.getText().matches("[0-9]*")) {
+						return change;
+					}
+					return null;
+		}));
+		
+			
+
+		grid.add(new Label("Measure unit:"), 0, 0);
+		grid.add(measureUnit, 1, 0);
+		grid.add(new Label("Measure value:"), 0, 1);
+		grid.add(measureValue, 1, 1);
+
+		// Enable/Disable login button depending on whether a username was entered.
+		Node acceptButton = dialog.getDialogPane().lookupButton(doneButtonType);
+		acceptButton.setDisable(true);
+
+		// Do some validation (using the Java 8 lambda syntax).
+		measureValue.textProperty().addListener((observable, oldValue, newValue) -> {
+		    acceptButton.setDisable(newValue.trim().isEmpty());
+		});
+
+		dialog.getDialogPane().setContent(grid);
+
+		// Request focus on the username field by default.
+		Platform.runLater(() -> measureUnit.requestFocus());
+
+		// Convert the result to a username-password-pair when the login button is clicked.
+		dialog.setResultConverter(dialogButton -> {
+		    if (dialogButton == doneButtonType) {
+		        return new Pair<>(measureUnit.getText(), measureValue.getText());
+		    }
+		    return null;
+		});
+
+		Optional<Pair<String, String>> result = dialog.showAndWait();
+
+		result.ifPresent(measureValues -> {
+		    System.out.println("Unit=" + measureValues.getKey() + ", Value=" + measureValues.getValue());
+		});
+	}
+	
+	private double getImageToImageViewRatio(){
+		return fullImage.getImage().getWidth() / fullImage.getFitWidth();
+	}
+	
+	@FXML
+	private void handleDrawPerikymata(){
+		clearImageViewHandlers();
+		EventHandler<Event> h = evt->{
+			if(((MouseEvent)evt).getButton().compareTo(MouseButton.SECONDARY)==0){
+				clearImageViewHandlers();
+			} else {
+			peaksCoords.add(new int[]{(int) (((MouseEvent)evt).getX()*this.getImageToImageViewRatio()),(int) (((MouseEvent)evt).getY()*this.getImageToImageViewRatio())});
+			drawPeaks();
+			}
+		};
+		fullImage.setOnMousePressed(h);
+	}
+	
+	@FXML 
+	private void handleErasePerikymata(){
+		clearImageViewHandlers();
+		EventHandler<Event> h = evt->{
+			Circle c = (Circle)evt.getSource();
+			peaksCoords.remove(circles.indexOf(c));
+			drawPeaks();
+			handleErasePerikymata();
+		};
+		
+		for(Circle c : circles){
+			c.addEventHandler(MouseEvent.MOUSE_CLICKED, h);
+		}
+		
+	}
+	
 
 }

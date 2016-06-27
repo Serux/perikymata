@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import es.ubu.lsi.perikymata.modelo.filters.Prewitt;
+import es.ubu.lsi.perikymata.util.ProfileUtil;
 import es.ubu.lsi.perikymata.vista.PerikymataCountController;
 
 public class BresenhamTest {
@@ -21,7 +22,7 @@ public class BresenhamTest {
 	@Test
 	public void test() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		//TODO test more this.
-		Method method = PerikymataCountController.class.getDeclaredMethod("Bresenham", int.class, int.class, int.class, int.class);
+		Method method = ProfileUtil.class.getDeclaredMethod("Bresenham", int.class, int.class, int.class, int.class);
 		method.setAccessible(true);
 		List<int[]> lista = (List<int[]>) method.invoke(new PerikymataCountController(), 0, 0, 3, 3);
 		List<int[]> resultado = new ArrayList<>();
