@@ -1,32 +1,25 @@
 package es.ubu.lsi.perikymata.vista;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.xml.stream.events.StartDocument;
-
 import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -39,7 +32,6 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
-import javafx.scene.shape.Shape;
 import javafx.util.Pair;
 
 /**
@@ -108,7 +100,11 @@ public class PerikymataCountController {
 	private double[] endMeasure;
 	private Line measureLine;
 	
-
+	@FXML
+	private ImageView drawPerikymataButtonImage;
+	@FXML
+	private ImageView erasePerikymataButtonImage;
+	
 	/**
 	 * Imageview of the image used to calculate the perikymata.
 	 */
@@ -151,6 +147,9 @@ public class PerikymataCountController {
 		freeDrawPath.setStroke(Color.RED);
 
 		((AnchorPane) fullImage.getParent()).getChildren().add(freeDrawPath);
+		
+		erasePerikymataButtonImage.setImage(new Image(this.getClass().getResource("/rsc/Eraser-icon.png").toExternalForm()));
+		drawPerikymataButtonImage.setImage(new Image(this.getClass().getResource("/rsc/Pen-icon.png").toExternalForm()));
 	}
 
 	/**
@@ -446,6 +445,13 @@ public class PerikymataCountController {
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("Start measure point selected.");
 					if (startMeasure != null && endMeasure != null){
+						
+							measureLine.setStartX(startMeasure[0]/getImageToImageViewRatio());
+							measureLine.setStartY(startMeasure[1]/getImageToImageViewRatio());
+							measureLine.setEndX(endMeasure[0]/getImageToImageViewRatio());
+							measureLine.setEndY(endMeasure[1]/getImageToImageViewRatio());
+							
+						
 						measure();
 					}
 				}
@@ -471,6 +477,10 @@ public class PerikymataCountController {
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("End measure point selected.");
 					if (startMeasure != null && endMeasure != null){
+						measureLine.setStartX(startMeasure[0]/getImageToImageViewRatio());
+						measureLine.setStartY(startMeasure[1]/getImageToImageViewRatio());
+						measureLine.setEndX(endMeasure[0]/getImageToImageViewRatio());
+						measureLine.setEndY(endMeasure[1]/getImageToImageViewRatio());
 						measure();
 					}
 				}
