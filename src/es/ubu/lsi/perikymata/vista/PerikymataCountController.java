@@ -1,6 +1,7 @@
 package es.ubu.lsi.perikymata.vista;
 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,12 @@ import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.modelo.filters.CLAHE_;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
 import ij.ImagePlus;
+import ij.process.ByteProcessor;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -87,7 +90,7 @@ public class PerikymataCountController {
 	 * are calculated over the original image, and are used to calculate the line
 	 * when it is zoomed. The first element is always a MoveTo and the rest are LineTo.
 	 */
-	// TODO maybe not observable needed
+	// TODO maybe observable is not needed
 	private List<PathElement> freeDrawPathList = FXCollections.observableArrayList();
 	
 	/**
@@ -159,38 +162,42 @@ public class PerikymataCountController {
 	@FXML
 	private void initialize() {
 		
+		//Original image to be shown when marking the measures.
 		fullOriginalImage.setVisible(false);
 		fullOriginalImage.fitHeightProperty().bind(fullImage.fitHeightProperty());
 		fullOriginalImage.fitWidthProperty().bind(fullImage.fitWidthProperty());
 		fullOriginalImage.eventDispatcherProperty().bind(fullImage.eventDispatcherProperty());
 		
+		//Show the value of the slider in the label.
 		perikymataThresholdLabel.textProperty().bind(((StringFormatter)Bindings.format("%.0f",thresholdSlider.valueProperty()).concat("%")));
 		
+		//Sets the parameters of the measure line.
 		measureLine = new Line();
 		measureLine.setStrokeWidth(2);
 		measureLine.setStroke(Color.RED);
 		((AnchorPane) fullImage.getParent()).getChildren().add(measureLine);
 		
+		//Sets the parameters of the decile lines.
 		lineDecileStart = new Line();
 		lineDecileStart.setStroke(Color.CORNFLOWERBLUE);
 		((AnchorPane) fullImage.getParent()).getChildren().add(lineDecileStart);
-
 		lineDecileEnd = new Line();
 		lineDecileEnd.setStroke(Color.CORNFLOWERBLUE);
 		((AnchorPane) fullImage.getParent()).getChildren().add(lineDecileEnd);
-
+		
 		for (int i = 0; i < decilesLinesBetween.length; i++) {
 			decilesLinesBetween[i] = new Line();
 			decilesLinesBetween[i].setStroke(Color.CORNFLOWERBLUE);
 			((AnchorPane) fullImage.getParent()).getChildren().add(decilesLinesBetween[i]);
 		}
 		
+		//Sets the properties for the free line used to mark perikymata.
 		freeDrawPath = new Path();
 		freeDrawPath.setStrokeWidth(2);
 		freeDrawPath.setStroke(Color.RED);
-
 		((AnchorPane) fullImage.getParent()).getChildren().add(freeDrawPath);
 		
+		//Sets the images of the buttons
 		erasePerikymataButtonImage.setImage(new Image(this.getClass().getResource("/rsc/Eraser-icon.png").toExternalForm()));
 		drawPerikymataButtonImage.setImage(new Image(this.getClass().getResource("/rsc/Pen-icon.png").toExternalForm()));
 	}
@@ -215,7 +222,6 @@ public class PerikymataCountController {
 	private  void zoomMinus() {
 		fullImage.setFitHeight(fullImage.getFitHeight() * 0.75);
 		fullImage.setFitWidth(fullImage.getFitWidth() * 0.75);
-
 		reDrawElements();
 
 	}
@@ -437,6 +443,11 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void calculatePerikymata() {
+		
+		//TODO visual debug only, please remove this line.
+		this.executeClahe(50, 50, 150, 150);
+		
+		
 		if (!freeDrawPathList.isEmpty()) {
 			//TODO maybe all this can be done in the util.
 			List<int[]> profile = ProfileUtil.getProfilePixels(this.freeDrawPathList);
@@ -478,6 +489,10 @@ public class PerikymataCountController {
 		}
 	}
 	
+	/**
+	 * Handler that puts an event on the image to mark the start of the measure, 
+	 * if start and end measures are set, line is drawn and measure dialog is called.
+	 */
 	@FXML
 	private void measureStartHandler(){
 		clearImageViewHandlers();
@@ -495,13 +510,6 @@ public class PerikymataCountController {
 					statusLabel.setText("Start measure point selected.");
 					fullOriginalImage.setVisible(false);
 					if (startMeasure != null && endMeasure != null){
-						
-							measureLine.setStartX(startMeasure[0]/getImageToImageViewRatio());
-							measureLine.setStartY(startMeasure[1]/getImageToImageViewRatio());
-							measureLine.setEndX(endMeasure[0]/getImageToImageViewRatio());
-							measureLine.setEndY(endMeasure[1]/getImageToImageViewRatio());
-							
-						
 						measure();
 					}
 				}
@@ -512,6 +520,10 @@ public class PerikymataCountController {
 		fullImage.setOnMouseClicked(mouseHandler);
 	}
 	
+	/**
+	 * Handler that puts an event on the image to mark the end of the measure, 
+	 * if start and end measures are set, line is drawn and measure dialog is called.
+	 */
 	@FXML
 	private void measureEndHandler(){
 		clearImageViewHandlers();
@@ -529,10 +541,6 @@ public class PerikymataCountController {
 					statusLabel.setText("End measure point selected.");
 					fullOriginalImage.setVisible(false);
 					if (startMeasure != null && endMeasure != null){
-						measureLine.setStartX(startMeasure[0]/getImageToImageViewRatio());
-						measureLine.setStartY(startMeasure[1]/getImageToImageViewRatio());
-						measureLine.setEndX(endMeasure[0]/getImageToImageViewRatio());
-						measureLine.setEndY(endMeasure[1]/getImageToImageViewRatio());
 						measure();
 					}
 				}
@@ -543,8 +551,18 @@ public class PerikymataCountController {
 		fullImage.setOnMouseClicked(mouseHandler);
 	}
 	
+	/**
+	 * Draws the line between startMeasure and EndMeasure and shows a dialog 
+	 * asking for the units and value of the measure.
+	 */
 	@FXML
 	private void measure(){
+		
+		measureLine.setStartX(startMeasure[0]/getImageToImageViewRatio());
+		measureLine.setStartY(startMeasure[1]/getImageToImageViewRatio());
+		measureLine.setEndX(endMeasure[0]/getImageToImageViewRatio());
+		measureLine.setEndY(endMeasure[1]/getImageToImageViewRatio());
+		
 		// Create the custom dialog.
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
 		dialog.setTitle("Input the image measure unit and measure value.");
@@ -608,10 +626,18 @@ public class PerikymataCountController {
 		});
 	}
 	
+	/**
+	 * 
+	 * @return the proportion between the original image and the imageview.
+	 */
 	private double getImageToImageViewRatio(){
 		return fullImage.getImage().getWidth() / fullImage.getFitWidth();
 	}
 	
+	/**
+	 * Handler of a button that, on pressed, marks that there is a perikymata where the
+	 * mouse is clicked.
+	 */
 	@FXML
 	private void handleDrawPerikymata(){
 		clearImageViewHandlers();
@@ -626,6 +652,9 @@ public class PerikymataCountController {
 		fullImage.setOnMousePressed(h);
 	}
 	
+	/**
+	 * Handler that, on pressed, deletes marked perikymata on mouse click. 
+	 */
 	@FXML 
 	private void handleErasePerikymata(){
 		clearImageViewHandlers();
@@ -642,10 +671,16 @@ public class PerikymataCountController {
 		
 	}
 	
-	private void executeClahe (){
-		CLAHE_ c = new CLAHE_();
+	private void executeClahe(int x, int y, int height, int width){
+		ImagePlus ip = new ImagePlus();
+		BufferedImage im = SwingFXUtils.fromFXImage(fullImage.getImage(),null);
+		ip.setImage(im);
 		//Maybe mask can be used to apply convolve only to desired pixels.
-		//c.run(new ImagePlus().setImage(arg0), 63, 255, 3, new Rectangle(x, y, width, height), mask);
+		BufferedImage res = CLAHE_.run(ip, 63, 255, 3, new Rectangle(x, y, width, height), null);
+		fullImage.setImage(SwingFXUtils.toFXImage(res, null));
+		//TODO get ROI and apply CLAHE.
+		//TODO get orthogonal profile of ROY
+		//TODO substract clahe and prewitt matrixes element by element.
 	}
 	
 
