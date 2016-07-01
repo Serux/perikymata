@@ -1,15 +1,20 @@
 package es.ubu.lsi.perikymata.vista;
 
 import java.awt.Rectangle;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.sun.javafx.binding.StringFormatter;
 
 import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.modelo.filters.CLAHE_;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
 import ij.ImagePlus;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -20,6 +25,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
@@ -99,10 +105,19 @@ public class PerikymataCountController {
 	@FXML
 	private AnchorPane imageAnchorPane;
 	
+	/**
+	 * Coordinates of the measures.
+	 */
 	private double[] startMeasure;
 	private double[] endMeasure;
+	/**
+	 * Drawn line from startMeasure to endMeasure.
+	 */
 	private Line measureLine;
 	
+	/**
+	 * Buttons used to draw and erase perikymata.
+	 */
 	@FXML
 	private ImageView drawPerikymataButtonImage;
 	@FXML
@@ -125,7 +140,19 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private Label statusLabel;
+	
+	/**
+	 * Label synchronized to the slider to show its value.
+	 */
+	@FXML
+	private Label perikymataThresholdLabel;
 
+	/**
+	 * Slider user to select the minimum threshold needed to mark a perikymata.  
+	 */
+	@FXML
+	private Slider thresholdSlider;
+	
 	/**
 	 * Initializes the Javafx components.
 	 */
@@ -136,6 +163,8 @@ public class PerikymataCountController {
 		fullOriginalImage.fitHeightProperty().bind(fullImage.fitHeightProperty());
 		fullOriginalImage.fitWidthProperty().bind(fullImage.fitWidthProperty());
 		fullOriginalImage.eventDispatcherProperty().bind(fullImage.eventDispatcherProperty());
+		
+		perikymataThresholdLabel.textProperty().bind(((StringFormatter)Bindings.format("%.0f",thresholdSlider.valueProperty()).concat("%")));
 		
 		measureLine = new Line();
 		measureLine.setStrokeWidth(2);

@@ -41,9 +41,9 @@
                   <Tooltip text="Mark new perikymata." />
                </tooltip>
             </Button>
-            <Slider layoutX="144.0" layoutY="41.0" prefHeight="14.0" prefWidth="78.0" showTickMarks="true" AnchorPane.rightAnchor="223.0" AnchorPane.topAnchor="41.0" />
-            <Label layoutX="225.0" layoutY="37.0" prefHeight="14.0" prefWidth="118.0" text="Detection Treshold:" AnchorPane.rightAnchor="102.0" AnchorPane.topAnchor="37.0" />
-            <Label fx:id="perikymataTresholdLabel" layoutX="330.0" layoutY="37.0" prefHeight="17.0" prefWidth="32.0" text="Value" AnchorPane.rightAnchor="83.0" AnchorPane.topAnchor="37.0" />
+            <Slider fx:id="thresholdSlider" blockIncrement="1.0" layoutX="144.0" layoutY="41.0" minorTickCount="24" prefHeight="14.0" prefWidth="78.0" showTickMarks="true" snapToTicks="true" value="75.0" AnchorPane.rightAnchor="223.0" AnchorPane.topAnchor="41.0" />
+            <Label layoutX="225.0" layoutY="37.0" prefHeight="14.0" prefWidth="118.0" text="Detection Threshold:" AnchorPane.rightAnchor="102.0" AnchorPane.topAnchor="37.0" />
+            <Label fx:id="perikymataThresholdLabel" layoutX="340.0" layoutY="37.0" prefHeight="17.0" prefWidth="42.0" text="Value" AnchorPane.rightAnchor="63.0" AnchorPane.topAnchor="37.0" />
          </children>
       </AnchorPane>
       <ScrollPane layoutX="27.0" layoutY="62.0" prefHeight="253.0" prefWidth="445.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="62.0">
