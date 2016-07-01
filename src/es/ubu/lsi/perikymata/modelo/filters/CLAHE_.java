@@ -17,6 +17,8 @@ package es.ubu.lsi.perikymata.modelo.filters;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Undo;
@@ -148,8 +150,9 @@ public class CLAHE_ implements PlugIn
 	 * @param slope
 	 * @param roiBox can be null
 	 * @param mask can be null
+	 * @return 
 	 */
-	final static public void run(
+	final static public BufferedImage run(
 			final ImagePlus imp,
 			final int blockRadius,
 			final int bins,
@@ -342,8 +345,9 @@ public class CLAHE_ implements PlugIn
 					ip.set( i, ( r << 16 ) | ( g << 8 ) | b );
 				}
 			}
-			imp.updateAndDraw();
+			
 		}
+		return ip.getBufferedImage();
 	}
 	
 	final static private int roundPositive( float a )
