@@ -1,11 +1,14 @@
 package es.ubu.lsi.perikymata.vista;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import es.ubu.lsi.perikymata.MainApp;
+import es.ubu.lsi.perikymata.modelo.filters.CLAHE_;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
+import ij.ImagePlus;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
@@ -110,6 +113,12 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private ImageView fullImage;
+	
+	/**
+	 * Imageview of the original image.
+	 */
+	@FXML
+	private ImageView fullOriginalImage;
 
 	/**
 	 * Label that shows the current action status.
@@ -122,6 +131,11 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void initialize() {
+		
+		fullOriginalImage.setVisible(false);
+		fullOriginalImage.fitHeightProperty().bind(fullImage.fitHeightProperty());
+		fullOriginalImage.fitWidthProperty().bind(fullImage.fitWidthProperty());
+		fullOriginalImage.eventDispatcherProperty().bind(fullImage.eventDispatcherProperty());
 		
 		measureLine = new Line();
 		measureLine.setStrokeWidth(2);
@@ -183,6 +197,7 @@ public class PerikymataCountController {
 	@FXML
 	private void selectStart() {
 		clearImageViewHandlers();
+		fullOriginalImage.setVisible(true);
 		
 		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 			@Override
@@ -191,6 +206,7 @@ public class PerikymataCountController {
 					xDecileStart = modifyLine(mouseEvent, lineDecileStart);
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("Start point selected.");
+					fullOriginalImage.setVisible(false);
 					if (xDecileStart != null && xDecileEnd != null){
 						calculateDeciles();
 					}
@@ -201,6 +217,7 @@ public class PerikymataCountController {
 		fullImage.setPickOnBounds(true);
 		fullImage.setOnMouseClicked(mouseHandler);
 
+		
 	}
 
 	/**
@@ -209,14 +226,15 @@ public class PerikymataCountController {
 	@FXML
 	private void selectEnd() {
 		clearImageViewHandlers();
+		fullOriginalImage.setVisible(true);
 		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
-
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
 					xDecileEnd = modifyLine(mouseEvent, lineDecileEnd);
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("End point selected.");
+					fullOriginalImage.setVisible(false);
 					if (xDecileStart != null && xDecileEnd != null){
 						calculateDeciles();
 					}
@@ -427,12 +445,14 @@ public class PerikymataCountController {
 			fullImage.setFitHeight(fullImage.getImage().getHeight());
 			fullImage.setFitWidth(fullImage.getImage().getWidth());
 			fullImage.setPreserveRatio(true);
+			fullOriginalImage.setImage(mainApp.getFullImage());
 		}
 	}
 	
 	@FXML
 	private void measureStartHandler(){
 		clearImageViewHandlers();
+		fullOriginalImage.setVisible(true);
 		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
@@ -444,6 +464,7 @@ public class PerikymataCountController {
 					startMeasure[1] = mouseEvent.getY() * getImageToImageViewRatio();
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("Start measure point selected.");
+					fullOriginalImage.setVisible(false);
 					if (startMeasure != null && endMeasure != null){
 						
 							measureLine.setStartX(startMeasure[0]/getImageToImageViewRatio());
@@ -465,6 +486,7 @@ public class PerikymataCountController {
 	@FXML
 	private void measureEndHandler(){
 		clearImageViewHandlers();
+		fullOriginalImage.setVisible(true);
 		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
@@ -476,6 +498,7 @@ public class PerikymataCountController {
 					endMeasure[1] = mouseEvent.getY() * getImageToImageViewRatio();
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("End measure point selected.");
+					fullOriginalImage.setVisible(false);
 					if (startMeasure != null && endMeasure != null){
 						measureLine.setStartX(startMeasure[0]/getImageToImageViewRatio());
 						measureLine.setStartY(startMeasure[1]/getImageToImageViewRatio());
@@ -588,6 +611,12 @@ public class PerikymataCountController {
 			c.addEventHandler(MouseEvent.MOUSE_CLICKED, h);
 		}
 		
+	}
+	
+	private void executeClahe (){
+		CLAHE_ c = new CLAHE_();
+		//Maybe mask can be used to apply convolve only to desired pixels.
+		//c.run(new ImagePlus().setImage(arg0), 63, 255, 3, new Rectangle(x, y, width, height), mask);
 	}
 	
 
