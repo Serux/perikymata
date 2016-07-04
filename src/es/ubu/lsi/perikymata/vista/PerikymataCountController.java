@@ -18,6 +18,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -26,6 +27,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -306,6 +308,10 @@ public class PerikymataCountController {
 	private void clearLine() {
 		clearImageViewHandlers();
 		statusLabel.setText("Line cleared.");
+		((AnchorPane) fullImage.getParent()).getChildren().removeAll(circles);
+		circles.clear();
+		peaksCoords.clear();
+		
 		this.freeDrawPathList.clear();
 		freeDrawPath.getElements().clear();
 	}
@@ -443,18 +449,16 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void calculatePerikymata() {
-		
-		//TODO visual debug only, please remove this line.
-		this.executeClahe(50, 50, 150, 150);
-		
-		
+		((AnchorPane) fullImage.getParent()).getChildren().removeAll(circles);
+		circles.clear();
+		peaksCoords.clear();
 		if (!freeDrawPathList.isEmpty()) {
 			//TODO maybe all this can be done in the util.
 			List<int[]> profile = ProfileUtil.getProfilePixels(this.freeDrawPathList);
-			List<Integer> peaksIndexes = ProfileUtil.findLocalPeaks(ProfileUtil.getIntensityProfile(profile,mainApp));
+			List<Integer> intensity = ProfileUtil.getIntensityProfile(profile, this.mainApp);
+			List<Integer> peaksIndexes = ProfileUtil.findLocalPeaks(intensity,(255*thresholdSlider.valueProperty().get())/thresholdSlider.getMax());
 			for (Integer i : peaksIndexes) {
 				peaksCoords.add(profile.get(i));
-	
 			}
 			drawPeaks();
 		} else {
@@ -578,8 +582,11 @@ public class PerikymataCountController {
 		grid.setVgap(10);
 		grid.setPadding(new Insets(20, 150, 10, 10));
 
-		TextField measureUnit = new TextField();
-		measureUnit.setPromptText("Measure unit");
+		//TextField measureUnit = new TextField();
+		//measureUnit.setPromptText("Measure unit");
+		ObservableList<String> options = FXCollections.observableArrayList("cm","mm","µm","nm");
+		final ComboBox<String> measureUnit = new ComboBox<>(options);
+		measureUnit.setValue("mm");
 		TextField measureValue = new TextField();
 		measureValue.setPromptText("Measure value");
 		measureValue.setTextFormatter(new TextFormatter<String>(
@@ -614,7 +621,7 @@ public class PerikymataCountController {
 		// Convert the result to a username-password-pair when the login button is clicked.
 		dialog.setResultConverter(dialogButton -> {
 		    if (dialogButton == doneButtonType) {
-		        return new Pair<>(measureUnit.getText(), measureValue.getText());
+		        return new Pair<>(measureUnit.getValue().toString(), measureValue.getText());
 		    }
 		    return null;
 		});
@@ -671,17 +678,7 @@ public class PerikymataCountController {
 		
 	}
 	
-	private void executeClahe(int x, int y, int height, int width){
-		ImagePlus ip = new ImagePlus();
-		BufferedImage im = SwingFXUtils.fromFXImage(fullImage.getImage(),null);
-		ip.setImage(im);
-		//Maybe mask can be used to apply convolve only to desired pixels.
-		BufferedImage res = CLAHE_.run(ip, 63, 255, 3, new Rectangle(x, y, width, height), null);
-		fullImage.setImage(SwingFXUtils.toFXImage(res, null));
-		//TODO get ROI and apply CLAHE.
-		//TODO get orthogonal profile of ROY
-		//TODO substract clahe and prewitt matrixes element by element.
-	}
+	
 	
 
 }

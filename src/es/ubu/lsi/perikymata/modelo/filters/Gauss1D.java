@@ -1,6 +1,10 @@
 package es.ubu.lsi.perikymata.modelo.filters;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Gauss1D {
 	
@@ -29,19 +33,20 @@ public class Gauss1D {
 	 * @param size Size of the Hann Function (upper sin)
 	 * @return Convolved Array
 	 */
-	public int[] convolve1D(int[] in, int size)
+	public List<Integer> convolve1D(List<Integer> in, int size)
 	{
+		List ret = new ArrayList<>(in.size());
 		float[] kernel = calculateHannArray(size);
 	    int i, j, k;
-	    int[] out = new int[in.length+(kernel.length/2)];
+	    int[] out = new int[in.size()+(kernel.length/2)];
 
 	    // convolution from out[0] to out[kernelSize-2]
 	    for(i = 0; i < kernel.length - 1; ++i)
 	    {
 	        out[i] = 0;  // init to 0 before sum
 	        for(j = i, k = 0; j >= 0; --j, ++k)
-	        	if(i<out.length && j<in.length)
-	        		out[i] += in[j] * kernel[k];
+	        	if(i<out.length && j<in.size())
+	        		out[i] += in.get(j) * kernel[k];
 	    }
 	    
 	    // start convolution from out[kernelSize-1] to out[dataSize-1] (last)
@@ -49,11 +54,13 @@ public class Gauss1D {
 	    {
 	        out[i] = 0;  // init to 0 before accumulate
 	        for(j = i, k = 0; k < kernel.length; --j, ++k)
-	        	if(j<in.length)
-	        		out[i] += in[j] * kernel[k];
+	        	if(j<in.size())
+	        		out[i] += in.get(j) * kernel[k];
 	    }
-	    //Remove Zero-Values at the start of the array and return.
-	    return Arrays.copyOfRange(out,Math.round(kernel.length/2)-2,out.length);
+	    //Remove Zero-Values at the start of the array.
+	    int[] fixedArray = Arrays.copyOfRange(out,Math.round(kernel.length/2)-2,out.length);
+	    //Convert to List and return.
+	    return IntStream.of(fixedArray).boxed().collect(Collectors.toList());
 	}
 
 

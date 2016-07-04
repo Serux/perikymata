@@ -4,7 +4,11 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,15 +28,15 @@ public class Gauss1DTest {
 			float[] out = (float[]) method.invoke(new Gauss1D(), 10);
 			System.out.println(Arrays.toString(out));
 			
-			int[] profile = new int[]{1,1,50,1,1,1};
+			List<Integer> profile = new ArrayList<>(Arrays.asList(1,1,50,1,1,1));
 			Gauss1D g = new Gauss1D();
-			int[] res = g.convolve1D(profile, 10);
+			List<Integer> res = g.convolve1D(profile, 10);
 	
-			System.out.println(Arrays.toString(res));
+			System.out.println(res.toString());
 			
-			int[] profile2 = new int[]{0,1,2,3,4,5,6,7,8,9};
-			int[] res2 = g.convolve1D(profile2, 10);
-			System.out.println(Arrays.toString(res2));
+			ArrayList<Integer> profile2 =  new ArrayList<>(Arrays.asList(0,1,2,3,4,5,6,7,8,9));
+			List<Integer> res2 = g.convolve1D(profile2, 10);
+			System.out.println(res2.toString());
 			
 			/* Image image;
 		        ImageView imageView;

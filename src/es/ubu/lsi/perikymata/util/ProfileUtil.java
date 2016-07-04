@@ -1,11 +1,15 @@
 package es.ubu.lsi.perikymata.util;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import es.ubu.lsi.perikymata.MainApp;
+import es.ubu.lsi.perikymata.modelo.filters.CLAHE_;
+import es.ubu.lsi.perikymata.modelo.filters.Gauss1D;
+import ij.ImagePlus;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -53,55 +57,74 @@ public class ProfileUtil {
 	    // farther coordinates with a lower max length.
 	    
 	  //First side vector.
-	    for (int i = length-1; i>=0; i--){
-	        orthogonal[ortIndex]= new int[]{i*v2[0]+point[0],i*v2[1]+point[1]*i};
+	    for (int i = length; i>=0; i--){
+	        orthogonal[ortIndex]= new int[]{i*v2[0]+point[0],i*v2[1]+point[1]};
 	        ortIndex++;
 	    }
 	    //Original point
 	    orthogonal[ortIndex] = point;
 	    ortIndex++;
 	    //Other side vector.
-	    for (int i = 0; i<length; i++){
-	        orthogonal[ortIndex]= new int[]{i*v1[0]+point[0],i*v1[1]+point[1]*i};
+	    for (int i = 1; i<length; i++){
+	        orthogonal[ortIndex]= new int[]{i*v1[0]+point[0],i*v1[1]+point[1]};
 	        ortIndex++;
 	    }
 	    
 	    return orthogonal;
 	}
 
+
 	/**
-	 * Gets the orthogonal profile. Orthogonal means that it's using the pixels of the 
-	 * sides of the point to get more data of the image and reduce the error of the profile.
-	 * @param image Filtered image to calculate the profile of.
-	 * @param pointsVector List of points of the image that are going to be used to calculate the orthogonal profile.
+	 * Gets the intensity matrix of the line drawn by the user and its surrounding region using
+	 * the orthogonal vector.
+	 * @param image Image to get the Intensity matrix of.
+	 * @param pointsVector List of points of the image that are going to be used to calculate the orthogonal matrix.
 	 * @param length Number of pixels to get from each side.
-	 * @return
+	 * @return Matrix(List of Lists) that contains the intensity of the pixels surrounding the pointsVector.
 	 */
-	public static List<Integer> getOrthogonalProfile(BufferedImage image, List<int[]> pointsVector,int length){
-	    List<Integer> profile= new LinkedList<>();
-	    for( int i=0; i<pointsVector.size(); i++){
-	    	profile.add(getProfileOfOrthogonalLine(image, ortogonalLineOfAPoint(pointsVector, i, length)));          
+	private static List<List<Integer>> getOrthogonalIntensityMatrix(BufferedImage image, List<int[]> pointsVector,int length){
+	    List<List<Integer>> intensityMatrix= new LinkedList<>();
+	    List<int[][]> orthogonalLine = getOrthogonalCoordinatesMatrix(pointsVector,length); 
+	    
+	    for( int i=0; i<orthogonalLine.size(); i++){
+	    	intensityMatrix.add(getOrthogonalIntensity(image, orthogonalLine.get(i)));          
 	    }
-	    return profile;
+	    return intensityMatrix;
 	}
 	
 	/**
-	 * Gets the intensity of each point of the orthogonal vector and gets the mean. 
+	 * Gets a matrix with the coordinates surrounding the pointsVector line using the orthogonal vector of
+	 * each side.
+	 * @param pointsVector List of points of the image that are going to be used to calculate the orthogonal matrix.
+	 * @param length Length of each sides' orthogonal vector.
+	 * @return Coordinates of the elements of the orthogonal line, containing in each position of the list an array of
+	 * 			each orthogonal line, with the x-y coordinates
+	 */
+	private static List<int[][]> getOrthogonalCoordinatesMatrix(List<int[]> pointsVector,int length){
+		List<int[][]> orthogonalLine = new LinkedList<>(); 
+		for( int i=0; i<pointsVector.size(); i++){
+	    	orthogonalLine.add(ortogonalLineOfAPoint(pointsVector, i, length));          
+	    }
+		return orthogonalLine;
+	}
+	
+	/**
+	 * Gets the intensity of each point of the orthogonal vector. 
 	 * @param image Filtered image to calculate the profile of. 
 	 * @param orthogonalLine Points of the orthogonal vector.
 	 * @return Mean of the intensity of the orthogonal vector.
 	 */
-	private static int getProfileOfOrthogonalLine(BufferedImage image, int[][] orthogonalLine){
-		int sum = 0;
+	private static List<Integer> getOrthogonalIntensity(BufferedImage image, int[][] orthogonalLine){
+		List<Integer> ret = new ArrayList<>();
 		for(int[] point : orthogonalLine){
 	    	//We assume that the image will be in grayScale (8bit) or rgb (24 bits) but
 	    	//all the three channels having the same value. r = g = b. 
 	    	//gray = r+g+b/3, so if they are the same gray= 3b/b=b, and blue being the 
 	    	//8 rightmost bits, we can take these same 8 bits for
 	    	//both RGB and GrayScale images.
-			sum += image.getRGB(point[0], point[1]) & 0xFF; 
+			ret.add(image.getRGB(point[0], point[1]) & 0xFF); 
 		}
-		return sum/orthogonalLine.length;
+		return ret;
 		
 	}
 
@@ -186,17 +209,22 @@ public class ProfileUtil {
 	}
 
 	/**
-	 * Returns these mean of the intensity profile with a width of two pixels at
+	 * Returns the mean of the intensity profile with a width of two pixels at
 	 * each side by using the orthogonal vectors of the given the coordinates of
 	 * a line.
 	 * 
 	 * @param profileCoords
 	 *            Coordinates of a single-pixeled line.
+	 * @param mainapp Reference to the main application to get the images.
 	 * @return intensity profile
 	 */
-	public static List<Integer> getIntensityProfile(List<int[]> profileCoords,MainApp mainApp) {
-		BufferedImage img = SwingFXUtils.fromFXImage(mainApp.getFullImage(), null);
-		return ProfileUtil.getOrthogonalProfile(img, profileCoords, 2);
+	public static List<Integer> getIntensityProfile(List<int[]> profileCoords,MainApp mainapp) {
+		
+		BufferedImage original = SwingFXUtils.fromFXImage(mainapp.getFullImage(), null);
+		BufferedImage prewitt = SwingFXUtils.fromFXImage(mainapp.getFilteredImage(), null);
+		int[] roi = getRoi(profileCoords);
+		BufferedImage clahe = executeClahe(roi[0],roi[1],roi[2],roi[3],original);
+		return getPrewittCLAHEProfile(prewitt, clahe, profileCoords);
 	}
 
 	/**
@@ -206,9 +234,10 @@ public class ProfileUtil {
 	 * 
 	 * @param profile
 	 *            Intensity profile.
+	 * @param threshold minimum value for a peak to be treated as a perikymata
 	 * @return List of the indexes where perikymata has been found.
 	 */
-	public static List<Integer> findLocalPeaks(List<Integer> profile) {
+	public static List<Integer> findLocalPeaks(List<Integer> profile, double threshold) {
 		int l = profile.size();
 		int lastMaxIndex = 0;
 		int lastMaxValue = 0;
@@ -220,17 +249,23 @@ public class ProfileUtil {
 				// Intensity is growing
 				lastMaxValue = profile.get(i);
 				lastMaxIndex = i;
-			} else if (profile.get(i) < lastMaxValue) {
-				// There is a local max, so index is set to a known value.
-				lastMaxValue = 0;
+			} else if (profile.get(i) < lastMaxValue ) {
+				// Intensity is geting lower, so there is a local max.				
+				
+				// local max is only stored if is higher than the threshold.
 				// If There is more than one consecutive max value, the mid
-				// point
-				// is stored.
-				if (lastMaxIndex == i - 1) {
-					peaks.add(i - 1);
-				} else {
-					peaks.add((i + lastMaxIndex) / 2);
+				// point is stored.
+				if(profile.get(i-1)>=threshold){
+					if (lastMaxIndex == i - 1) {
+						peaks.add(i - 1);
+					} else {
+						peaks.add((i + lastMaxIndex) / 2);
+					}
+					
 				}
+				//index is set to a known value.
+				lastMaxValue = 0;
+				lastMaxIndex = 0;
 			}
 		}
 		// Check if the profile ends with one or more maxes.
@@ -241,5 +276,71 @@ public class ProfileUtil {
 				peaks.add(l - 1);
 		}
 		return peaks;
+	}
+	
+	private static BufferedImage executeClahe(int x1, int y1, int x2, int y2,BufferedImage im){
+		ImagePlus ip = new ImagePlus();
+		;
+		ip.setImage(im);
+		int width = Math.max(x2, x1) - Math.min(x2, x1);
+		int height = Math.max(y2, y1) - Math.min(y2, y1);
+		//Maybe mask on last argument can be used to apply convolve only to desired pixels.
+		return CLAHE_.run(ip, 63, 255, 3, new Rectangle(x1, y1, width, height), null);
+		//fullImage.setImage(SwingFXUtils.toFXImage(res, null));
+	}
+	
+	private static int[] getRoi(List<int[]> pointsVector){
+		int x1=Integer.MAX_VALUE,x2=0;
+		int y1=Integer.MAX_VALUE,y2=0;
+		for(int[] coords : pointsVector){
+			if(coords[0]<x1){
+				x1=coords[0];
+			} else if(coords[0]>x2){
+				x2=coords[0];
+			}
+			
+			if(coords[1]<y1){
+				y1=coords[1];
+			} else if(coords[1]>y2){
+				y2=coords[1];
+			}
+		}
+		return new int[]{x1,y1,x2,y2};
+	}
+	
+	private static List<Integer> getPrewittCLAHEProfile(BufferedImage prewitt, BufferedImage clahe, List<int[]> line){
+		List<List<Integer>> intensityMatrix = substractMatrixes(getOrthogonalIntensityMatrix(prewitt, line, 2),getOrthogonalIntensityMatrix(clahe, line, 2));
+		//List<List<Integer>> intensityMatrix = substractMatrixes(getOrthogonalIntensityMatrix(clahe, line, 2),getOrthogonalIntensityMatrix(prewitt, line, 2));
+		List<Integer> intensityProfile = getProfileFromIntensityMatrix(intensityMatrix);
+		return new Gauss1D().convolve1D(intensityProfile, 5);	
+	}
+	
+	private static List<List<Integer>> substractMatrixes(List<List<Integer>> a,List<List<Integer>> b){
+		List<Integer> ortogonal;
+		List<List<Integer>> ret = new LinkedList<>();
+		for(int i=0; i<a.size(); i++){
+			ortogonal = new ArrayList<>(a.get(0).size());
+			for(int j=0; j<a.get(0).size();j++){
+				//0 if negative.
+				ortogonal.add(Math.max(0, a.get(i).get(j) - b.get(i).get(j)));
+			}
+			ret.add(ortogonal);
+		}
+		return ret;
+	}
+	
+	private static List<Integer> getProfileFromIntensityMatrix(List<List<Integer>> intensityMatrix){
+		List<Integer> ret = new ArrayList<>(intensityMatrix.size());
+		Integer temp;
+		for(List<Integer> orthogonalVector : intensityMatrix){
+			temp = new Integer(0);
+			for(Integer element : orthogonalVector){
+				temp = Integer.sum(temp, element);
+			}
+			ret.add(temp/orthogonalVector.size());
+		}
+		return ret;
+		
+		
 	}
 }
