@@ -46,6 +46,15 @@ public class Project {
 	private Measure measure;
 	
 	/**
+	 * x Coordinate of the Start Decile
+	 */
+	private Double xDecileStart = null;
+	/**
+	 * x Coordinate of the End Decile
+	 */
+	private Double xDecileEnd = null;
+	
+	/**
 	 * getter for project name, used to read from a XML.
 	 * @return project name.
 	 */
@@ -128,6 +137,38 @@ public class Project {
 	 */
 	public void setMeasure(Measure measure) {
 		this.measure = measure;
+	}
+
+
+	/**
+	 * @return the xDecileStart
+	 */
+	public Double getxDecileStart() {
+		return xDecileStart;
+	}
+
+
+	/**
+	 * @param xDecileStart the xDecileStart to set
+	 */
+	public void setxDecileStart(Double xDecileStart) {
+		this.xDecileStart = xDecileStart;
+	}
+
+
+	/**
+	 * @return the xDecileEnd
+	 */
+	public Double getxDecileEnd() {
+		return xDecileEnd;
+	}
+
+
+	/**
+	 * @param xDecileEnd the xDecileEnd to set
+	 */
+	public void setxDecileEnd(Double xDecileEnd) {
+		this.xDecileEnd = xDecileEnd;
 	}
 	
 	

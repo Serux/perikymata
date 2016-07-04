@@ -11,6 +11,7 @@ import com.sun.javafx.binding.StringFormatter;
 
 import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.modelo.Measure;
+import es.ubu.lsi.perikymata.modelo.Project;
 import es.ubu.lsi.perikymata.modelo.filters.CLAHE_;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
 import ij.ImagePlus;
@@ -20,6 +21,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -430,6 +432,8 @@ public class PerikymataCountController {
 	 * and draws those slices over the image.
 	 */
 	private void calculateDeciles() {
+		
+		
 		double min = xDecileStart, max = xDecileEnd;
 		if (Double.compare(xDecileStart, xDecileEnd) > 0) {
 			min = xDecileEnd;
@@ -442,6 +446,10 @@ public class PerikymataCountController {
 			decilesBetween[i] = decilesBetween[i - 1] + sizeDecil;
 		}
 		reDrawElements();
+		
+		mainApp.getProject().setxDecileStart(xDecileStart);
+		mainApp.getProject().setxDecileEnd(xDecileEnd);
+		mainApp.makeProjectXml();
 	}
 
 	
@@ -452,19 +460,38 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void calculatePerikymata() {
+		
+		this.statusLabel.setText("Calculating Perikymata, this can take several minutes.");
+		
+		
 		((AnchorPane) fullImage.getParent()).getChildren().removeAll(circles);
 		circles.clear();
 		peaksCoords.clear();
 		if (!freeDrawPathList.isEmpty()) {
-			//TODO maybe all this can be done in the util.
-			List<int[]> profile = ProfileUtil.getProfilePixels(this.freeDrawPathList);
-			List<Integer> intensity = ProfileUtil.getIntensityProfile(profile, this.mainApp);
-			List<Integer> peaksIndexes = ProfileUtil.findLocalPeaks(intensity,(255*thresholdSlider.valueProperty().get())/thresholdSlider.getMax());
-			for (Integer i : peaksIndexes) {
-				peaksCoords.add(profile.get(i));
-			}
-			mainApp.getProject().setPeaksCoords(peaksCoords);
-			drawPeaks();
+			Task<Void> task = new Task<Void>() {
+			protected Void call()throws Exception{
+				Platform.runLater(()->statusLabel.setText("Calculating profile coords... 1/4"));
+				List<int[]> profile = ProfileUtil.getProfilePixels(freeDrawPathList);
+				Platform.runLater(()->statusLabel.setText("Calculating profile intensity... 2/4"));
+				List<Integer> intensity = ProfileUtil.getIntensityProfile(profile, mainApp);
+				Platform.runLater(()->statusLabel.setText("Finding perikymata... 3/4"));
+				List<Integer> peaksIndexes = ProfileUtil.findLocalPeaks(intensity,(255*thresholdSlider.valueProperty().get())/thresholdSlider.getMax());
+				for (Integer i : peaksIndexes) {
+					peaksCoords.add(profile.get(i));
+				}
+				Platform.runLater(()->statusLabel.setText("Drawing perikymata... 4/4"));
+				mainApp.getProject().setPeaksCoords(peaksCoords);
+				
+				Platform.runLater(()->drawPeaks());
+				Platform.runLater(()->statusLabel.setText("Perikymata marking completed"));
+				return null;
+				}
+			};
+			Thread th = new Thread(task);
+			th.setDaemon(true);
+			th.start();
+			
+			
 		} else {
 			statusLabel.setText("Line has not been drawn");
 		}
@@ -501,6 +528,12 @@ public class PerikymataCountController {
 				drawPeaks();
 			}
 			measure = mainApp.getProject().getMeasure();
+			
+			xDecileStart = mainApp.getProject().getxDecileStart();
+			xDecileEnd= mainApp.getProject().getxDecileEnd();
+			if(xDecileStart!=null & xDecileEnd != null)
+				calculateDeciles();
+				
 			
 			this.reDrawElements();
 			
