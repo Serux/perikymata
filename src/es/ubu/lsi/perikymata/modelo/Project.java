@@ -1,5 +1,6 @@
 package es.ubu.lsi.perikymata.modelo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -33,7 +34,17 @@ public class Project {
 	 * List of the elements used to draw the free-draw line.
 	 */
 	private List<PathElement> linePath;
+	
+	/**
+	 * Coordinates of the detected perikymata.
+	 */
+	private List<int[]> peaksCoords = new ArrayList<>();
 
+	/**
+	 * Measure for calculating the distance between perikymata.
+	 */
+	private Measure measure;
+	
 	/**
 	 * getter for project name, used to read from a XML.
 	 * @return project name.
@@ -41,6 +52,7 @@ public class Project {
 	public String getProjectName() {
 		return projectName;
 	}
+	
 
 	/**
 	 * Setter for project name.
@@ -72,11 +84,51 @@ public class Project {
 	}
 	
 
+	/**
+	 * 
+	 * @return the free draw linepath
+	 */
 	@XmlJavaTypeAdapter(DrawLineXmlAdapter.class)
 	public List<PathElement> getLinePath(){
 		return linePath;
 	}
+	/**
+	 * 
+	 * @param linePath the linePath to set
+	 */
 	public void setLinePath(List<PathElement> linePath){
 		this.linePath = linePath;
 	}
+
+	/**
+	 * @return the peaksCoords
+	 */
+	public List<int[]> getPeaksCoords() {
+		return peaksCoords;
+	}
+
+	/**
+	 * @param peaksCoords the peaksCoords to set
+	 */
+	public void setPeaksCoords(List<int[]> peaksCoords) {
+		this.peaksCoords = peaksCoords;
+	}
+
+
+	/**
+	 * @return the measure
+	 */
+	public Measure getMeasure() {
+		return measure;
+	}
+
+
+	/**
+	 * @param measure the measure to set
+	 */
+	public void setMeasure(Measure measure) {
+		this.measure = measure;
+	}
+	
+	
 }

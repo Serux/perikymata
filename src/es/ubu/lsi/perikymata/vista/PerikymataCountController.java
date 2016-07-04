@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.sun.javafx.binding.StringFormatter;
 
 import es.ubu.lsi.perikymata.MainApp;
+import es.ubu.lsi.perikymata.modelo.Measure;
 import es.ubu.lsi.perikymata.modelo.filters.CLAHE_;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
 import ij.ImagePlus;
@@ -55,6 +56,11 @@ import javafx.util.Pair;
  *
  */
 public class PerikymataCountController {
+	/**
+	 * Measure object with the coordinates and the value of the measure.
+	 */
+	Measure measure = new Measure();
+	
 	/**
 	 *  Reference to the main application.
 	 */
@@ -110,11 +116,6 @@ public class PerikymataCountController {
 	@FXML
 	private AnchorPane imageAnchorPane;
 	
-	/**
-	 * Coordinates of the measures.
-	 */
-	private double[] startMeasure;
-	private double[] endMeasure;
 	/**
 	 * Drawn line from startMeasure to endMeasure.
 	 */
@@ -381,11 +382,11 @@ public class PerikymataCountController {
 			drawPeaks();
 		}
 		
-		if(startMeasure!= null && endMeasure != null){
-			measureLine.setStartX(startMeasure[0]/ratio);
-			measureLine.setStartY(startMeasure[1]/ratio);
-			measureLine.setEndX(endMeasure[0]/ratio);
-			measureLine.setEndY(endMeasure[1]/ratio);
+		if(measure.getStartMeasure()!= null && measure.getEndMeasure() != null){
+			measureLine.setStartX(measure.getStartMeasure()[0]/ratio);
+			measureLine.setStartY(measure.getStartMeasure()[1]/ratio);
+			measureLine.setEndX(measure.getEndMeasure()[0]/ratio);
+			measureLine.setEndY(measure.getEndMeasure()[1]/ratio);
 			
 		}
 
@@ -462,6 +463,7 @@ public class PerikymataCountController {
 			for (Integer i : peaksIndexes) {
 				peaksCoords.add(profile.get(i));
 			}
+			mainApp.getProject().setPeaksCoords(peaksCoords);
 			drawPeaks();
 		} else {
 			statusLabel.setText("Line has not been drawn");
@@ -492,8 +494,17 @@ public class PerikymataCountController {
 			fullImage.setFitWidth(fullImage.getImage().getWidth());
 			fullImage.setPreserveRatio(true);
 			fullOriginalImage.setImage(mainApp.getFullImage());
-			this.freeDrawPathList = mainApp.getProject().getLinePath();
+			freeDrawPathList.clear();
+			freeDrawPathList.addAll(mainApp.getProject().getLinePath());
+			if(mainApp.getProject().getPeaksCoords()!=null){
+				peaksCoords = mainApp.getProject().getPeaksCoords();
+				drawPeaks();
+			}
+			measure = mainApp.getProject().getMeasure();
+			
 			this.reDrawElements();
+			
+			
 			
 		}
 	}
@@ -510,15 +521,15 @@ public class PerikymataCountController {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
-					if(startMeasure == null){
-						startMeasure = new double[2];
+					if(measure.getStartMeasure() == null){
+						measure.setStartMeasure(new double[2]);
 					}
-					startMeasure[0] = mouseEvent.getX() * getImageToImageViewRatio();
-					startMeasure[1] = mouseEvent.getY() * getImageToImageViewRatio();
+					measure.getStartMeasure()[0] = mouseEvent.getX() * getImageToImageViewRatio();
+					measure.getStartMeasure()[1] = mouseEvent.getY() * getImageToImageViewRatio();
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("Start measure point selected.");
 					fullOriginalImage.setVisible(false);
-					if (startMeasure != null && endMeasure != null){
+					if (measure.getStartMeasure() != null && measure.getEndMeasure() != null){
 						measure();
 					}
 				}
@@ -541,15 +552,15 @@ public class PerikymataCountController {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
-					if(endMeasure == null){
-						endMeasure = new double[2];
+					if(measure.getEndMeasure() == null){
+						measure.setEndMeasure(new double[2]);
 					}
-					endMeasure[0] = mouseEvent.getX() * getImageToImageViewRatio();
-					endMeasure[1] = mouseEvent.getY() * getImageToImageViewRatio();
+					measure.getEndMeasure()[0] = mouseEvent.getX() * getImageToImageViewRatio();
+					measure.getEndMeasure()[1] = mouseEvent.getY() * getImageToImageViewRatio();
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("End measure point selected.");
 					fullOriginalImage.setVisible(false);
-					if (startMeasure != null && endMeasure != null){
+					if (measure.getStartMeasure() != null && measure.getEndMeasure() != null){
 						measure();
 					}
 				}
@@ -567,10 +578,14 @@ public class PerikymataCountController {
 	@FXML
 	private void measure(){
 		
-		measureLine.setStartX(startMeasure[0]/getImageToImageViewRatio());
-		measureLine.setStartY(startMeasure[1]/getImageToImageViewRatio());
-		measureLine.setEndX(endMeasure[0]/getImageToImageViewRatio());
-		measureLine.setEndY(endMeasure[1]/getImageToImageViewRatio());
+		measureLine.setStartX(measure.getStartMeasure()[0]/getImageToImageViewRatio());
+		measureLine.setStartY(measure.getStartMeasure()[1]/getImageToImageViewRatio());
+		measureLine.setEndX(measure.getEndMeasure()[0]/getImageToImageViewRatio());
+		measureLine.setEndY(measure.getEndMeasure()[1]/getImageToImageViewRatio());
+		
+		
+		measure.setStartMeasure(measure.getStartMeasure());
+		measure.setEndMeasure(measure.getEndMeasure());
 		
 		// Create the custom dialog.
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
@@ -591,9 +606,14 @@ public class PerikymataCountController {
 		//measureUnit.setPromptText("Measure unit");
 		ObservableList<String> options = FXCollections.observableArrayList("cm","mm","µm","nm");
 		final ComboBox<String> measureUnit = new ComboBox<>(options);
-		measureUnit.setValue("mm");
+		if(measure == null || measure.getMeasureUnit()==null)
+			measureUnit.setValue("mm");
+		else measureUnit.setValue(measure.getMeasureUnit());
 		TextField measureValue = new TextField();
 		measureValue.setPromptText("Measure value");
+		if(measure!=null && measure.getMeasureValue() != 0){
+			measureValue.setText(Integer.toString(measure.getMeasureValue()));
+		}
 		measureValue.setTextFormatter(new TextFormatter<String>(
 				change->{
 					if (change.getText().matches("[0-9]*")) {
@@ -634,7 +654,10 @@ public class PerikymataCountController {
 		Optional<Pair<String, String>> result = dialog.showAndWait();
 
 		result.ifPresent(measureValues -> {
-		    System.out.println("Unit=" + measureValues.getKey() + ", Value=" + measureValues.getValue());
+			measure.setMeasureUnit(measureValues.getKey());
+	    	measure.setMeasureValue(Integer.parseInt(measureValues.getValue()));
+		    mainApp.getProject().setMeasure(measure);
+		    mainApp.makeProjectXml();
 		});
 	}
 	
