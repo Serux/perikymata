@@ -1,8 +1,14 @@
 package es.ubu.lsi.perikymata.vista;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+
+import javax.imageio.ImageIO;
 
 import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.modelo.filters.Filter;
@@ -397,8 +403,20 @@ public class ImageFiltersController {
 	@FXML
 	private void nextScreen() {
 		mainApp.getProject().setFilterList(mainApp.getAppliedFilters());
+		saveToFile(filteredImage.getImage());
 		mainApp.makeProjectXml();
 		mainApp.showPerikymataCount();
+	}
+	
+	public void saveToFile(Image image) {
+	    File outputFile = Paths.get(mainApp.getProjectPath(), "Full_Image", "Filtered_Image.png").toFile();
+	    BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+	    try {
+	      ImageIO.write(bImage, "png", outputFile);
+	    } catch (IOException e) {
+	    	mainApp.getLogger().log(Level.SEVERE, "Filtered image cannot be saved.", e);
+	    	//TODO launch popup
+	    }
 	}
 	
 	/**

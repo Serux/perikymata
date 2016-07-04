@@ -7,7 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import es.ubu.lsi.perikymata.modelo.filters.Filter;
+import es.ubu.lsi.perikymata.util.DrawLineXmlAdapter;
 import es.ubu.lsi.perikymata.util.FiltersXmlAdapter;
+import javafx.scene.shape.PathElement;
 
 /**
  * Project class, stores persistent data. 
@@ -20,11 +22,17 @@ public class Project {
 	/**
 	 * Name of the project.
 	 */
-	String projectName;
+	private String projectName;
+	
 	/**
 	 * List of applied filters.
 	 */
-	List<Filter> filterList;
+	private List<Filter> filterList;
+	
+	/**
+	 * List of the elements used to draw the free-draw line.
+	 */
+	private List<PathElement> linePath;
 
 	/**
 	 * getter for project name, used to read from a XML.
@@ -61,5 +69,14 @@ public class Project {
 	 */
 	public void setFilterList(List<Filter> filterList) {
 		this.filterList = filterList;
+	}
+	
+
+	@XmlJavaTypeAdapter(DrawLineXmlAdapter.class)
+	public List<PathElement> getLinePath(){
+		return linePath;
+	}
+	public void setLinePath(List<PathElement> linePath){
+		this.linePath = linePath;
 	}
 }

@@ -37,6 +37,4 @@ public class FiltersXmlAdapter extends XmlAdapter<String, Filter> {
 	public String marshal(Filter v) throws Exception {
 		return v.getSmallStringRepresentation();
 	}
-
-
 }

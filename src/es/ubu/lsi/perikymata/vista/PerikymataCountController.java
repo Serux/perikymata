@@ -330,6 +330,8 @@ public class PerikymataCountController {
 				if (mouseEvent.getButton().compareTo(MouseButton.SECONDARY) == 0) {
 					statusLabel.setText("Finished drawing line.");
 					clearImageViewHandlers();
+					mainApp.getProject().setLinePath(freeDrawPathList);
+					mainApp.makeProjectXml();
 				} else if (freeDrawPath.getElements().isEmpty() 
 						&& (mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED
 						|| mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED)) {
@@ -490,6 +492,9 @@ public class PerikymataCountController {
 			fullImage.setFitWidth(fullImage.getImage().getWidth());
 			fullImage.setPreserveRatio(true);
 			fullOriginalImage.setImage(mainApp.getFullImage());
+			this.freeDrawPathList = mainApp.getProject().getLinePath();
+			this.reDrawElements();
+			
 		}
 	}
 	
