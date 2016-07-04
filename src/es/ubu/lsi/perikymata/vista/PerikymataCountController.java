@@ -2,10 +2,14 @@ package es.ubu.lsi.perikymata.vista;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 
 import com.sun.javafx.binding.StringFormatter;
 
@@ -739,7 +743,73 @@ public class PerikymataCountController {
 		
 	}
 	
+	@FXML
+	private void generateCsvFile()
+	   {
+		try
+		{
+			String sFileName = Paths.get(mainApp.getProjectPath(), "Perikymata_Outputs", "Output.csv").toString();
+		    FileWriter writer = new FileWriter(sFileName);
+			 
+		    writer.append(mainApp.getProject().getProjectName());
+		    writer.append('\n');
+
+		    //TODO proportion per decil
+		    
+		    writer.append("Decile");
+		    writer.append(',');
+		    writer.append("Coordinates");
+	        writer.append(',');
+	        writer.append("Distance to previous");
+	        writer.append('\n');
+	        
+	        int decile=0;
+	        int currentPerikymataIndex=0;
+	        int lastPerikymataIndex=0;
+	        while(decile <9){
+	        	while(currentPerikymataIndex < peaksCoords.size() && decilesBetween[decile] > peaksCoords.get(currentPerikymataIndex)[0]){
+	        		if(currentPerikymataIndex!=0)
+	        			lastPerikymataIndex++;
+	        		currentPerikymataIndex++;
+	        		writer.append(Integer.toString(decile+1));
+	    		    writer.append(',');
+	    		    writer.append(Integer.toString(peaksCoords.get(currentPerikymataIndex)[0]) + Integer.toString(peaksCoords.get(currentPerikymataIndex)[1]));
+	    		    writer.append(',');
+	    		    double xdist = Math.max(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) ;
+	    		    double ydist = Math.max(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) ;
+	    		    writer.append(Double.toString(Math.sqrt(Math.pow(xdist,2)+Math.pow(ydist,2))));
+	    		    writer.append('\n');
+	    		    
+	        	}
+	        	decile++;
+	        }
+
+	        
+	        while(currentPerikymataIndex < peaksCoords.size() && xDecileEnd > peaksCoords.get(currentPerikymataIndex)[0]){
+        		if(currentPerikymataIndex!=0)
+        			lastPerikymataIndex++;
+        		currentPerikymataIndex++;
+        		writer.append(Integer.toString(10));
+    		    writer.append(',');
+    		    writer.append(Integer.toString(peaksCoords.get(currentPerikymataIndex)[0]) + Integer.toString(peaksCoords.get(currentPerikymataIndex)[1]));
+    		    writer.append(',');
+    		    double xdist = Math.max(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) ;
+    		    double ydist = Math.max(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) ;
+    		    writer.append(Double.toString(Math.sqrt(Math.pow(xdist,2)+Math.pow(ydist,2))));
+    		    writer.append('\n');
+    		    
+        	}
+				
+		    writer.flush();
+		    writer.close();
+		}
+		catch(IOException e)
+		{
+			mainApp.getLogger().log(Level.SEVERE,"Error while saving CSV.",e);
+		} 
+	   }
+}
 	
 	
 
-}
+

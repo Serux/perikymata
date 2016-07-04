@@ -23,7 +23,7 @@
                   <Button mnemonicParsing="false" onAction="#measure" text="Measure - Edit unit and value" />
               </items>
             </ToolBar>
-            <Button layoutX="456.0" layoutY="8.0" mnemonicParsing="false" text="Export Data" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0" />
+            <Button layoutX="456.0" layoutY="8.0" mnemonicParsing="false" onAction="#generateCsvFile" text="Export Data" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0" />
             <Button layoutX="161.0" layoutY="8.0" mnemonicParsing="false" onAction="#calculatePerikymata" prefHeight="25.0" prefWidth="137.0" text="Auto-mark perikymata" AnchorPane.rightAnchor="165.0" AnchorPane.topAnchor="8.0" />
             <Button layoutX="324.0" layoutY="9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleErasePerikymata" prefHeight="24.0" prefWidth="32.0" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="8.0">
                <tooltip>
