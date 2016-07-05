@@ -11,7 +11,6 @@
    <children>
       <Slider fx:id="gaussSlider" blockIncrement="0.05" layoutX="185.0" layoutY="153.0" majorTickUnit="1.0" max="4.0" minorTickCount="5" prefHeight="17.0" prefWidth="161.0" showTickLabels="true" showTickMarks="true" value="2.0" AnchorPane.rightAnchor="129.0" AnchorPane.topAnchor="153.0" />
       <Button layoutX="332.0" layoutY="276.0" mnemonicParsing="false" onAction="#nextScreen" text="Save and Continue" AnchorPane.bottomAnchor="49.0" AnchorPane.rightAnchor="27.0" />
-      <Button layoutX="185.0" layoutY="276.0" mnemonicParsing="false" text="Save filtered image as..." AnchorPane.bottomAnchor="49.0" AnchorPane.rightAnchor="150.0" />
       <SplitPane dividerPositions="0.5135135135135135" layoutX="24.0" layoutY="20.0" orientation="VERTICAL" prefHeight="353.0" prefWidth="270.0" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="301.0" AnchorPane.topAnchor="20.0">
         <items>
             <ScrollPane fx:id="scrollPane1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="151.0" prefWidth="157.0">
@@ -34,7 +33,7 @@
             </ScrollPane>
         </items>
       </SplitPane>
-      <Button fx:id="addPrewittButton" layoutX="359.0" layoutY="81.0" mnemonicParsing="false" onAction="#addPrewittFilter" text="Add Prewwit" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="81.0" />
+      <Button fx:id="addPrewittButton" layoutX="359.0" layoutY="81.0" mnemonicParsing="false" onAction="#addPrewittFilter" text="Add Prewitt" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="81.0" />
       <Button fx:id="addGaussButton" layoutX="364.0" layoutY="149.0" mnemonicParsing="false" onAction="#addGaussianFilter" text="Add Gauss" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="149.0" />
       <Label fx:id="gaussLevel" layoutX="266.0" layoutY="134.0" prefHeight="17.0" prefWidth="24.0" text="2.00" AnchorPane.rightAnchor="185.0" AnchorPane.topAnchor="134.0" />
       <Label layoutX="185.0" layoutY="134.0" text="Gauss Sigma:" AnchorPane.rightAnchor="220.0" AnchorPane.topAnchor="134.0" />

@@ -43,7 +43,7 @@ public class Project {
 	/**
 	 * Measure for calculating the distance between perikymata.
 	 */
-	private Measure measure;
+	private Measure measure = new Measure();
 	
 	/**
 	 * x Coordinate of the Start Decile

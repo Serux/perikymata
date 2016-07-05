@@ -2,8 +2,8 @@ package es.ubu.lsi.perikymata.modelo;
 
 public class Measure {
 	
-	private double[] startMeasure;
-	private double[] endMeasure;
+	private double[] startMeasure = new double[2];
+	private double[] endMeasure = new double[2];
 	private int measureValue;
 	private String measureUnit;
 	/**

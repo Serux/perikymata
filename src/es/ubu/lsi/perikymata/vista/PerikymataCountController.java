@@ -65,7 +65,7 @@ public class PerikymataCountController {
 	/**
 	 * Measure object with the coordinates and the value of the measure.
 	 */
-	Measure measure = new Measure();
+	private Measure measure;
 	
 	/**
 	 *  Reference to the main application.
@@ -170,7 +170,6 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void initialize() {
-		
 		//Original image to be shown when marking the measures.
 		fullOriginalImage.setVisible(false);
 		fullOriginalImage.fitHeightProperty().bind(fullImage.fitHeightProperty());
@@ -348,6 +347,8 @@ public class PerikymataCountController {
 						|| mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
 					freeDrawPath.getElements().add(new LineTo(mouseEvent.getX(), mouseEvent.getY()));
 					freeDrawPathList.add(new LineTo(mouseEvent.getX() * ratio,mouseEvent.getY() * ratio));
+					mainApp.getProject().setLinePath(freeDrawPathList);
+					mainApp.makeProjectXml();
 
 				}
 				;
@@ -388,7 +389,7 @@ public class PerikymataCountController {
 			drawPeaks();
 		}
 		
-		if(measure.getStartMeasure()!= null && measure.getEndMeasure() != null){
+		if(measure != null && measure.getStartMeasure()!= null && measure.getEndMeasure() != null){
 			measureLine.setStartX(measure.getStartMeasure()[0]/ratio);
 			measureLine.setStartY(measure.getStartMeasure()[1]/ratio);
 			measureLine.setEndX(measure.getEndMeasure()[0]/ratio);
@@ -526,13 +527,14 @@ public class PerikymataCountController {
 			fullImage.setPreserveRatio(true);
 			fullOriginalImage.setImage(mainApp.getFullImage());
 			freeDrawPathList.clear();
-			freeDrawPathList.addAll(mainApp.getProject().getLinePath());
+			if(!mainApp.getProject().getLinePath().isEmpty())
+				freeDrawPathList.addAll(mainApp.getProject().getLinePath());
 			if(mainApp.getProject().getPeaksCoords()!=null){
 				peaksCoords = mainApp.getProject().getPeaksCoords();
 				drawPeaks();
 			}
 			measure = mainApp.getProject().getMeasure();
-			
+
 			xDecileStart = mainApp.getProject().getxDecileStart();
 			xDecileEnd= mainApp.getProject().getxDecileEnd();
 			if(xDecileStart!=null & xDecileEnd != null)
@@ -558,7 +560,7 @@ public class PerikymataCountController {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
-					if(measure.getStartMeasure() == null){
+					if(measure != null && measure.getStartMeasure() == null){
 						measure.setStartMeasure(new double[2]);
 					}
 					measure.getStartMeasure()[0] = mouseEvent.getX() * getImageToImageViewRatio();
@@ -718,6 +720,8 @@ public class PerikymataCountController {
 				clearImageViewHandlers();
 			} else {
 			peaksCoords.add(new int[]{(int) (((MouseEvent)evt).getX()*this.getImageToImageViewRatio()),(int) (((MouseEvent)evt).getY()*this.getImageToImageViewRatio())});
+			mainApp.getProject().setPeaksCoords(peaksCoords);
+			mainApp.makeProjectXml();
 			drawPeaks();
 			}
 		};
@@ -734,6 +738,8 @@ public class PerikymataCountController {
 			Circle c = (Circle)evt.getSource();
 			peaksCoords.remove(circles.indexOf(c));
 			drawPeaks();
+			mainApp.getProject().setPeaksCoords(peaksCoords);
+			mainApp.makeProjectXml();
 			handleErasePerikymata();
 		};
 		

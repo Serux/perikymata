@@ -14,8 +14,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#handleNew" text="New Project" />
                   <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="Open Project" />
                   <MenuItem mnemonicParsing="false" text="Save" />
-                  <MenuItem mnemonicParsing="false" text="Save As..." />
-              <MenuItem mnemonicParsing="false" onAction="#handleExit" text="Exit" />
+              <MenuItem mnemonicParsing="false" onAction="#handleExit" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Stage">

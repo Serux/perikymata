@@ -24,6 +24,7 @@ import org.junit.runners.model.Statement;
  * 
  * @author Andy Till
  * 
+ * https://gist.github.com/andytill/3835914
  */
 public class JavaFXThreadingRule implements TestRule {
     
