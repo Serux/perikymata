@@ -16,7 +16,7 @@ import com.sun.javafx.binding.StringFormatter;
 import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.modelo.Measure;
 import es.ubu.lsi.perikymata.modelo.Project;
-import es.ubu.lsi.perikymata.modelo.filters.CLAHE_;
+import es.ubu.lsi.perikymata.util.CLAHE_;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;

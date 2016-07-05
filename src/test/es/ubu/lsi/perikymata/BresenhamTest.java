@@ -1,4 +1,4 @@
-package test.es.ubu.lsi.perikymata.modelo.filters;
+package test.es.ubu.lsi.perikymata;
 
 import static org.junit.Assert.*;
 

@@ -6,9 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import es.ubu.lsi.perikymata.MainApp;
-import test.es.ubu.lsi.perikymata.modelo.filters.JavaFXThreadingRule;
 
-public class MainAppTest {
+public class LoggerTest {
 	@Rule 
 	public JavaFXThreadingRule javafxRule = new JavaFXThreadingRule();
 	

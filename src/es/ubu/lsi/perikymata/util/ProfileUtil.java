@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import es.ubu.lsi.perikymata.MainApp;
-import es.ubu.lsi.perikymata.modelo.filters.CLAHE_;
-import es.ubu.lsi.perikymata.modelo.filters.Gauss1D;
 import ij.ImagePlus;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.shape.LineTo;

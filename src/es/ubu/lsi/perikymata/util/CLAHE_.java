@@ -1,4 +1,4 @@
-package es.ubu.lsi.perikymata.modelo.filters;
+package es.ubu.lsi.perikymata.util;
 
 /**
  * License: GPL

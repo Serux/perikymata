@@ -1,4 +1,4 @@
-package test.es.ubu.lsi.perikymata.modelo.filters;
+package test.es.ubu.lsi.perikymata;
 
 import static org.junit.Assert.*;
 
@@ -13,7 +13,7 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 
-import es.ubu.lsi.perikymata.modelo.filters.Gauss1D;
+import es.ubu.lsi.perikymata.util.Gauss1D;
 
 
 public class Gauss1DTest {

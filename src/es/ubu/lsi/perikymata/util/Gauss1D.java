@@ -1,4 +1,4 @@
-package es.ubu.lsi.perikymata.modelo.filters;
+package es.ubu.lsi.perikymata.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
