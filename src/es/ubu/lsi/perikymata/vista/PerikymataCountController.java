@@ -1,11 +1,8 @@
 package es.ubu.lsi.perikymata.vista;
 
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,18 +12,12 @@ import com.sun.javafx.binding.StringFormatter;
 
 import es.ubu.lsi.perikymata.MainApp;
 import es.ubu.lsi.perikymata.modelo.Measure;
-import es.ubu.lsi.perikymata.modelo.Project;
-import es.ubu.lsi.perikymata.util.CLAHE_;
 import es.ubu.lsi.perikymata.util.ProfileUtil;
-import ij.ImagePlus;
-import ij.process.ByteProcessor;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -104,7 +95,6 @@ public class PerikymataCountController {
 	 * are calculated over the original image, and are used to calculate the line
 	 * when it is zoomed. The first element is always a MoveTo and the rest are LineTo.
 	 */
-	// TODO maybe observable is not needed
 	private List<PathElement> freeDrawPathList = FXCollections.observableArrayList();
 	
 	/**
@@ -115,12 +105,8 @@ public class PerikymataCountController {
 	/**
 	 * Circles drawn to show where perikymata are found.
 	 */
-	//TODO observable maybe not needed.
 	private List<Circle> circles = FXCollections.observableArrayList();
 
-	//TODO maybe can be used to refactor the adding of graphic components.
-	@FXML
-	private AnchorPane imageAnchorPane;
 	
 	/**
 	 * Drawn line from startMeasure to endMeasure.
@@ -154,6 +140,12 @@ public class PerikymataCountController {
 	private Label statusLabel;
 	
 	/**
+	 * Loading gif.
+	 */
+    @FXML
+	private ImageView loading;
+	
+	/**
 	 * Label synchronized to the slider to show its value.
 	 */
 	@FXML
@@ -176,6 +168,10 @@ public class PerikymataCountController {
 		fullOriginalImage.fitWidthProperty().bind(fullImage.fitWidthProperty());
 		fullOriginalImage.eventDispatcherProperty().bind(fullImage.eventDispatcherProperty());
 		
+		// Loads loading gif.
+		loading.setImage(new Image(this.getClass().getResource("/rsc/482.gif").toExternalForm()));
+		loading.setVisible(false);
+				
 		//Show the value of the slider in the label.
 		perikymataThresholdLabel.textProperty().bind(((StringFormatter)Bindings.format("%.0f",thresholdSlider.valueProperty()).concat("%")));
 		
@@ -217,10 +213,7 @@ public class PerikymataCountController {
 	private  void zoomPlus() {
 		fullImage.setFitHeight(fullImage.getFitHeight() * 1.25);
 		fullImage.setFitWidth(fullImage.getFitWidth() * 1.25);
-
 		reDrawElements();
-
-
 	}
 
 	/**
@@ -235,7 +228,7 @@ public class PerikymataCountController {
 	}
 
 	/**
-	 * Handles the selection of the bounds of the tooth.
+	 * Handles the selection of the starting bound of the tooth.
 	 */
 	@FXML
 	private void selectStart() {
@@ -246,10 +239,12 @@ public class PerikymataCountController {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
-					xDecileStart = modifyLine(mouseEvent, lineDecileStart);
+					xDecileStart = modifyBoundsLine(mouseEvent, lineDecileStart);
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("Start point selected.");
 					fullOriginalImage.setVisible(false);
+					mainApp.getProject().setxDecileStart(xDecileStart);
+					mainApp.makeProjectXml();
 					if (xDecileStart != null && xDecileEnd != null){
 						calculateDeciles();
 					}
@@ -264,7 +259,7 @@ public class PerikymataCountController {
 	}
 
 	/**
-	 * Handles the selection of the bounds of the tooth.
+	 * Handles the selection of the Ending bound of the tooth.
 	 */
 	@FXML
 	private void selectEnd() {
@@ -274,10 +269,12 @@ public class PerikymataCountController {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				if (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) {
-					xDecileEnd = modifyLine(mouseEvent, lineDecileEnd);
+					xDecileEnd = modifyBoundsLine(mouseEvent, lineDecileEnd);
 					fullImage.setOnMouseClicked(null);
 					statusLabel.setText("End point selected.");
 					fullOriginalImage.setVisible(false);
+					mainApp.getProject().setxDecileStart(xDecileEnd);
+					mainApp.makeProjectXml();
 					if (xDecileStart != null && xDecileEnd != null){
 						calculateDeciles();
 					}
@@ -297,7 +294,7 @@ public class PerikymataCountController {
 	 * @param line Line to draw or redraw.
 	 * @return x position relative to the real image.
 	 */
-	private double modifyLine(MouseEvent me, Line line) {
+	private double modifyBoundsLine(MouseEvent me, Line line) {
 		line.setStartX(new Double(me.getX()));
 		line.setEndX(new Double(me.getX()));
 		line.setStartY(0);
@@ -389,6 +386,7 @@ public class PerikymataCountController {
 			drawPeaks();
 		}
 		
+		//Draws the measure line
 		if(measure != null && measure.getStartMeasure()!= null && measure.getEndMeasure() != null){
 			measureLine.setStartX(measure.getStartMeasure()[0]/ratio);
 			measureLine.setStartY(measure.getStartMeasure()[1]/ratio);
@@ -465,7 +463,7 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void calculatePerikymata() {
-		
+		loading.setVisible(true);
 		this.statusLabel.setText("Calculating Perikymata, this can take several minutes.");
 		
 		
@@ -474,7 +472,10 @@ public class PerikymataCountController {
 		peaksCoords.clear();
 		if (!freeDrawPathList.isEmpty()) {
 			Task<Void> task = new Task<Void>() {
-			protected Void call()throws Exception{
+			protected Void call(){
+				mainApp.getRootLayout().setDisable(true);
+				try{
+					
 				Platform.runLater(()->statusLabel.setText("Calculating profile coords... 1/4"));
 				List<int[]> profile = ProfileUtil.getProfilePixels(freeDrawPathList);
 				Platform.runLater(()->statusLabel.setText("Calculating profile intensity... 2/4"));
@@ -489,6 +490,12 @@ public class PerikymataCountController {
 				
 				Platform.runLater(()->drawPeaks());
 				Platform.runLater(()->statusLabel.setText("Perikymata marking completed"));
+				} catch (Exception e){
+					mainApp.getLogger().log(Level.SEVERE, "Error marking Perikymata.", e);
+				} finally {
+					loading.setVisible(false);
+					mainApp.getRootLayout().setDisable(false);
+				}
 				return null;
 				}
 			};
@@ -527,7 +534,7 @@ public class PerikymataCountController {
 			fullImage.setPreserveRatio(true);
 			fullOriginalImage.setImage(mainApp.getFullImage());
 			freeDrawPathList.clear();
-			if(!mainApp.getProject().getLinePath().isEmpty())
+			if(mainApp.getProject().getLinePath() != null)
 				freeDrawPathList.addAll(mainApp.getProject().getLinePath());
 			if(mainApp.getProject().getPeaksCoords()!=null){
 				peaksCoords = mainApp.getProject().getPeaksCoords();
@@ -542,9 +549,6 @@ public class PerikymataCountController {
 				
 			
 			this.reDrawElements();
-			
-			
-			
 		}
 	}
 	
@@ -554,6 +558,7 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void measureStartHandler(){
+		
 		clearImageViewHandlers();
 		fullOriginalImage.setVisible(true);
 		EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
@@ -685,14 +690,17 @@ public class PerikymataCountController {
 		// Convert the result to a username-password-pair when the login button is clicked.
 		dialog.setResultConverter(dialogButton -> {
 		    if (dialogButton == doneButtonType) {
+
 		        return new Pair<>(measureUnit.getValue().toString(), measureValue.getText());
 		    }
+		    statusLabel.setText("Measure has not been changed.");
 		    return null;
 		});
 
 		Optional<Pair<String, String>> result = dialog.showAndWait();
 
 		result.ifPresent(measureValues -> {
+	    	statusLabel.setText("Measure changed correctly.");
 			measure.setMeasureUnit(measureValues.getKey());
 	    	measure.setMeasureValue(Integer.parseInt(measureValues.getValue()));
 		    mainApp.getProject().setMeasure(measure);
@@ -714,9 +722,11 @@ public class PerikymataCountController {
 	 */
 	@FXML
 	private void handleDrawPerikymata(){
+    	statusLabel.setText("Drawing Perikymata, right click to end.");
 		clearImageViewHandlers();
 		EventHandler<Event> h = evt->{
 			if(((MouseEvent)evt).getButton().compareTo(MouseButton.SECONDARY)==0){
+		    	statusLabel.setText("Perikymata Hand-Marking ended.");
 				clearImageViewHandlers();
 			} else {
 			peaksCoords.add(new int[]{(int) (((MouseEvent)evt).getX()*this.getImageToImageViewRatio()),(int) (((MouseEvent)evt).getY()*this.getImageToImageViewRatio())});
@@ -734,6 +744,7 @@ public class PerikymataCountController {
 	@FXML 
 	private void handleErasePerikymata(){
 		clearImageViewHandlers();
+    	statusLabel.setText("Click a perikymata circle to erase it.");
 		EventHandler<Event> h = evt->{
 			Circle c = (Circle)evt.getSource();
 			peaksCoords.remove(circles.indexOf(c));
@@ -741,6 +752,7 @@ public class PerikymataCountController {
 			mainApp.getProject().setPeaksCoords(peaksCoords);
 			mainApp.makeProjectXml();
 			handleErasePerikymata();
+			
 		};
 		
 		for(Circle c : circles){
@@ -749,6 +761,9 @@ public class PerikymataCountController {
 		
 	}
 	
+	/**
+	 * Outputs a CSV file with the data of the perikymata.
+	 */
 	@FXML
 	private void generateCsvFile()
 	   {

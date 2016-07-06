@@ -1,11 +1,24 @@
 package es.ubu.lsi.perikymata.modelo;
 
+/**
+ * Class that stores the measure of the image.
+ * 
+ * @author Sergio Chico Carrancio
+ */
 public class Measure {
 	
+	/**
+	 * Coordinates of the start and the end of the measure.
+	 */
 	private double[] startMeasure = new double[2];
 	private double[] endMeasure = new double[2];
+	
+	/**
+	 * Value and unit of the measure.
+	 */
 	private int measureValue;
 	private String measureUnit;
+	
 	/**
 	 * @return the startMeasure
 	 */

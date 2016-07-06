@@ -126,14 +126,24 @@ public class ProfileUtil {
 		
 	}
 
+	/**
+	 * Calculates the Bresenham distance between two points.
+	 * That is, a straight line using Cartesian coordinates.
+	 * 
+	 * @param x0 X coordinate of Starting point.
+	 * @param y0 Y coordinate of Starting point.
+	 * @param x1 X coordinate of Ending point.
+	 * @param y1 Y coordinate of Ending point.
+	 * @return A list of the coordinates between the starting point and
+	 * The ending point.
+	 */
 	private static List<int[]> Bresenham(int x0, int y0, int x1, int y1) {
-		// TODO revisar y comentar
 		int x, y, dx, dy, p, incE, incNE, stepx, stepy;
 		dx = (x1 - x0);
 		dy = (y1 - y0);
 		List<int[]> llist = new LinkedList<>();
 	
-		// determinar que punto usar para empezar, cual para terminar */
+		// gets the start and end points
 		if (dy < 0) {
 			dy = -dy;
 			stepy = -1;
@@ -150,7 +160,7 @@ public class ProfileUtil {
 	
 		x = x0;
 		y = y0;
-		/* se cicla hasta llegar al extremo de la línea */
+		// iterates to the end of the line
 		if (dx > dy) {
 			p = 2 * dy - dx;
 			incE = 2 * dy;
@@ -287,6 +297,13 @@ public class ProfileUtil {
 		//fullImage.setImage(SwingFXUtils.toFXImage(res, null));
 	}
 	
+	/**
+	 * Gets the minimum square that where it can fit the free drawn line,
+	 * used to apply CLAHE on the minimum possible region.
+	 * @param pointsVector Coordinates of the drawn line.
+	 * @return Coordinates Of the top left point of the square(1) and the
+	 * bottom right points of the square(2) as follows: [x1,y1,x2,y2]
+	 */
 	private static int[] getRoi(List<int[]> pointsVector){
 		int x1=Integer.MAX_VALUE,x2=0;
 		int y1=Integer.MAX_VALUE,y2=0;
@@ -306,13 +323,28 @@ public class ProfileUtil {
 		return new int[]{x1,y1,x2,y2};
 	}
 	
+	/**
+	 * Substracts Prewitt - CLAHE, gets the profile of the line drawn over the subtracted 
+	 * zone and returns it smoothening it with a 1D Gaussian convolution.
+	 * It can be used to get the profile of any X-Y images.
+	 * 
+	 * @param prewitt Prewitt image.
+	 * @param clahe CLAHE image.
+	 * @param line Line to calculate the profile. 
+	 * @return Profile used to calculate where the perikymata are.
+	 */
 	private static List<Integer> getPrewittCLAHEProfile(BufferedImage prewitt, BufferedImage clahe, List<int[]> line){
 		List<List<Integer>> intensityMatrix = substractMatrixes(getOrthogonalIntensityMatrix(prewitt, line, 2),getOrthogonalIntensityMatrix(clahe, line, 2));
-		//List<List<Integer>> intensityMatrix = substractMatrixes(getOrthogonalIntensityMatrix(clahe, line, 2),getOrthogonalIntensityMatrix(prewitt, line, 2));
 		List<Integer> intensityProfile = getProfileFromIntensityMatrix(intensityMatrix);
 		return new Gauss1D().convolve1D(intensityProfile, 5);	
 	}
 	
+	/**
+	 * Substracts MatrixA - MatrixB element by element.
+	 * @param a Matrix A
+	 * @param b Matrix B
+	 * @return MatrixA - MatrixB. Negative values are returned as zero.
+	 */
 	private static List<List<Integer>> substractMatrixes(List<List<Integer>> a,List<List<Integer>> b){
 		List<Integer> ortogonal;
 		List<List<Integer>> ret = new LinkedList<>();
@@ -327,6 +359,12 @@ public class ProfileUtil {
 		return ret;
 	}
 	
+	/**
+	 * Reduces every column of a intensity Matrix to a single point.
+	 * 
+	 * @param intensityMatrix Matrix of intensity.
+	 * @return Intensity profile of the matrix.
+	 */
 	private static List<Integer> getProfileFromIntensityMatrix(List<List<Integer>> intensityMatrix){
 		List<Integer> ret = new ArrayList<>(intensityMatrix.size());
 		Integer temp;

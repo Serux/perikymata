@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
@@ -60,11 +59,7 @@ public class ImageFiltersController {
 	 */
 	private BufferedImage auxImage;
 	
-	//TODO atomic lock must be on MainApp.
-	/**
-	 * True if a thread is working, false otherwise.
-	 */
-	private AtomicBoolean working = new AtomicBoolean(false);
+
 
 	/////////////////////////Imageviews Elements////////////////////////
 
@@ -333,7 +328,7 @@ public class ImageFiltersController {
 	 */
 	@FXML
 	private void handleRunFilters() {
-		if (working.compareAndSet(false, true)) {
+		
 			// Saves a copy of the original image to apply filters
 			auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
 			disableComponents();
@@ -342,35 +337,33 @@ public class ImageFiltersController {
 			new Thread(() -> {
 				ObservableList<Filter> f = this.filtersTable.getItems();
 				for(int i =0; i< f.size(); i++ ){
-					changeStatus("Aplying " + f.get(i).getFiltername().getValue() + ". " + (i+1) + "\\" + f.size());
+					changeStatus("Aplying " + f.get(i).getFiltername().getValue() + ". " + (i+1) + "/" + f.size());
 					this.auxImage = f.get(i).run(auxImage);
 				}
 				
 				filteredImage.setImage(SwingFXUtils.toFXImage(auxImage,null));
 				this.mainApp.setFilteredImage(SwingFXUtils.toFXImage(auxImage,null));
 				changeStatus("Filters apply completed! Idle.");
-				working.set(false);
+		
 				loading.setVisible(false);
 				this.enableComponents();
 			}).start();
 
-		} else {
-			changeStatus("Already applying filters, please wait.");
-		}
+		
+		
 	}
 	
-	//TODO think if this will be useful, and if it is, comment it.
+	/**
+	 * Disables the components while the algorithm is running.
+	 */
 	private void disableComponents(){
-		filtersTable.setDisable(true);
-		addGaussButton.setDisable(true);
-		addPrewittButton.setDisable(true);
-		deleteFilterButton.setDisable(true);
+		mainApp.getRootLayout().setDisable(true);
 	}
+	/**
+	 * enables the components when the algorithm has ended.
+	 */
 	private void enableComponents(){
-		filtersTable.setDisable(false);
-		addGaussButton.setDisable(false);
-		addPrewittButton.setDisable(false);
-		deleteFilterButton.setDisable(false);
+		mainApp.getRootLayout().setDisable(false);
 	}
 
 	/**
@@ -408,14 +401,17 @@ public class ImageFiltersController {
 		mainApp.showPerikymataCount();
 	}
 	
-	public void saveToFile(Image image) {
+	/**
+	 * Saves the filtered image to disk.
+	 * @param image Filtered image.
+	 */
+	private void saveToFile(Image image) {
 	    File outputFile = Paths.get(mainApp.getProjectPath(), "Full_Image", "Filtered_Image.png").toFile();
 	    BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
 	    try {
 	      ImageIO.write(bImage, "png", outputFile);
 	    } catch (IOException e) {
 	    	mainApp.getLogger().log(Level.SEVERE, "Filtered image cannot be saved.", e);
-	    	//TODO launch popup
 	    }
 	}
 	

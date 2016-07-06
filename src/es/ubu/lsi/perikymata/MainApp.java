@@ -64,6 +64,20 @@ public class MainApp extends Application {
 	private BorderPane rootLayout;
 
 	/**
+	 * @return the rootLayout
+	 */
+	public BorderPane getRootLayout() {
+		return rootLayout;
+	}
+
+	/**
+	 * @param rootLayout the rootLayout to set
+	 */
+	public void setRootLayout(BorderPane rootLayout) {
+		this.rootLayout = rootLayout;
+	}
+
+	/**
 	 * File logger.
 	 */
 	private Logger logger = Logger.getLogger(MainApp.class.getName());
@@ -111,7 +125,7 @@ public class MainApp extends Application {
 		configureLogger();
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("Perikymata - Unsaved Project");
-		this.primaryStage.getIcons().add(new Image("file:resources/images/logo.png"));
+		this.primaryStage.getIcons().add(new Image(this.getClass().getResource("/rsc/Tooth-icon.png").toExternalForm()));
 		this.primaryStage.setMinHeight(450.0);
 		this.primaryStage.setMinWidth(650.0);
 		initRootLayout();
@@ -166,7 +180,6 @@ public class MainApp extends Application {
 			// erased.
 			loadProjectFromFile(file);
 		} else {
-			//TODO add this to a function
 			Boolean cont = false;
 			while (!cont) {
 				Alert alert = new Alert(AlertType.CONFIRMATION);

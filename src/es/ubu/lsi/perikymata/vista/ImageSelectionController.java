@@ -205,6 +205,7 @@ public class ImageSelectionController {
 		
 		new Thread(() -> {
 			try {
+				mainApp.getRootLayout().setDisable(true);
 				List<String> tempList = new ArrayList<>();
 				StringBuilder tempString = new StringBuilder();
 				mainApp.getFilesList()
@@ -216,7 +217,7 @@ public class ImageSelectionController {
 								+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " "
 								+ tempString);
 				int ok;
-				//Stitching::OK exit code is 1.
+				//OK exit code is 1.
 				if( (ok=stitcher.waitFor()) == 1){
 
 					java.awt.Image full = new Opener()
@@ -225,7 +226,7 @@ public class ImageSelectionController {
 					
 					changeStatus("Stitching completed!");
 					loading.setVisible(false);
-					
+					mainApp.getRootLayout().setDisable(false);
 					Platform.runLater(() -> {
 						mainApp.setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
 						this.previewImage.setImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
@@ -239,25 +240,18 @@ public class ImageSelectionController {
 				}
 			} catch (IOException e) {
 				mainApp.getLogger().log(Level.SEVERE, "Exception occur executing stitcher.",e);
-				//TODO alerts are not showing in thread.
-	        	/*Alert alert = new Alert(Alert.AlertType.INFORMATION);
-	        	alert.setTitle("Error stitching");
-	        	alert.setHeaderText("Error executing stitcher.\n");
-	        	alert.setContentText("Error executing stitcher process, make sure that Stitcher.exe is in folder:\n <Perikymata_Folder>/rsc/stitching/bin/Stitching.exe");
-	            alert.showAndWait();*/
+				
 	            changeStatus("Stitching failed.");
 				loading.setVisible(false);
 			} catch (InterruptedException e) {
 				mainApp.getLogger().log(Level.SEVERE, "Exception occur waiting for stitching.",e);
-				//TODO alerts are not showing in thread.
-	        	/*Alert alert = new Alert(Alert.AlertType.INFORMATION);
-	        	alert.setTitle("Error executing stitcher");
-	        	alert.setHeaderText("An error occurred and stitcher was interrupted.\n");
-	        	alert.setContentText("An error ocurred and stitcher did'n finished correctly.");
-	            alert.showAndWait();*/
+				
 	            changeStatus("Thread interrupted.");
 				loading.setVisible(false);
 	            Thread.currentThread().interrupt();
+			} finally {
+				loading.setVisible(false);
+				mainApp.getRootLayout().setDisable(false);
 			}
 		}).start();
 	}

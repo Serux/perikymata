@@ -77,18 +77,12 @@ public class RootLayoutController {
     }
 
     /**
-     * Saves the file to the project file that is currently open. If there is no
-     * open file, the "save as" dialog is shown.
+     * Forces a save to the XML, it is not used because XML is created on
+     * every modification of the data, but it's here just in case.
      */
     @FXML
     private void handleSave() {
-    	//TODO
-        /*File personFile = mainApp.getPersonFilePath();
-        if (personFile != null) {
-            mainApp.savePersonDataToFile(personFile);
-        } else {
-            handleSaveAs();
-        }*/
+    	mainApp.makeProjectXml();
     }
 
     /**
@@ -97,12 +91,12 @@ public class RootLayoutController {
     @FXML
     private void handleAbout() {
     	Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    	alert.setTitle("Perikymata");
+    	alert.setTitle("Paleontological analysis of dental images - Perikymata");
     	alert.setHeaderText("About");
-    	alert.setContentText("Autor: Sergio Chico Carrancio\n"
-    			+ "Tutor: Jose Francisco Diez Pastor\n"
-    			+ "Tutor: Raul Marticorena Sanchez  \n"
-    			+ "Universidad de Burgos");
+    	alert.setContentText("Author: Sergio Chico Carrancio\n"
+    			+ "Tutor: Dr. Jose Francisco Diez Pastor\n"
+    			+ "Tutor: Dr Raul Marticorena Sanchez  \n"
+    			+ "Universidad de Burgos, July 2016");
         alert.showAndWait();
     }
     

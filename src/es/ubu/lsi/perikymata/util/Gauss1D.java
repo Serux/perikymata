@@ -1,11 +1,19 @@
 package es.ubu.lsi.perikymata.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Class that makes a gauss function in one dimension.
+ * Makes hard changes in the function softer.
+ * for example 0,255,0 is transformed in something like
+ * 50,200,50.
+ * 
+ * @author Sergio Chico Carrancio
+ *
+ */
 public class Gauss1D {
 	
 	/**
@@ -35,7 +43,6 @@ public class Gauss1D {
 	 */
 	public List<Integer> convolve1D(List<Integer> in, int size)
 	{
-		List ret = new ArrayList<>(in.size());
 		float[] kernel = calculateHannArray(size);
 	    int i, j, k;
 	    int[] out = new int[in.size()+(kernel.length/2)];

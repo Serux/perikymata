@@ -3,9 +3,6 @@ package es.ubu.lsi.perikymata.util;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import es.ubu.lsi.perikymata.modelo.Project;
-import es.ubu.lsi.perikymata.modelo.filters.Filter;
-import es.ubu.lsi.perikymata.modelo.filters.Gauss;
-import es.ubu.lsi.perikymata.modelo.filters.Prewitt;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;

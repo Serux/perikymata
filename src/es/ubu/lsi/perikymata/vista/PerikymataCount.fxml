@@ -41,7 +41,7 @@
                   <Tooltip text="Mark new perikymata." />
                </tooltip>
             </Button>
-            <Slider fx:id="thresholdSlider" blockIncrement="1.0" layoutX="144.0" layoutY="41.0" minorTickCount="24" prefHeight="14.0" prefWidth="78.0" showTickMarks="true" snapToTicks="true" value="75.0" AnchorPane.rightAnchor="223.0" AnchorPane.topAnchor="41.0" />
+            <Slider fx:id="thresholdSlider" blockIncrement="1.0" layoutX="144.0" layoutY="41.0" minorTickCount="24" prefHeight="14.0" prefWidth="78.0" showTickMarks="true" snapToTicks="true" AnchorPane.rightAnchor="223.0" AnchorPane.topAnchor="41.0" />
             <Label layoutX="225.0" layoutY="37.0" prefHeight="14.0" prefWidth="118.0" text="Detection Threshold:" AnchorPane.rightAnchor="102.0" AnchorPane.topAnchor="37.0" />
             <Label fx:id="perikymataThresholdLabel" layoutX="340.0" layoutY="37.0" prefHeight="17.0" prefWidth="42.0" text="Value" AnchorPane.rightAnchor="63.0" AnchorPane.topAnchor="37.0" />
          </children>
@@ -56,10 +56,11 @@
             </AnchorPane>
         </content>
       </ScrollPane>
-      <HBox layoutX="15.0" layoutY="324.0" prefHeight="17.0" prefWidth="318.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="142.0">
+      <HBox layoutX="15.0" layoutY="324.0" prefHeight="25.0" prefWidth="445.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0">
          <children>
             <Label prefHeight="17.0" prefWidth="42.0" text="Status:" />
             <Label fx:id="statusLabel" text="Nothing selected." />
+            <ImageView fx:id="loading" fitHeight="25.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </HBox>
    </children>
