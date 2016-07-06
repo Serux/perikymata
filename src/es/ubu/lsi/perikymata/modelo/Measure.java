@@ -16,7 +16,7 @@ public class Measure {
 	/**
 	 * Value and unit of the measure.
 	 */
-	private int measureValue;
+	private double measureValue;
 	private String measureUnit;
 	
 	/**
@@ -46,13 +46,13 @@ public class Measure {
 	/**
 	 * @return the measureValue
 	 */
-	public int getMeasureValue() {
+	public double getMeasureValue() {
 		return measureValue;
 	}
 	/**
 	 * @param measureValue the measureValue to set
 	 */
-	public void setMeasureValue(int measureValue) {
+	public void setMeasureValue(double measureValue) {
 		this.measureValue = measureValue;
 	}
 	/**

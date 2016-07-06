@@ -487,7 +487,7 @@ public class PerikymataCountController {
 				}
 				Platform.runLater(()->statusLabel.setText("Drawing perikymata... 4/4"));
 				mainApp.getProject().setPeaksCoords(peaksCoords);
-				
+				mainApp.makeProjectXml();
 				Platform.runLater(()->drawPeaks());
 				Platform.runLater(()->statusLabel.setText("Perikymata marking completed"));
 				} catch (Exception e){
@@ -628,8 +628,8 @@ public class PerikymataCountController {
 		measureLine.setEndY(measure.getEndMeasure()[1]/getImageToImageViewRatio());
 		
 		
-		measure.setStartMeasure(measure.getStartMeasure());
-		measure.setEndMeasure(measure.getEndMeasure());
+		mainApp.getProject().getMeasure().setStartMeasure(measure.getStartMeasure());
+		mainApp.getProject().getMeasure().setEndMeasure(measure.getEndMeasure());
 		
 		// Create the custom dialog.
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
@@ -656,11 +656,13 @@ public class PerikymataCountController {
 		TextField measureValue = new TextField();
 		measureValue.setPromptText("Measure value");
 		if(measure!=null && measure.getMeasureValue() != 0){
-			measureValue.setText(Integer.toString(measure.getMeasureValue()));
+			measureValue.setText(Double.toString(measure.getMeasureValue()));
 		}
 		measureValue.setTextFormatter(new TextFormatter<String>(
 				change->{
-					if (change.getText().matches("[0-9]*")) {
+					if (change.getText().matches("[0-9]*(\\.)?[0-9]*")) {
+						if(change.getText().endsWith("."))
+							change.setText(change.getText()+"0");
 						return change;
 					}
 					return null;
@@ -702,7 +704,7 @@ public class PerikymataCountController {
 		result.ifPresent(measureValues -> {
 	    	statusLabel.setText("Measure changed correctly.");
 			measure.setMeasureUnit(measureValues.getKey());
-	    	measure.setMeasureValue(Integer.parseInt(measureValues.getValue()));
+	    	measure.setMeasureValue(Double.parseDouble(measureValues.getValue()));
 		    mainApp.getProject().setMeasure(measure);
 		    mainApp.makeProjectXml();
 		});
@@ -769,12 +771,31 @@ public class PerikymataCountController {
 	   {
 		try
 		{
+			if(xDecileStart == null){
+				statusLabel.setText("Start Decile is missing, cannot make CSV.");
+			}else if(xDecileEnd == null){
+				statusLabel.setText("End Decile is missing, cannot make CSV.");
+			}else if(measure.getMeasureValue()==0){
+				statusLabel.setText("Measure missing, cannot make CSV.");
+			}else if(peaksCoords.isEmpty()){
+				statusLabel.setText("Perikymata not detected, cannot make CSV.");
+			}
+			double[] proportions = new double[10];
+			int numPerDecile=0;
 			String sFileName = Paths.get(mainApp.getProjectPath(), "Perikymata_Outputs", "Output.csv").toString();
 		    FileWriter writer = new FileWriter(sFileName);
 			 
+		   //Vector distance of the measure
+		    double measureXDist = Math.max(measure.getStartMeasure()[0],measure.getEndMeasure()[0]) -  Math.min(measure.getStartMeasure()[0],measure.getStartMeasure()[0]) ;
+		    double measureYDist = Math.max(measure.getStartMeasure()[1],measure.getEndMeasure()[1]) -  Math.min(measure.getStartMeasure()[1],measure.getStartMeasure()[1]) ;
+		    double measureTotalDist = Math.sqrt(Math.pow(measureXDist,2)+Math.pow(measureYDist,2));
+		    
 		    writer.append(mainApp.getProject().getProjectName());
 		    writer.append('\n');
-
+		    writer.append("Measure Unit:");
+		    writer.append(',');
+		    writer.append(measure.getMeasureUnit());
+		    writer.append('\n');
 		    //TODO proportion per decil
 		    
 		    writer.append("Decile");
@@ -787,45 +808,84 @@ public class PerikymataCountController {
 	        int decile=0;
 	        int currentPerikymataIndex=0;
 	        int lastPerikymataIndex=0;
+	        
+	        //Skips perikymata before the first decile.
+	        while(xDecileStart > peaksCoords.get(currentPerikymataIndex)[0]){
+	        	currentPerikymataIndex++;
+	        	lastPerikymataIndex++;
+	        }
+	        int firstValue = currentPerikymataIndex;
 	        while(decile <9){
-	        	while(currentPerikymataIndex < peaksCoords.size() && decilesBetween[decile] > peaksCoords.get(currentPerikymataIndex)[0]){
-	        		if(currentPerikymataIndex!=0)
+	        	while(currentPerikymataIndex < peaksCoords.size()-1 && decilesBetween[decile] > peaksCoords.get(currentPerikymataIndex)[0]){
+	        		//First element is compared to self on the first iteration, then to the previous.
+	        		if(currentPerikymataIndex!=firstValue)
 	        			lastPerikymataIndex++;
 	        		currentPerikymataIndex++;
+	        		//Number of decile, starting on 1 and ending on 10.
 	        		writer.append(Integer.toString(decile+1));
 	    		    writer.append(',');
-	    		    writer.append(Integer.toString(peaksCoords.get(currentPerikymataIndex)[0]) + Integer.toString(peaksCoords.get(currentPerikymataIndex)[1]));
+	    		    //Coordinates of the perikymata
+	    		    writer.append(Integer.toString(peaksCoords.get(currentPerikymataIndex)[0]) +" "+ Integer.toString(peaksCoords.get(currentPerikymataIndex)[1]));
 	    		    writer.append(',');
+	    		    //Vector distance of the pixels
 	    		    double xdist = Math.max(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) ;
-	    		    double ydist = Math.max(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) ;
-	    		    writer.append(Double.toString(Math.sqrt(Math.pow(xdist,2)+Math.pow(ydist,2))));
+	    		    double ydist = Math.max(peaksCoords.get(currentPerikymataIndex)[1],peaksCoords.get(lastPerikymataIndex)[1]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[1],peaksCoords.get(lastPerikymataIndex)[1]) ;
+	    		    double totalDist = Math.sqrt(Math.pow(xdist,2)+Math.pow(ydist,2));
+	    		    //Real distance = (real*pixelsDistance)/measureDistance
+	    		    writer.append(Double.toString((measure.getMeasureValue()*totalDist)/measureTotalDist));
 	    		    writer.append('\n');
-	    		    
+	    		    numPerDecile++;
 	        	}
+	        	proportions[decile]=numPerDecile;
 	        	decile++;
+	        	
+	        	numPerDecile=0;
 	        }
-
 	        
-	        while(currentPerikymataIndex < peaksCoords.size() && xDecileEnd > peaksCoords.get(currentPerikymataIndex)[0]){
+	        //Last decile.
+	        while(currentPerikymataIndex < peaksCoords.size()-1 && xDecileEnd > peaksCoords.get(currentPerikymataIndex)[0]){
         		if(currentPerikymataIndex!=0)
         			lastPerikymataIndex++;
         		currentPerikymataIndex++;
-        		writer.append(Integer.toString(10));
+        		writer.append(Integer.toString(decile+1));
     		    writer.append(',');
-    		    writer.append(Integer.toString(peaksCoords.get(currentPerikymataIndex)[0]) + Integer.toString(peaksCoords.get(currentPerikymataIndex)[1]));
+    		    writer.append(Integer.toString(peaksCoords.get(currentPerikymataIndex)[0]) +" "+ Integer.toString(peaksCoords.get(currentPerikymataIndex)[1]));
     		    writer.append(',');
+    		    //Vector distance
     		    double xdist = Math.max(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) ;
-    		    double ydist = Math.max(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[0],peaksCoords.get(lastPerikymataIndex)[0]) ;
-    		    writer.append(Double.toString(Math.sqrt(Math.pow(xdist,2)+Math.pow(ydist,2))));
+    		    double ydist = Math.max(peaksCoords.get(currentPerikymataIndex)[1],peaksCoords.get(lastPerikymataIndex)[1]) -  Math.min(peaksCoords.get(currentPerikymataIndex)[1],peaksCoords.get(lastPerikymataIndex)[1]) ;
+    		    double totalDist = Math.sqrt(Math.pow(xdist,2)+Math.pow(ydist,2));
+    		    //Real distance = (real*pixelsDistance)/measureDistance
+    		    writer.append(Double.toString((measure.getMeasureValue()*totalDist)/measureTotalDist));
     		    writer.append('\n');
-    		    
+    		    numPerDecile++;
         	}
+	        proportions[9]=numPerDecile;
+	        
+	        //Writes proportion per decile
+	        writer.append("Proportion per decile");
+	        writer.append('\n');
+	        writer.append('1');
+	        for(int i=1; i<10;i++){
+	        	writer.append(',');
+	        	writer.append(String.valueOf(i+1));
+	        }
+	        writer.append('\n');
+	        writer.append(String.valueOf(proportions[0]));
+			for(int i=1; i<10;i++){
+				writer.append(',');
+				writer.append(String.valueOf(proportions[i]));
 				
+			}
+			writer.append('\n');
+	        
 		    writer.flush();
 		    writer.close();
+		    statusLabel.setText("CSV exported succesfully");
 		}
 		catch(IOException e)
 		{
+			statusLabel.setText("Error exporting CSV");
 			mainApp.getLogger().log(Level.SEVERE,"Error while saving CSV.",e);
 		} 
 	   }
