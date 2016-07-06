@@ -781,7 +781,7 @@ public class PerikymataCountController {
 				statusLabel.setText("Perikymata not detected, cannot make CSV.");
 			}
 			double[] proportions = new double[10];
-			int numPerDecile=0;
+			
 			String sFileName = Paths.get(mainApp.getProjectPath(), "Perikymata_Outputs", "Output.csv").toString();
 		    FileWriter writer = new FileWriter(sFileName);
 			 
@@ -796,7 +796,6 @@ public class PerikymataCountController {
 		    writer.append(',');
 		    writer.append(measure.getMeasureUnit());
 		    writer.append('\n');
-		    //TODO proportion per decil
 		    
 		    writer.append("Decile");
 		    writer.append(',');
@@ -805,6 +804,7 @@ public class PerikymataCountController {
 	        writer.append("Distance to previous");
 	        writer.append('\n');
 	        
+	        int numPerDecile=0;
 	        int decile=0;
 	        int currentPerikymataIndex=0;
 	        int lastPerikymataIndex=0;
@@ -814,13 +814,15 @@ public class PerikymataCountController {
 	        	currentPerikymataIndex++;
 	        	lastPerikymataIndex++;
 	        }
+	        //TODO doesn't works with hand-Drawn perikymata. As we need to check the 
+	        // distance with the previous perikymata, we need to order the peaks first,
+	        // then this works.
 	        int firstValue = currentPerikymataIndex;
 	        while(decile <9){
 	        	while(currentPerikymataIndex < peaksCoords.size()-1 && decilesBetween[decile] > peaksCoords.get(currentPerikymataIndex)[0]){
-	        		//First element is compared to self on the first iteration, then to the previous.
-	        		if(currentPerikymataIndex!=firstValue)
-	        			lastPerikymataIndex++;
-	        		currentPerikymataIndex++;
+	        		
+	        		
+	        		
 	        		//Number of decile, starting on 1 and ending on 10.
 	        		writer.append(Integer.toString(decile+1));
 	    		    writer.append(',');
@@ -835,6 +837,12 @@ public class PerikymataCountController {
 	    		    writer.append(Double.toString((measure.getMeasureValue()*totalDist)/measureTotalDist));
 	    		    writer.append('\n');
 	    		    numPerDecile++;
+	    		    
+	    		  //First element is compared to self on the first iteration, then to the previous.
+	    		    if(currentPerikymataIndex!=firstValue)
+	        			lastPerikymataIndex++;
+	    		    currentPerikymataIndex++;
+	    		    
 	        	}
 	        	proportions[decile]=numPerDecile;
 	        	decile++;
@@ -862,6 +870,7 @@ public class PerikymataCountController {
         	}
 	        proportions[9]=numPerDecile;
 	        
+	        //TODO what tipe of proportion?
 	        //Writes proportion per decile
 	        writer.append("Proportion per decile");
 	        writer.append('\n');

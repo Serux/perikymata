@@ -10,8 +10,8 @@ public class Measure {
 	/**
 	 * Coordinates of the start and the end of the measure.
 	 */
-	private double[] startMeasure = new double[2];
-	private double[] endMeasure = new double[2];
+	private double[] startMeasure = null;
+	private double[] endMeasure = null;
 	
 	/**
 	 * Value and unit of the measure.
