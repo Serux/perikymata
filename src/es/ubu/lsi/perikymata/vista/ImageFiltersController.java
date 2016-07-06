@@ -1,4 +1,5 @@
 package es.ubu.lsi.perikymata.vista;
+
 /**
  * License: GPL
  *
@@ -58,32 +59,30 @@ import javafx.scene.input.TransferMode;
  * @author Sergio Chico Carrancio
  */
 public class ImageFiltersController {
-	////////////////////////NotFXML variables////////////////////////////
+	//////////////////////// NotFXML variables////////////////////////////
 	/**
-	 * Used to modify the behaviour of the filters table. 
+	 * Used to modify the behaviour of the filters table.
 	 */
 	private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
-	
+
 	/**
 	 * Reference to the main application
 	 */
 	private MainApp mainApp;
-	
+
 	/**
 	 * Image used to apply the filters.
 	 */
 	private BufferedImage auxImage;
-	
 
-
-	/////////////////////////Imageviews Elements////////////////////////
+	///////////////////////// Imageviews Elements////////////////////////
 
 	/**
 	 * Reference to the filtered image.
 	 */
 	@FXML
 	private ImageView filteredImage;
-	
+
 	/**
 	 * Reference to the original image.
 	 */
@@ -95,66 +94,65 @@ public class ImageFiltersController {
 	 */
 	@FXML
 	private ScrollPane scrollPane1;
-	
+
 	/**
 	 * Reference to the second Scrollpane.
 	 */
 	@FXML
 	private ScrollPane scrollPane2;
-	
-	//////////////////////Status Elements////////////////////
-	
+
+	////////////////////// Status Elements////////////////////
+
 	/**
 	 * Current status, tells to the user if a Thread is running.
 	 */
 	@FXML
 	private Label status;
-	
+
 	/**
 	 * Loading gif.
 	 */
-    @FXML
+	@FXML
 	private ImageView loading;
 
-	
-	////////////////////Table Elements/////////////////////////
+	//////////////////// Table Elements/////////////////////////
 	/**
 	 * List of operations to be executed.
 	 */
-    @FXML
+	@FXML
 	private TableView<Filter> filtersTable;
-    
-    /**
-     * Column of the table that shows the name of the filter.
-     */
-    @FXML
-    private TableColumn<Filter, String> filtersColumn;
-    
-    /**
-     * Column of the table that shows the arguments the filter.
-     */
-    @FXML
-    private TableColumn<Filter, String> argumentsColumn;
-    
+
+	/**
+	 * Column of the table that shows the name of the filter.
+	 */
+	@FXML
+	private TableColumn<Filter, String> filtersColumn;
+
+	/**
+	 * Column of the table that shows the arguments the filter.
+	 */
+	@FXML
+	private TableColumn<Filter, String> argumentsColumn;
+
 	/**
 	 * Button to delete a selected filter.
 	 */
 	@FXML
 	private Button deleteFilterButton;
 
-	////////////////////////Prewitt Filter///////////////////////
+	//////////////////////// Prewitt Filter///////////////////////
 	/**
 	 * Button to ad a new prewitt filter.
 	 */
 	@FXML
 	private Button addPrewittButton;
-	
+
 	/**
 	 * Slider for controlling the size of the prewitt mask.
 	 */
 	@FXML
 	private Slider prewittSizeSlider;
-	
+
 	/**
 	 * Label to show the exact size of the force on a prewitt filter.
 	 */
@@ -166,21 +164,21 @@ public class ImageFiltersController {
 	 */
 	@FXML
 	private Slider prewittForceSlider;
-	
+
 	/**
 	 * Label to show the exact size of the mask on a prewitt filter.
 	 */
 	@FXML
 	private Label prewittSizeLevel;
 
-	//////////////////////Gaussian Filter/////////////////////////
+	////////////////////// Gaussian Filter/////////////////////////
 
 	/**
 	 * Button to ad a new gauss filter.
 	 */
 	@FXML
 	private Button addGaussButton;
-	
+
 	/**
 	 * Slider for controlling the sigma of the gauss filter.
 	 */
@@ -204,103 +202,105 @@ public class ImageFiltersController {
 		// same time.
 		scrollPane1.vvalueProperty().bindBidirectional(scrollPane2.vvalueProperty());
 		scrollPane1.hvalueProperty().bindBidirectional(scrollPane2.hvalueProperty());
-		
+
 		// binds size of the two images to be the same.
-		//originalImage.setPreserveRatio(true);
+		// originalImage.setPreserveRatio(true);
 		originalImage.fitHeightProperty().bindBidirectional(filteredImage.fitHeightProperty());
 		originalImage.fitWidthProperty().bindBidirectional(filteredImage.fitWidthProperty());
-		
-		scrollPane1.getContent().setCursor(new ImageCursor(new Image(this.getClass().getResource("/rsc/zoom_in.gif").toExternalForm())));
+
+		scrollPane1.getContent().setCursor(
+				new ImageCursor(new Image(this.getClass().getResource("/rsc/zoom_in.gif").toExternalForm())));
 		scrollPane2.getContent().setCursor(scrollPane1.getContent().getCursor());
 		scrollPane1.getContent().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {
-				
-				if(event.getButton().compareTo(MouseButton.PRIMARY)==0){
+
+				if (event.getButton().compareTo(MouseButton.PRIMARY) == 0) {
 					zoomPlusHandler();
-				} else if(event.getButton().compareTo(MouseButton.SECONDARY)==0){
-					zoomMinusHandler();		
+				} else if (event.getButton().compareTo(MouseButton.SECONDARY) == 0) {
+					zoomMinusHandler();
 				}
 				event.consume();
 			}
 		});
 		scrollPane2.getContent().setOnMouseClicked(scrollPane1.getContent().onMouseClickedProperty().get());
-		
 
 		// Handler that changes a labels to show the value of the sliders.
 		gaussLevel.textProperty().bindBidirectional(gaussSlider.valueProperty(), new DecimalFormat("##.##"));
-		prewittForceLevel.textProperty().bindBidirectional(prewittForceSlider.valueProperty(), new DecimalFormat("#.##"));
+		prewittForceLevel.textProperty().bindBidirectional(prewittForceSlider.valueProperty(),
+				new DecimalFormat("#.##"));
 		prewittSizeLevel.textProperty().bindBidirectional(prewittSizeSlider.valueProperty(), new DecimalFormat("#"));
 		status.setText("Idle");
-		
+
 		// Loads loading gif.
 		loading.setImage(new Image(this.getClass().getResource("/rsc/482.gif").toExternalForm()));
 		loading.setVisible(false);
-		
+
 		// Initialize the person table with the two columns.
-        filtersColumn.setCellValueFactory(cellData -> cellData.getValue().getFiltername());
-        argumentsColumn.setCellValueFactory(cellData -> cellData.getValue().getFilterArgs());
-       
-        //http://stackoverflow.com/questions/28603224/sort-tableview-with-drag-and-drop-rows
-        filtersTable.setRowFactory(tv -> {
-            TableRow<Filter> row = new TableRow<>();
+		filtersColumn.setCellValueFactory(cellData -> cellData.getValue().getFiltername());
+		argumentsColumn.setCellValueFactory(cellData -> cellData.getValue().getFilterArgs());
 
-            row.setOnDragDetected(event -> {
-                if (! row.isEmpty()) {
-                    Integer index = row.getIndex();
-                    Dragboard db = row.startDragAndDrop(TransferMode.MOVE);
-                    db.setDragView(row.snapshot(null, null));
-                    ClipboardContent cc = new ClipboardContent();
-                    cc.put(SERIALIZED_MIME_TYPE, index);
-                    db.setContent(cc);
-                    event.consume();
-                }
-            });
+		// http://stackoverflow.com/a/28606524
+		filtersTable.setRowFactory(tv -> {
+			TableRow<Filter> row = new TableRow<>();
 
-            row.setOnDragOver(event -> {
-                Dragboard db = event.getDragboard();
-                if (db.hasContent(SERIALIZED_MIME_TYPE)) {
-                    if (row.getIndex() != ((Integer)db.getContent(SERIALIZED_MIME_TYPE)).intValue()) {
-                        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                        event.consume();
-                    }
-                }
-            });
+			row.setOnDragDetected(event -> {
+				if (!row.isEmpty()) {
+					Integer index = row.getIndex();
+					Dragboard db = row.startDragAndDrop(TransferMode.MOVE);
+					db.setDragView(row.snapshot(null, null));
+					ClipboardContent cc = new ClipboardContent();
+					cc.put(SERIALIZED_MIME_TYPE, index);
+					db.setContent(cc);
+					event.consume();
+				}
+			});
 
-            row.setOnDragDropped(event -> {
-                Dragboard db = event.getDragboard();
-                if (db.hasContent(SERIALIZED_MIME_TYPE)) {
-                    int draggedIndex = (Integer) db.getContent(SERIALIZED_MIME_TYPE);
-                    Filter draggedPerson = filtersTable.getItems().remove(draggedIndex);
+			row.setOnDragOver(event -> {
+				Dragboard db = event.getDragboard();
+				if (db.hasContent(SERIALIZED_MIME_TYPE)) {
+					if (row.getIndex() != ((Integer) db.getContent(SERIALIZED_MIME_TYPE)).intValue()) {
+						event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+						event.consume();
+					}
+				}
+			});
 
-                    int dropIndex ; 
+			row.setOnDragDropped(event -> {
+				Dragboard db = event.getDragboard();
+				if (db.hasContent(SERIALIZED_MIME_TYPE)) {
+					int draggedIndex = (Integer) db.getContent(SERIALIZED_MIME_TYPE);
+					Filter draggedPerson = filtersTable.getItems().remove(draggedIndex);
 
-                    if (row.isEmpty()) {
-                        dropIndex = filtersTable.getItems().size() ;
-                    } else {
-                        dropIndex = row.getIndex();
-                    }
+					int dropIndex;
 
-                    filtersTable.getItems().add(dropIndex, draggedPerson);
+					if (row.isEmpty()) {
+						dropIndex = filtersTable.getItems().size();
+					} else {
+						dropIndex = row.getIndex();
+					}
 
-                    event.setDropCompleted(true);
-                    filtersTable.getSelectionModel().select(dropIndex);
-                    event.consume();
-                } });
-            return row ;
-        });
-        
+					filtersTable.getItems().add(dropIndex, draggedPerson);
+
+					event.setDropCompleted(true);
+					filtersTable.getSelectionModel().select(dropIndex);
+					event.consume();
+				}
+			});
+			return row;
+		});
+
 	}
-	
+
 	@FXML
-	private void zoomMinusHandler(){
-		originalImage.setFitHeight(originalImage.getFitHeight()*0.75);
+	private void zoomMinusHandler() {
+		originalImage.setFitHeight(originalImage.getFitHeight() * 0.75);
 	}
-	
+
 	@FXML
-	private void zoomPlusHandler(){
-		originalImage.setFitHeight(originalImage.getFitHeight()*1.25);
+	private void zoomPlusHandler() {
+		originalImage.setFitHeight(originalImage.getFitHeight() * 1.25);
 	}
 
 	/**
@@ -308,10 +308,10 @@ public class ImageFiltersController {
 	 */
 	@FXML
 	private void addPrewittFilter() {
-		mainApp.getAppliedFilters().add(new Prewitt((int)prewittSizeSlider.getValue(), prewittForceSlider.getValue()));
+		mainApp.getAppliedFilters().add(new Prewitt((int) prewittSizeSlider.getValue(), prewittForceSlider.getValue()));
 
 	}
-	
+
 	/**
 	 * Handler that adds a gaussian filter to the list of filters.
 	 */
@@ -319,65 +319,64 @@ public class ImageFiltersController {
 	private void addGaussianFilter() {
 		mainApp.getAppliedFilters().add(new Gauss(gaussSlider.getValue()));
 	}
-	
+
 	/**
 	 * Handler that removes a filter from the list.
 	 */
 	@FXML
 	private void handleRemoveFilter() {
-	       int selectedIndex = filtersTable.getSelectionModel().getSelectedIndex();
-	        if (selectedIndex >= 0) {
-	        	filtersTable.getItems().remove(selectedIndex);
-	        } else {
-	            // Nothing selected.
-	        	Alert alert = new Alert(AlertType.WARNING);
-	        	alert.setTitle("No Selection");
-	        	alert.setHeaderText("No Filter Selected");
-	        	alert.setContentText("Please select a filter in the table to delete it");
-	        	alert.showAndWait();
-	        }
+		int selectedIndex = filtersTable.getSelectionModel().getSelectedIndex();
+		if (selectedIndex >= 0) {
+			filtersTable.getItems().remove(selectedIndex);
+		} else {
+			// Nothing selected.
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("No Selection");
+			alert.setHeaderText("No Filter Selected");
+			alert.setContentText("Please select a filter in the table to delete it");
+			alert.showAndWait();
+		}
 	}
-	
+
 	/**
 	 * Handler that removes a filter from the list.
 	 */
 	@FXML
 	private void handleRunFilters() {
-		
-			// Saves a copy of the original image to apply filters
-			auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
-			disableComponents();
-			changeStatus("Applying filters, please wait");
-			loading.setVisible(true);
-			new Thread(() -> {
-				ObservableList<Filter> f = this.filtersTable.getItems();
-				for(int i =0; i< f.size(); i++ ){
-					changeStatus("Aplying " + f.get(i).getFiltername().getValue() + ". " + (i+1) + "/" + f.size());
-					this.auxImage = f.get(i).run(auxImage);
-				}
-				
-				filteredImage.setImage(SwingFXUtils.toFXImage(auxImage,null));
-				this.mainApp.setFilteredImage(SwingFXUtils.toFXImage(auxImage,null));
-				changeStatus("Filters apply completed! Idle.");
-		
-				loading.setVisible(false);
-				this.enableComponents();
-			}).start();
 
-		
-		
+		// Saves a copy of the original image to apply filters
+		auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
+		disableComponents();
+		changeStatus("Applying filters, please wait");
+		loading.setVisible(true);
+		new Thread(() -> {
+			ObservableList<Filter> f = this.filtersTable.getItems();
+			for (int i = 0; i < f.size(); i++) {
+				changeStatus("Aplying " + f.get(i).getFiltername().getValue() + ". " + (i + 1) + "/" + f.size());
+				this.auxImage = f.get(i).run(auxImage);
+			}
+
+			filteredImage.setImage(SwingFXUtils.toFXImage(auxImage, null));
+			this.mainApp.setFilteredImage(SwingFXUtils.toFXImage(auxImage, null));
+			changeStatus("Filters apply completed! Idle.");
+
+			loading.setVisible(false);
+			this.enableComponents();
+		}).start();
+
 	}
-	
+
 	/**
 	 * Disables the components while the algorithm is running.
 	 */
-	private void disableComponents(){
+	private void disableComponents() {
 		mainApp.getRootLayout().setDisable(true);
 	}
+
 	/**
 	 * enables the components when the algorithm has ended.
 	 */
-	private void enableComponents(){
+	private void enableComponents() {
 		mainApp.getRootLayout().setDisable(false);
 	}
 
@@ -393,17 +392,16 @@ public class ImageFiltersController {
 		if (mainApp.getFullImage() != null) {
 			originalImage.setImage(mainApp.getFullImage());
 			filteredImage.setImage(mainApp.getFilteredImage());
-			
+
 			originalImage.setFitHeight(originalImage.getImage().getHeight());
-	        
-	        // Add observable list data to the table
-	        filtersTable.setItems(mainApp.getAppliedFilters());
-	        
-	        // Saves a copy of the original image to apply filters
-	        auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
+
+			// Add observable list data to the table
+			filtersTable.setItems(mainApp.getAppliedFilters());
+
+			// Saves a copy of the original image to apply filters
+			auxImage = SwingFXUtils.fromFXImage(this.originalImage.getImage(), null);
 		}
 	}
-
 
 	/**
 	 * Handler that changes to the perikymata counting stage when called.
@@ -415,27 +413,30 @@ public class ImageFiltersController {
 		mainApp.makeProjectXml();
 		mainApp.showPerikymataCount();
 	}
-	
+
 	/**
 	 * Saves the filtered image to disk.
-	 * @param image Filtered image.
+	 * 
+	 * @param image
+	 *            Filtered image.
 	 */
 	private void saveToFile(Image image) {
-	    File outputFile = Paths.get(mainApp.getProjectPath(), "Full_Image", "Filtered_Image.png").toFile();
-	    BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
-	    try {
-	      ImageIO.write(bImage, "png", outputFile);
-	    } catch (IOException e) {
-	    	mainApp.getLogger().log(Level.SEVERE, "Filtered image cannot be saved.", e);
-	    }
+		File outputFile = Paths.get(mainApp.getProjectPath(), "Full_Image", "Filtered_Image.png").toFile();
+		BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+		try {
+			ImageIO.write(bImage, "png", outputFile);
+		} catch (IOException e) {
+			mainApp.getLogger().log(Level.SEVERE, "Filtered image cannot be saved.", e);
+		}
 	}
-	
+
 	/**
-	 * Changes the text of the status label from the Platform because label can't
-	 * be changed directly from a thread.
+	 * Changes the text of the status label from the Platform because label
+	 * can't be changed directly from a thread.
+	 * 
 	 * @param text
 	 */
-	private synchronized void changeStatus(String text){
-		Platform.runLater(()-> status.setText(text));
+	private synchronized void changeStatus(String text) {
+		Platform.runLater(() -> status.setText(text));
 	}
 }

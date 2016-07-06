@@ -1,4 +1,5 @@
 package es.ubu.lsi.perikymata;
+
 /**
  * License: GPL
  *
@@ -86,7 +87,8 @@ public class MainApp extends Application {
 	}
 
 	/**
-	 * @param rootLayout the rootLayout to set
+	 * @param rootLayout
+	 *            the rootLayout to set
 	 */
 	public void setRootLayout(BorderPane rootLayout) {
 		this.rootLayout = rootLayout;
@@ -140,7 +142,8 @@ public class MainApp extends Application {
 		configureLogger();
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("Perikymata - Unsaved Project");
-		this.primaryStage.getIcons().add(new Image(this.getClass().getResource("/rsc/Tooth-icon.png").toExternalForm()));
+		this.primaryStage.getIcons()
+				.add(new Image(this.getClass().getResource("/rsc/Tooth-icon.png").toExternalForm()));
 		this.primaryStage.setMinHeight(450.0);
 		this.primaryStage.setMinWidth(650.0);
 		initRootLayout();
@@ -630,7 +633,8 @@ public class MainApp extends Application {
 	}
 
 	/**
-	 * Clear the data of all the variables to a new state to open or create a project.
+	 * Clear the data of all the variables to a new state to open or create a
+	 * project.
 	 */
 	public void clearData() {
 		this.appliedFilters.clear();

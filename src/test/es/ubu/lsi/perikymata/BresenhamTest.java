@@ -1,4 +1,5 @@
 package test.es.ubu.lsi.perikymata;
+
 /**
  * License: GPL
  *
@@ -36,26 +37,28 @@ import es.ubu.lsi.perikymata.vista.PerikymataCountController;
  */
 public class BresenhamTest {
 
-	@Rule 
+	@Rule
 	public JavaFXThreadingRule javafxRule = new JavaFXThreadingRule();
-	
+
 	@Test
 	@SuppressWarnings("unchecked")
-	public void test() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		//It is a private method, so we make it accessible to be able to test it.
+	public void test() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		// It is a private method, so we make it accessible to be able to test
+		// it.
 		Method method = ProfileUtil.class.getDeclaredMethod("Bresenham", int.class, int.class, int.class, int.class);
 		method.setAccessible(true);
 		List<int[]> lista = (List<int[]>) method.invoke(new PerikymataCountController(), 0, 0, 3, 3);
 		List<int[]> resultado = new ArrayList<>();
-		//Easy test, given 0,0 and 3,3 the line must pass 
+		// Easy test, given 0,0 and 3,3 the line must pass
 		// the points 1,1 2,2 and arrive at 3,3. Harder
 		// tests can be made.
-		resultado.add(new int[]{1,1});
-		resultado.add(new int[]{2,2});
-		resultado.add(new int[]{3,3});
+		resultado.add(new int[] { 1, 1 });
+		resultado.add(new int[] { 2, 2 });
+		resultado.add(new int[] { 3, 3 });
 		Iterator<int[]> itList = lista.iterator();
 		Iterator<int[]> itResult = resultado.iterator();
-		while(itList.hasNext()){
+		while (itList.hasNext()) {
 			assertArrayEquals(itList.next(), itResult.next());
 		}
 	}

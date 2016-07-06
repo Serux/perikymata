@@ -1,4 +1,5 @@
 package es.ubu.lsi.perikymata.util;
+
 /**
  * License: GPL
  *
@@ -21,8 +22,10 @@ import es.ubu.lsi.perikymata.modelo.Project;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;
+
 /**
  * Class used to pass a pathElement from XML to an object and vice versa.
+ * 
  * @see Project#getFilterList()
  * @author Sergio Chico Carrancio
  */
@@ -36,10 +39,10 @@ public class DrawLineXmlAdapter extends XmlAdapter<String, PathElement> {
 		String[] pathElementString = v.split(":");
 		String[] parameters = pathElementString[1].split(",");
 		PathElement pathElement = null;
-		if(MoveTo.class.getName().equals(pathElementString[0])){
-			pathElement = new MoveTo(Double.parseDouble(parameters[0]),Double.parseDouble(parameters[1]));
-		} else{
-			pathElement = new LineTo(Double.parseDouble(parameters[0]),Double.parseDouble(parameters[1]));
+		if (MoveTo.class.getName().equals(pathElementString[0])) {
+			pathElement = new MoveTo(Double.parseDouble(parameters[0]), Double.parseDouble(parameters[1]));
+		} else {
+			pathElement = new LineTo(Double.parseDouble(parameters[0]), Double.parseDouble(parameters[1]));
 		}
 		return pathElement;
 	}
@@ -49,13 +52,12 @@ public class DrawLineXmlAdapter extends XmlAdapter<String, PathElement> {
 	 */
 	@Override
 	public String marshal(PathElement v) throws Exception {
-		if(v instanceof MoveTo){
+		if (v instanceof MoveTo) {
 			MoveTo value = (MoveTo) v;
-			return value.getClass().getName() + ":" +value.getX()+","+value.getY();
-		}
-		else{
+			return value.getClass().getName() + ":" + value.getX() + "," + value.getY();
+		} else {
 			LineTo value = (LineTo) v;
-			return value.getClass().getName() + ":" +value.getX()+","+value.getY();
+			return value.getClass().getName() + ":" + value.getX() + "," + value.getY();
 		}
 	}
 }

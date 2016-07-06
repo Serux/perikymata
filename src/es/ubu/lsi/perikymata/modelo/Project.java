@@ -1,4 +1,5 @@
 package es.ubu.lsi.perikymata.modelo;
+
 /**
  * License: GPL
  *
@@ -28,8 +29,7 @@ import es.ubu.lsi.perikymata.util.FiltersXmlAdapter;
 import javafx.scene.shape.PathElement;
 
 /**
- * Project class, stores persistent data. 
- * Is used to read or create a XML file.
+ * Project class, stores persistent data. Is used to read or create a XML file.
  * 
  * @author Sergio Chico Carrancio
  */
@@ -39,17 +39,17 @@ public class Project {
 	 * Name of the project.
 	 */
 	private String projectName;
-	
+
 	/**
 	 * List of applied filters.
 	 */
 	private List<Filter> filterList;
-	
+
 	/**
 	 * List of the elements used to draw the free-draw line.
 	 */
 	private List<PathElement> linePath;
-	
+
 	/**
 	 * Coordinates of the detected perikymata.
 	 */
@@ -59,7 +59,7 @@ public class Project {
 	 * Measure for calculating the distance between perikymata.
 	 */
 	private Measure measure = new Measure();
-	
+
 	/**
 	 * x Coordinate of the Start Decile
 	 */
@@ -68,27 +68,30 @@ public class Project {
 	 * x Coordinate of the End Decile
 	 */
 	private Double xDecileEnd = null;
-	
+
 	/**
 	 * getter for project name, used to read from a XML.
+	 * 
 	 * @return project name.
 	 */
 	public String getProjectName() {
 		return projectName;
 	}
-	
 
 	/**
 	 * Setter for project name.
-	 * @param projectName name to set.
+	 * 
+	 * @param projectName
+	 *            name to set.
 	 */
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
 
 	/**
-	 * Getter for the list of filters, used to read from a XML.
-	 * If you want to add a new filter, see:
+	 * Getter for the list of filters, used to read from a XML. If you want to
+	 * add a new filter, see:
+	 * 
 	 * @see FiltersXmlAdapter
 	 * @return list of filters.
 	 */
@@ -101,26 +104,28 @@ public class Project {
 	/**
 	 * Setter for the list of applied filters.
 	 * 
-	 * @param filterList applied filters.
+	 * @param filterList
+	 *            applied filters.
 	 */
 	public void setFilterList(List<Filter> filterList) {
 		this.filterList = filterList;
 	}
-	
 
 	/**
 	 * 
 	 * @return the free draw linepath
 	 */
 	@XmlJavaTypeAdapter(DrawLineXmlAdapter.class)
-	public List<PathElement> getLinePath(){
+	public List<PathElement> getLinePath() {
 		return linePath;
 	}
+
 	/**
 	 * 
-	 * @param linePath the linePath to set
+	 * @param linePath
+	 *            the linePath to set
 	 */
-	public void setLinePath(List<PathElement> linePath){
+	public void setLinePath(List<PathElement> linePath) {
 		this.linePath = linePath;
 	}
 
@@ -132,12 +137,12 @@ public class Project {
 	}
 
 	/**
-	 * @param peaksCoords the peaksCoords to set
+	 * @param peaksCoords
+	 *            the peaksCoords to set
 	 */
 	public void setPeaksCoords(List<int[]> peaksCoords) {
 		this.peaksCoords = peaksCoords;
 	}
-
 
 	/**
 	 * @return the measure
@@ -146,14 +151,13 @@ public class Project {
 		return measure;
 	}
 
-
 	/**
-	 * @param measure the measure to set
+	 * @param measure
+	 *            the measure to set
 	 */
 	public void setMeasure(Measure measure) {
 		this.measure = measure;
 	}
-
 
 	/**
 	 * @return the xDecileStart
@@ -162,14 +166,13 @@ public class Project {
 		return xDecileStart;
 	}
 
-
 	/**
-	 * @param xDecileStart the xDecileStart to set
+	 * @param xDecileStart
+	 *            the xDecileStart to set
 	 */
 	public void setxDecileStart(Double xDecileStart) {
 		this.xDecileStart = xDecileStart;
 	}
-
 
 	/**
 	 * @return the xDecileEnd
@@ -178,13 +181,12 @@ public class Project {
 		return xDecileEnd;
 	}
 
-
 	/**
-	 * @param xDecileEnd the xDecileEnd to set
+	 * @param xDecileEnd
+	 *            the xDecileEnd to set
 	 */
 	public void setxDecileEnd(Double xDecileEnd) {
 		this.xDecileEnd = xDecileEnd;
 	}
-	
-	
+
 }

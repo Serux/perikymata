@@ -1,4 +1,5 @@
 package es.ubu.lsi.perikymata.vista;
+
 /**
  * License: GPL
  *
@@ -61,20 +62,21 @@ public class ImageSelectionController {
 	 */
 	private MainApp mainApp;
 
-	//////////////////////Status Elements////////////////////
-	
+	////////////////////// Status Elements////////////////////
+
 	/**
 	 * Current status, tells to the user if a Thread is running.
 	 */
 	@FXML
 	private Label status;
-	
+
 	/**
 	 * Loading gif.
 	 */
-    @FXML
+	@FXML
 	private ImageView loading;
-    /////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////
 	/**
 	 * Initializes the controller class. This method is automatically called
 	 * after the fxml file has been loaded.
@@ -112,15 +114,15 @@ public class ImageSelectionController {
 
 				Files.copy(file.toPath(), fileStream);
 			} catch (IOException e) {
-				mainApp.getLogger().log(Level.SEVERE, "Exception occur opening full image.",e);
-	        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
-	        	alert.setTitle("Error opening full image");
-	        	alert.setHeaderText("Can't open or copy full image.\n");
-	        	alert.setContentText("Can't open full image or copy it into the project folder.\n"
-	        			+ "file was: " + file.toString());
-	            alert.showAndWait();	
+				mainApp.getLogger().log(Level.SEVERE, "Exception occur opening full image.", e);
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setTitle("Error opening full image");
+				alert.setHeaderText("Can't open or copy full image.\n");
+				alert.setContentText(
+						"Can't open full image or copy it into the project folder.\n" + "file was: " + file.toString());
+				alert.showAndWait();
 			}
-			
+
 			mainApp.setFullImage(SwingFXUtils.toFXImage((BufferedImage) full, null));
 			previewImage.setImage(mainApp.getFullImage());
 			mainApp.setFilteredImage(mainApp.getFullImage());
@@ -150,13 +152,12 @@ public class ImageSelectionController {
 
 					Files.copy(file.toPath(), fileStream);
 				} catch (IOException e) {
-					mainApp.getLogger().log(Level.SEVERE, "Exception occur opening fragment files.",e);
-		        	Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		        	alert.setTitle("Error opening or coping fragments.");
-		        	alert.setHeaderText("Can't open or copy fragment file.\n");
-		        	alert.setContentText("Cant open or copy the image to stitch with path:\n"
-		        			+ file.toString());
-		            alert.showAndWait();	
+					mainApp.getLogger().log(Level.SEVERE, "Exception occur opening fragment files.", e);
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setTitle("Error opening or coping fragments.");
+					alert.setHeaderText("Can't open or copy fragment file.\n");
+					alert.setContentText("Cant open or copy the image to stitch with path:\n" + file.toString());
+					alert.showAndWait();
 				}
 
 			}
@@ -217,7 +218,7 @@ public class ImageSelectionController {
 
 		changeStatus("Stitching, please wait");
 		loading.setVisible(true);
-		
+
 		new Thread(() -> {
 			try {
 				mainApp.getRootLayout().setDisable(true);
@@ -227,18 +228,16 @@ public class ImageSelectionController {
 						.forEach(x -> tempList.add(Paths.get(mainApp.getProjectPath(), "Fragments", x).toString()));
 				for (String i : tempList)
 					tempString.append(" " + i);
-				Process stitcher = Runtime.getRuntime()
-						.exec("rsc/stitching/bin/Stitching.exe" + " "
-								+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " "
-								+ tempString);
+				Process stitcher = Runtime.getRuntime().exec("rsc/stitching/bin/Stitching.exe" + " "
+						+ Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png") + " " + tempString);
 				int ok;
-				//OK exit code is 1.
-				if( (ok=stitcher.waitFor()) == 1){
+				// OK exit code is 1.
+				if ((ok = stitcher.waitFor()) == 1) {
 
 					java.awt.Image full = new Opener()
 							.openImage(Paths.get(mainApp.getProjectPath(), "Full_Image", "Full_Image.png").toString())
 							.getImage();
-					
+
 					changeStatus("Stitching completed!");
 					loading.setVisible(false);
 					mainApp.getRootLayout().setDisable(false);
@@ -251,19 +250,19 @@ public class ImageSelectionController {
 					changeStatus("Stitching failed.");
 					loading.setVisible(false);
 					mainApp.getLogger().log(Level.WARNING, "Stitching failed, exit with code: " + ok);
-					
+
 				}
 			} catch (IOException e) {
-				mainApp.getLogger().log(Level.SEVERE, "Exception occur executing stitcher.",e);
-				
-	            changeStatus("Stitching failed.");
+				mainApp.getLogger().log(Level.SEVERE, "Exception occur executing stitcher.", e);
+
+				changeStatus("Stitching failed.");
 				loading.setVisible(false);
 			} catch (InterruptedException e) {
-				mainApp.getLogger().log(Level.SEVERE, "Exception occur waiting for stitching.",e);
-				
-	            changeStatus("Thread interrupted.");
+				mainApp.getLogger().log(Level.SEVERE, "Exception occur waiting for stitching.", e);
+
+				changeStatus("Thread interrupted.");
 				loading.setVisible(false);
-	            Thread.currentThread().interrupt();
+				Thread.currentThread().interrupt();
 			} finally {
 				loading.setVisible(false);
 				mainApp.getRootLayout().setDisable(false);
@@ -289,11 +288,12 @@ public class ImageSelectionController {
 	}
 
 	/**
-	 * Changes the text of the status label from the Platform because label can't
-	 * be changed directly from a thread.
+	 * Changes the text of the status label from the Platform because label
+	 * can't be changed directly from a thread.
+	 * 
 	 * @param text
 	 */
-	private synchronized void changeStatus(String text){
-		Platform.runLater(()-> status.setText(text));
+	private synchronized void changeStatus(String text) {
+		Platform.runLater(() -> status.setText(text));
 	}
 }

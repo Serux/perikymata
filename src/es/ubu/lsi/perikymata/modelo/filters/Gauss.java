@@ -1,4 +1,5 @@
 package es.ubu.lsi.perikymata.modelo.filters;
+
 /**
  * License: GPL
  *
@@ -24,26 +25,28 @@ import ij.process.ImageProcessor;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class Gauss implements Filter{
+public class Gauss implements Filter {
 
 	/**
 	 * Strength of the filter.
 	 */
 	private double sigmaValue;
-	
+
 	/**
 	 * Name of the filter.
 	 */
 	public static final String FILTERNAME = "Gaussian";
-	
+
 	/**
 	 * Constructor of the filter, adds the arguments to the object.
-	 * @param sigma Strenght of the filter.
+	 * 
+	 * @param sigma
+	 *            Strenght of the filter.
 	 */
-	public Gauss( double sigma ){
-		sigmaValue =  sigma;
+	public Gauss(double sigma) {
+		sigmaValue = sigma;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -62,7 +65,7 @@ public class Gauss implements Filter{
 	public StringProperty getFiltername() {
 		return new SimpleStringProperty(FILTERNAME);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -70,13 +73,12 @@ public class Gauss implements Filter{
 	public StringProperty getFilterArgs() {
 		return new SimpleStringProperty("Sigma: " + new DecimalFormat("#.##").format(sigmaValue));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String getSmallStringRepresentation() {
-		return FILTERNAME + ":" + sigmaValue ;
+		return FILTERNAME + ":" + sigmaValue;
 	}
 }
-
