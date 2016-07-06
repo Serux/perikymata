@@ -1,5 +1,20 @@
 package es.ubu.lsi.perikymata.vista;
-
+/**
+ * License: GPL
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 import es.ubu.lsi.perikymata.MainApp;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -96,7 +111,13 @@ public class RootLayoutController {
     	alert.setContentText("Author: Sergio Chico Carrancio\n"
     			+ "Tutor: Dr. Jose Francisco Diez Pastor\n"
     			+ "Tutor: Dr Raul Marticorena Sanchez  \n"
-    			+ "Universidad de Burgos, July 2016");
+    			+ "Universidad de Burgos, July 2016\n\n\n"
+    			+ "Perikymata v1.0 (Analisis Paleontologico de piezas dentales)\n"
+    			+ "Copyright (C) 2016 Sergio Chico Carrancio.\n"
+    			+ "Perikymata v1.0 comes with ABSOLUTELY NO WARRANTY;\n"
+    			+ "for details view the file PERIKYMATA_LICENSE.txt\n"
+    			+ "This is free software, and you are welcome to redistribute it under "
+    			+ "the conditions found in the license.");
         alert.showAndWait();
     }
     

@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!-- 
+/**
+ * License: GPL
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+ -->
 <?import javafx.scene.control.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.image.*?>
@@ -23,16 +40,8 @@
                   <Button mnemonicParsing="false" onAction="#measure" text="Measure - Edit unit and value" />
               </items>
             </ToolBar>
-            <Button layoutX="456.0" layoutY="8.0" mnemonicParsing="false" onAction="#generateCsvFile" text="Export Data" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0" />
             <Button layoutX="161.0" layoutY="8.0" mnemonicParsing="false" onAction="#calculatePerikymata" prefHeight="25.0" prefWidth="137.0" text="Auto-mark perikymata" AnchorPane.rightAnchor="165.0" AnchorPane.topAnchor="8.0" />
-            <Button layoutX="324.0" layoutY="9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleErasePerikymata" prefHeight="24.0" prefWidth="32.0" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="8.0">
-               <tooltip>
-                  <Tooltip text="Erase Marked Perikymata." />
-               </tooltip>
-               <graphic>
-                  <ImageView fx:id="erasePerikymataButtonImage" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
-               </graphic>
-            </Button>
+            <Slider fx:id="thresholdSlider" blockIncrement="1.0" layoutX="144.0" layoutY="41.0" minorTickCount="24" prefHeight="14.0" prefWidth="78.0" showTickMarks="true" snapToTicks="true" AnchorPane.rightAnchor="223.0" AnchorPane.topAnchor="41.0" />
             <Button layoutX="280.0" layoutY="9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDrawPerikymata" prefHeight="24.0" prefWidth="32.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="8.0">
                <graphic>
                   <ImageView fx:id="drawPerikymataButtonImage" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
@@ -41,7 +50,15 @@
                   <Tooltip text="Mark new perikymata." />
                </tooltip>
             </Button>
-            <Slider fx:id="thresholdSlider" blockIncrement="1.0" layoutX="144.0" layoutY="41.0" minorTickCount="24" prefHeight="14.0" prefWidth="78.0" showTickMarks="true" snapToTicks="true" AnchorPane.rightAnchor="223.0" AnchorPane.topAnchor="41.0" />
+            <Button layoutX="324.0" layoutY="9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleErasePerikymata" prefHeight="24.0" prefWidth="32.0" AnchorPane.rightAnchor="85.0" AnchorPane.topAnchor="8.0">
+               <tooltip>
+                  <Tooltip text="Erase Marked Perikymata." />
+               </tooltip>
+               <graphic>
+                  <ImageView fx:id="erasePerikymataButtonImage" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+            </Button>
+            <Button layoutX="456.0" layoutY="8.0" mnemonicParsing="false" onAction="#generateCsvFile" text="Export Data" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0" />
             <Label layoutX="225.0" layoutY="37.0" prefHeight="14.0" prefWidth="118.0" text="Detection Threshold:" AnchorPane.rightAnchor="102.0" AnchorPane.topAnchor="37.0" />
             <Label fx:id="perikymataThresholdLabel" layoutX="340.0" layoutY="37.0" prefHeight="17.0" prefWidth="42.0" text="Value" AnchorPane.rightAnchor="63.0" AnchorPane.topAnchor="37.0" />
          </children>

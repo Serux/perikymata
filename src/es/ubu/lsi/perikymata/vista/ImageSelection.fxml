@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!-- 
+/**
+ * License: GPL
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License 2
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+ -->
 <?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
@@ -42,9 +59,9 @@
                         </ImageView>
                      </children>
                   </Pane>
-                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="261.0" mnemonicParsing="false" onAction="#nextScreen" prefHeight="25.0" prefWidth="200.0" text="Save project and continue" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   <Button mnemonicParsing="false" onAction="#handleRotate" text="Rotate 90º" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                   <Button alignment="CENTER" contentDisplay="CENTER" layoutX="-14.0" layoutY="225.0" mnemonicParsing="false" onMouseClicked="#handleOpen" prefHeight="25.0" prefWidth="200.0" text="Load full image" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Button alignment="CENTER" contentDisplay="CENTER" layoutY="261.0" mnemonicParsing="false" onAction="#nextScreen" prefHeight="25.0" prefWidth="200.0" text="Save project and continue" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
          </items>
