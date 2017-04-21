@@ -8,8 +8,11 @@ El objetivo de este Proyecto consistió en realizar un marcado semi-automático 
 Para realizar este proyecto, se desarrolló una aplicación en Java, con una interfaz gráfica usando JavaFX y la librería de operaciones sobre imágenes ImageJ. También se realizó una parte de OpenCV desarrollada en el lenguaje C/C++.
 
 La aplicación desarrollada se divide en tres etapas principales:
+
 Primero se realiza la unión automática de varias imágenes para formar una imagen de pieza dental completa usando OpenCV.
+
 La segunda fase es una edición de la imagen, aplicando filtros Prewitt-Gauss hacen que las periymata sean más fáciles de ver.
+
 La tercera fase es el dibujado, por parte del usuario, de una línea que atraviese la zona donde se quieren contar perikymata. La aplicación dibuja un punto en cada perikyma detectada y guarda los datos sobre las posiciones y distancias de las perikyma en forma de CSV.
 
 La aplicación está basada en la creación de un proyecto por cada imagen, por lo que se puede recuperar el trabajo realizado en cualquier momento.
