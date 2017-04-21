@@ -1,5 +1,6 @@
 # Perikymata 
 ######Análisis paleontológico de piezas dentales
+
 Proyecto en colaboración con el departamento de investigación del Museo de la Evolución Humana en Burgos.
 
 El objetivo de este Proyecto consistió en realizar un marcado semi-automático de una serie de surcos en piezas dentales, llamados perikymata, observadas en las imágenes tomadas mediante microscopio electrónico.
