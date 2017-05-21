@@ -21,7 +21,7 @@ La aplicación está basada en la creación de un proyecto por cada imagen, por 
 
 Esta aplicación está en proceso de ser registrada a través de la Universidad de Burgos.
 
-######Paleontological analisys of dental pieces
+######Paleontological analysis of dental pieces
 
 This applications tries to help to detect Perikymata in a tooth image taken by a electronic microscope.
 
