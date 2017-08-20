@@ -1,4 +1,5 @@
 * See English translation below
+This project continues and has been modified and improved in the following repository: https://github.com/amtBurgos/Perikymata2017
 
 Software registrado por la Oficina de Transferencia de Resultados de Investigación (OTRI) de la Universidad de Burgos con el nombre de Análisis Paleontológico de piezas dentales.
 Software registered by the Office of Transference of Results from Investigation (OTRI) of the University of Burgos with the name of "Análisis Paleontológico de piezas dentales" 
