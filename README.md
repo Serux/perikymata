@@ -28,8 +28,6 @@ La tercera fase es el dibujado, por parte del usuario, de una línea que atravie
 
 La aplicación está basada en la creación de un proyecto por cada imagen, por lo que se puede recuperar el trabajo realizado en cualquier momento.
 
-Esta aplicación está en proceso de ser registrada a través de la Universidad de Burgos.
-
 ######Paleontological analysis of dental pieces
 
 This applications tries to help to detect Perikymata in a tooth image taken by a electronic microscope.
