@@ -1,5 +1,14 @@
 * See English translation below
 
+Software registrado por la Oficina de Transferencia de Resultados de Investigación (OTRI) de la Universidad de Burgos con el nombre de Análisis Paleontológico de piezas dentales.
+Software registered by the Office of Transference of Results from Investigation (OTRI) of the University of Burgos with the name of "Análisis Paleontológico de piezas dentales" 
+http://www.ubu.es/otri/propiedad-industrial-e-intelectual/registros-de-propiedad-intelectual
+
+Análisis Paleontológico de piezas dentales
+- Autores: José Francisco Díez Pastor, Raúl Marticorena Sánchez, Sergio Chico Carrancio, Maria Rebeca García González.
+- Fecha de registro: 13/07/2017
+
+
 # Perikymata 
 ######Análisis paleontológico de piezas dentales
 
